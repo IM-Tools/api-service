@@ -1,0 +1,10 @@
+server:
+  listen: ':8000'
+  mode: 'debug' # gin的运行模式 debug, release, test
+mysql:
+  host: '127.0.0.1'
+  port: 3306
+  database: 'go_admin'
+  username: 'root'
+  password: 'root'
+  charset: 'utf8mb4'
