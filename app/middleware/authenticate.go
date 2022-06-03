@@ -8,7 +8,7 @@ package middleware
 import "github.com/gin-gonic/gin"
 
 // 后台校验中间件
-func AdminAuth() gin.HandlerFunc {
+func Auth() gin.HandlerFunc {
 
 	return func(cxt *gin.Context) {
 		cxt.Next()

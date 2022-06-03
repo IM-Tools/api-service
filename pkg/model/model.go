@@ -6,8 +6,8 @@
 package model
 
 import (
+	"Im-Push-Services/config"
 	"fmt"
-	"go-admin/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"

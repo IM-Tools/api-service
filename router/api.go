@@ -6,6 +6,7 @@
 package router
 
 import (
+	"Im-Push-Services/app/controllers/auth"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,13 +14,13 @@ import (
 func RegisterApiRoutes(router *gin.Engine) {
 
 	startCors(router)
+	var api *gin.RouterGroup
+	api = router.Group("/api")
 
-	api := router.Group("/api")
-	{
-		auth := api.Group("auth")
-		{
-			auth.POST("login")
-		}
-	}
+	authGroup := api.Group("/auth")
+
+	login := new(auth.AuthController)
+
+	authGroup.POST("/login", login.Login)
 
 }

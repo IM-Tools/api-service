@@ -1,16 +1,18 @@
 package main
 
 import (
+	"Im-Push-Services/cmd"
+	"Im-Push-Services/config"
+	"Im-Push-Services/pkg/logger"
+	"Im-Push-Services/pkg/model"
+	"Im-Push-Services/router"
 	"github.com/gin-gonic/gin"
-	"go-admin/cmd"
-	"go-admin/config"
-	"go-admin/pkg/model"
-	"go-admin/router"
 )
 
 func init() {
 
 	config.InitConfig("config.yaml")
+	SetUpLogger()
 
 }
 
@@ -24,5 +26,18 @@ func main() {
 	model.InitDb()
 
 	router.RegisterApiRoutes(gin.Default())
+	router.RegisterWsRouters(gin.Default())
 	r.Run(config.Conf.Server.Listen)
+}
+
+func SetUpLogger() {
+	logger.InitLogger(
+		config.Conf.Log.Level,
+		config.Conf.Log.MaxSize,
+		config.Conf.Log.MaxBackup,
+		config.Conf.Log.MaxAge,
+		config.Conf.Log.Compress,
+		config.Conf.Log.Type,
+		config.Conf.Log.Level,
+	)
 }

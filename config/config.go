@@ -13,11 +13,21 @@ import (
 type Config struct {
 	Server ServerConf
 	Mysql  MysqlConf
+	Log    LogConf
+	JWT    JWTConf
 }
 
 type ServerConf struct {
+	Name   string `json:"name"`
 	Listen string `json:"listen"`
-	Mode   string `json:"mode"`
+
+	Mode string `json:"mode"`
+	Env  string `json:"env"`
+}
+
+type JWTConf struct {
+	Secret string `json:"secret"`
+	Ttl    int64  `json:"ttl"`
 }
 
 type MysqlConf struct {
@@ -27,6 +37,16 @@ type MysqlConf struct {
 	Password string `json:"password"`
 	Database string `json:"database"`
 	Charset  string `json:"charset"`
+}
+
+type LogConf struct {
+	Level     string `json:"level"`
+	Type      string `json:"type"`
+	FileName  string `json:"filename"`
+	MaxSize   int    `json:"max_size"`
+	MaxBackup int    `json:"max_backup"`
+	MaxAge    int    `json:"max_age"`
+	Compress  bool   `json:"compress"`
 }
 
 var Conf = &Config{}
@@ -63,4 +83,16 @@ func InitConfig(configPath string) *Config {
 
 	return Conf
 
+}
+
+func IsLocal() bool {
+	return Conf.Log.Level == "local"
+}
+
+func IsProduction() bool {
+	return Conf.Log.Level == "production"
+}
+
+func IsTesting() bool {
+	return Conf.Log.Level == "testing"
 }
