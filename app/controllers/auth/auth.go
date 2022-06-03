@@ -39,10 +39,11 @@ func (*AuthController) Login(cxt *gin.Context) {
 		Password: cxt.PostForm("password"),
 	}
 
-	err := validator.New().Struct(params)
+	validate := requests.ValidateTransInit()
+	err := validate.Struct(params)
 
 	if err != nil {
-		response.FailResponse(http.StatusInternalServerError, err.Error()).WriteTo(cxt)
+		response.FailResponse(http.StatusInternalServerError, requests.GetError(err)).WriteTo(cxt)
 		return
 	}
 

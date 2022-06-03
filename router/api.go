@@ -18,9 +18,10 @@ func RegisterApiRoutes(router *gin.Engine) {
 	api = router.Group("/api")
 
 	authGroup := api.Group("/auth")
+	{
+		login := new(auth.AuthController)
 
-	login := new(auth.AuthController)
-
-	authGroup.POST("/login", login.Login)
+		authGroup.POST("/login", login.Login)
+	}
 
 }

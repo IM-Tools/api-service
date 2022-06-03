@@ -1,10 +1,23 @@
 server:
+  name: 'im-push-service'
   listen: ':8000'
   mode: 'debug' # gin的运行模式 debug, release, test
+  env: 'local' #local production testing
 mysql:
   host: '127.0.0.1'
   port: 3306
-  database: 'go_admin'
+  database: 'im'
   username: 'root'
   password: 'root'
   charset: 'utf8mb4'
+log:
+  level: 'debug' # 开发时推荐使用 "debug" 或者 "info" ，生产环境下使用 "error"
+  type: 'daily' #"single" 独立的文件  "daily" 按照日期每日一个
+  filename: 'storage/logs/logs.log'
+  max_size: 64, # 保存最大单位 M
+  max_backup: 30 #最多保存日志文件数，0 为不限，MaxAge 到了还是会删
+  max_age: 7 #最多保存多少天
+  compress: false #是否压缩
+jwt:
+  secret: 'acb2ca5bc8d7fb2ef8f890f1be15d964' #密钥
+  ttl: 640000 # s

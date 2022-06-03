@@ -25,8 +25,9 @@ func main() {
 
 	model.InitDb()
 
-	router.RegisterApiRoutes(gin.Default())
-	router.RegisterWsRouters(gin.Default())
+	router.RegisterApiRoutes(r)
+	router.RegisterWsRouters(r)
+
 	r.Run(config.Conf.Server.Listen)
 }
 

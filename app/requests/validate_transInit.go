@@ -6,23 +6,38 @@
 package requests
 
 import (
+	"Im-Push-Services/config"
 	"fmt"
+	"github.com/go-playground/locales/ug_CN"
 	"github.com/go-playground/locales/zh"
-	"github.com/go-playground/universal-translator"
+	ut "github.com/go-playground/universal-translator"
+
 	"github.com/go-playground/validator/v10"
 	zhTranslations "github.com/go-playground/validator/v10/translations/zh"
 )
 
-// 数据翻译
-func validateTransInit(validate *validator.Validate) ut.Translator {
+var (
+	uni      *ut.UniversalTranslator
+	Validate *validator.Validate
+)
 
-	uni := ut.New(zh.New())
-	// 获取翻译器
-	trans, _ := uni.GetTranslator("zh")
-	// 注册翻译器
-	err := zhTranslations.RegisterDefaultTranslations(validate, trans)
+// 注册翻译器
+func ValidateTransInit() *validator.Validate {
+	Validate = validator.New()
+	locale := config.Conf.Server.Lang
+	switch locale {
+	case "zh":
+		fmt.Println(locale)
+		uni = ut.New(zh.New())
+		break
+	default:
+		uni = ut.New(ug_CN.New())
+		break
+	}
+	trans, _ := uni.GetTranslator(locale)
+	err := zhTranslations.RegisterDefaultTranslations(Validate, trans)
 	if err != nil {
 		fmt.Println(err)
 	}
-	return trans
+	return Validate
 }
