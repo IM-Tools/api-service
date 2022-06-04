@@ -5,13 +5,9 @@
 **/
 package user
 
-import (
-	"Im-Push-Services/pkg/model"
-)
-
 type ImUsers struct {
-	model.BaseModel
-	Id              int64  `gorm:"column:id" json:"id"`
+	//model.BaseModel
+	ID              int64  `gorm:"column:id;primaryKey" json:"id"`
 	Name            string `gorm:"column:name" json:"name"`
 	Email           string `gorm:"column:email" json:"email"`
 	EmailVerifiedAt int64  `gorm:"column:email_verified_at" json:"email_verified_at"`
@@ -29,6 +25,6 @@ type ImUsers struct {
 	Sex             int8   `gorm:"column:sex" json:"sex"`                 //0 未知 1.男 2.女
 	ClientType      int8   `gorm:"column:client_type" json:"client_type"` //1.web 2.pc 3.app
 	Age             int    `gorm:"column:age" json:"age"`
-	LastLoginTime   int64  `gorm:"column:last_login_time" json:"last_login_time"` //最后登录时间
+	LastLoginTime   string `gorm:"column:last_login_time" json:"last_login_time"` //最后登录时间
 	Uid             int64  `gorm:"column:uid" json:"uid"`                         //uid 关联
 }

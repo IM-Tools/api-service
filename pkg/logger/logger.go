@@ -6,11 +6,11 @@
 package logger
 
 import (
-	"Im-Push-Services/config"
 	"fmt"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
+	"im-services/config"
 	"os"
 	"strings"
 	"time"

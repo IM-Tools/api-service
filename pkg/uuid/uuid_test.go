@@ -13,20 +13,21 @@ import (
 )
 
 func TestUUid(T *testing.T) {
-	mySnow, _ := NewSnowFlake(0, 0) //生成雪花算法
+	mySnow, _ := NewSnowFlake(829323232, 9999999999999999) //生成雪花算法
 	group := sync.WaitGroup{}
 	startTime := time.Now()
 	generateId := func(s SnowFlake, requestNumber int) {
 		for i := 0; i < requestNumber; i++ {
-			s.NextId()
+			uuids, _ := s.NextId()
+			fmt.Println(uuids)
 			group.Done()
 		}
 	}
-	group.Add(40000)
+	group.Add(400)
 	//生成并发的数为4000000
 	currentThreadNum := 4
 	for i := 0; i < currentThreadNum; i++ {
-		generateId(*mySnow, 10000)
+		generateId(*mySnow, 100)
 	}
 	group.Wait()
 	fmt.Printf("time: %v\n", time.Now().Sub(startTime))

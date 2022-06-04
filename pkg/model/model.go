@@ -6,11 +6,11 @@
 package model
 
 import (
-	"Im-Push-Services/config"
 	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"im-services/config"
 )
 
 var DB *gorm.DB

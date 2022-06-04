@@ -1,12 +1,13 @@
 package main
 
 import (
-	"Im-Push-Services/cmd"
-	"Im-Push-Services/config"
-	"Im-Push-Services/pkg/logger"
-	"Im-Push-Services/pkg/model"
-	"Im-Push-Services/router"
 	"github.com/gin-gonic/gin"
+	"im-services/cmd"
+	"im-services/config"
+	"im-services/pkg/coroutine"
+	"im-services/pkg/logger"
+	"im-services/pkg/model"
+	"im-services/router"
 )
 
 func init() {
@@ -24,6 +25,8 @@ func main() {
 	r := gin.Default()
 
 	model.InitDb()
+	
+	coroutine.ConnectPool()
 
 	router.RegisterApiRoutes(r)
 	router.RegisterWsRouters(r)

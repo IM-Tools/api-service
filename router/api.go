@@ -6,8 +6,8 @@
 package router
 
 import (
-	"Im-Push-Services/app/controllers/auth"
 	"github.com/gin-gonic/gin"
+	"im-services/app/controllers/auth"
 )
 
 // 注册api路由

@@ -6,9 +6,9 @@
 package router
 
 import (
-	"Im-Push-Services/app/middleware"
-	"Im-Push-Services/service/handler"
 	"github.com/gin-gonic/gin"
+	"im-services/app/middleware"
+	"im-services/service/handler"
 )
 
 func RegisterWsRouters(router *gin.Engine) {

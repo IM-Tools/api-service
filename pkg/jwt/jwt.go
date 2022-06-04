@@ -6,10 +6,10 @@
 package jwt
 
 import (
-	"Im-Push-Services/config"
-	"Im-Push-Services/pkg/logger"
 	"errors"
 	goJwt "github.com/golang-jwt/jwt/v4"
+	"im-services/config"
+	"im-services/pkg/logger"
 	"time"
 )
 

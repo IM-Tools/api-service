@@ -6,11 +6,11 @@
 package requests
 
 import (
-	"Im-Push-Services/config"
 	"fmt"
 	"github.com/go-playground/locales/ug_CN"
 	"github.com/go-playground/locales/zh"
 	ut "github.com/go-playground/universal-translator"
+	"im-services/config"
 
 	"github.com/go-playground/validator/v10"
 	zhTranslations "github.com/go-playground/validator/v10/translations/zh"

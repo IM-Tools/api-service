@@ -18,11 +18,12 @@ type Config struct {
 }
 
 type ServerConf struct {
-	Name   string `json:"name"`
-	Listen string `json:"listen"`
-	Mode   string `json:"mode"`
-	Env    string `json:"env"`
-	Lang   string `json:"lang"`
+	Name           string `json:"name"`
+	Listen         string `json:"listen"`
+	Mode           string `json:"mode"`
+	Env            string `json:"env"`
+	Lang           string `json:"lang"`
+	CoroutinesPoll int    `json:"coroutines_poll"`
 }
 
 type JWTConf struct {

@@ -21,6 +21,11 @@ var upgrade = websocket.Upgrader{
 var (
 	Websocket *websocket.Conn
 	err       error
+	//Text      = websocket.TextMessage   //文本数据
+	//Clone     = websocket.CloseMessage  // 关闭指令
+	//Binary    = websocket.BinaryMessage // 二进制数据
+	//Ping      = websocket.PingMessage
+	//Pong      = websocket.PongMessage
 )
 
 func App(w http.ResponseWriter, r *http.Request) (*websocket.Conn, error) {

@@ -6,15 +6,16 @@
 package auth
 
 import (
-	"Im-Push-Services/app/models/user"
-	"Im-Push-Services/app/requests"
-	"Im-Push-Services/config"
-	"Im-Push-Services/pkg/hash"
-	"Im-Push-Services/pkg/jwt"
-	"Im-Push-Services/pkg/model"
-	"Im-Push-Services/pkg/response"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"im-services/app/models/user"
+	"im-services/app/requests"
+	"im-services/config"
+	"im-services/pkg/hash"
+	"im-services/pkg/jwt"
+	"im-services/pkg/model"
+	"im-services/pkg/response"
 	"net/http"
 	"time"
 )
@@ -49,7 +50,7 @@ func (*AuthController) Login(cxt *gin.Context) {
 
 	var users user.ImUsers
 
-	result := model.DB.Model(&user.ImUsers{}).Where("email=?", params.Email).First(&users)
+	result := model.DB.Table("im_users").Where("email=?", params.Email).First(&users)
 
 	if result.RowsAffected == 0 {
 		response.FailResponse(http.StatusInternalServerError, "邮箱未注册").ToJson(cxt)
@@ -71,6 +72,7 @@ func (*AuthController) Login(cxt *gin.Context) {
 		expireAtTime,
 	)
 
+	fmt.Println(users.ID)
 	response.SuccessResponse(&loginResponse{
 		ID:         users.ID,
 		UID:        users.Uid,
