@@ -6,7 +6,6 @@
 package client
 
 import (
-	"fmt"
 	"github.com/gorilla/websocket"
 	"im-services/pkg/logger"
 	"im-services/service/message"
@@ -46,22 +45,26 @@ func (client *ImClient) Read() {
 	for {
 		_, msg, err := client.Socket.ReadMessage()
 		if err != nil {
+			
 			ImManager.Unregister <- client
 			client.Close()
+			break
 		}
-		break
-		errs, msgString := message.New().ValidationMsg(msg)
-		logger.Logger.Info(string(msg))
+
+		errs, msgString, ackMsg := message.New().ValidationMsg(msg)
+
+		logger.Logger.Info(ackMsg)
 
 		if errs != nil {
-			client.Socket.WriteMessage(
-				websocket.TextMessage,
-				[]byte(fmt.Sprintf(`{"code":500,"message":"%s"}`,
-					msgString)))
+			client.Socket.WriteMessage(websocket.TextMessage,
+				[]byte(msgString))
 		} else {
-			ImManager.Broadcast <- []byte(msgString)
-		}
 
+			client.Socket.WriteMessage(websocket.TextMessage,
+				[]byte(ackMsg))
+			ImManager.Broadcast <- []byte(msgString)
+
+		}
 	}
 
 }

@@ -16,10 +16,6 @@ import (
 type WsService struct {
 }
 
-var (
-	id int64
-)
-
 func (*WsService) Connect(cxt *gin.Context) {
 
 	conn, err := ws.App(cxt.Writer, cxt.Request)
@@ -32,15 +28,15 @@ func (*WsService) Connect(cxt *gin.Context) {
 	}
 
 	// 用户id
-	id = helpers.InterfaceToInt64(cxt.MustGet("id"))
+	id := helpers.InterfaceToInt64(cxt.MustGet("id"))
 
-	// 注册客户端
+	// 创建客户端
 	client := wsClient.NewClient(id, conn)
-
-	wsClient.ImManager.SetClient(client)
+	// 注册客户端
+	wsClient.ImManager.Register <- client
 	// 监听读写
 
 	go client.Read()
-	
+
 	go client.Write()
 }

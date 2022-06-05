@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// 设置服务端支持跨域
 func startCors(router *gin.Engine) {
 
 	config := cors.DefaultConfig()

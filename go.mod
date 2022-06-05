@@ -9,6 +9,7 @@ require (
 	github.com/go-playground/locales v0.14.0
 	github.com/go-playground/universal-translator v0.18.0
 	github.com/go-playground/validator/v10 v10.11.0
+	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/golang-jwt/jwt/v4 v4.4.1
 	github.com/gorilla/websocket v1.5.0
 	github.com/jinzhu/now v1.1.5 // indirect
@@ -18,6 +19,7 @@ require (
 	github.com/spf13/cobra v1.4.0
 	github.com/spf13/viper v1.11.0
 	github.com/ugorji/go v1.2.7 // indirect
+	github.com/valyala/fastjson v1.6.3
 	go.uber.org/zap v1.21.0
 	golang.org/x/crypto v0.0.0-20220517005047-85d78b3ac167
 	golang.org/x/sys v0.0.0-20220513210249-45d2b4557a2a // indirect

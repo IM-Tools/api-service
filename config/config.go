@@ -11,10 +11,12 @@ import (
 )
 
 type Config struct {
-	Server ServerConf
-	Mysql  MysqlConf
-	Log    LogConf
-	JWT    JWTConf
+	Server    ServerConf
+	Mysql     MysqlConf
+	Log       LogConf
+	JWT       JWTConf
+	RedisConf RedisConf
+	Mail      MailConf
 }
 
 type ServerConf struct {
@@ -48,6 +50,25 @@ type LogConf struct {
 	MaxBackup int    `json:"max_backup"`
 	MaxAge    int    `json:"max_age"`
 	Compress  bool   `json:"compress"`
+}
+
+type RedisConf struct {
+	Host     string `json:"host"`
+	Port     string `json:"port"`
+	Password string `json:"password"`
+	DB       int    `json:"db"`
+	Poll     int    `json:"poll"`
+	Conn     int    `json:"conn"`
+}
+
+type MailConf struct {
+	Driver     string `json:"driver"`
+	Host       string `json:"host"`
+	Name       string `json:"name"`
+	Port       string `json:"port"`
+	Password   string `json:"password"`
+	Encryption string `json:"encryption"`
+	FromName   string `json:"from_name"`
 }
 
 var Conf = &Config{}

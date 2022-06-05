@@ -11,6 +11,7 @@ import (
 	"github.com/go-playground/locales/zh"
 	ut "github.com/go-playground/universal-translator"
 	"im-services/config"
+	"im-services/pkg/logger"
 
 	"github.com/go-playground/validator/v10"
 	zhTranslations "github.com/go-playground/validator/v10/translations/zh"
@@ -37,7 +38,7 @@ func ValidateTransInit() *validator.Validate {
 	trans, _ := uni.GetTranslator(locale)
 	err := zhTranslations.RegisterDefaultTranslations(Validate, trans)
 	if err != nil {
-		fmt.Println(err)
+		logger.Logger.Info(err.Error())
 	}
 	return Validate
 }

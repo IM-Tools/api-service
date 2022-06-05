@@ -11,6 +11,7 @@ import (
 	"im-services/service/handler"
 )
 
+// 注册websocket长链接路由
 func RegisterWsRouters(router *gin.Engine) {
 
 	WsService := new(handler.WsService)
