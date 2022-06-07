@@ -7,7 +7,7 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"im-services/app/controllers/auth"
+	"im-services/app/api/controllers/auth"
 )
 
 // 注册api路由

@@ -10,6 +10,7 @@ import (
 	"github.com/valyala/fastjson"
 	"im-services/pkg/coroutine_poll"
 	"im-services/pkg/logger"
+	"im-services/service/queue"
 	"sync"
 )
 
@@ -84,14 +85,16 @@ func (manager *ImClientManager) LaunchMessage(message []byte) {
 	v, _ := p.Parse(string(message))
 	channelType := v.GetInt("channel_type")
 	ReceiveId := v.GetInt64("receive_id")
-	logger.Logger.Info("消息方法" + string(message))
+	msg := v.Get("msg").String()
 	if channelType == 1 || channelType == 3 {
 		if client, ok := manager.ImClientMap[ReceiveId]; ok {
 			// todo 消息持久化
-			logger.Logger.Info("消息已经投递" + string(message))
-			client.Send <- message
+			logger.Logger.Info("消息已经投递" + msg)
+			client.Send <- []byte(msg)
 		} else {
 			logger.Logger.Info("用户离线了" + string(message))
+			//离线消息进入kafka
+			queue.OfflineMessageSaveQueue([]byte(msg), 1)
 		}
 	} else {
 		// todo 群聊消息

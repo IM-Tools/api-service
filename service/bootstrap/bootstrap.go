@@ -11,6 +11,7 @@ import (
 	"im-services/pkg/coroutine_poll"
 	"im-services/pkg/logger"
 	"im-services/pkg/model"
+	"im-services/pkg/redis"
 	"im-services/router"
 	"im-services/service/client"
 )
@@ -23,6 +24,8 @@ func Start() {
 	setUpLogger()
 
 	model.InitDb()
+
+	redis.InitClient()
 
 	coroutine_poll.ConnectPool()
 

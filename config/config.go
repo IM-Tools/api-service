@@ -11,12 +11,13 @@ import (
 )
 
 type Config struct {
-	Server    ServerConf
-	Mysql     MysqlConf
-	Log       LogConf
-	JWT       JWTConf
-	RedisConf RedisConf
-	Mail      MailConf
+	Server ServerConf
+	Mysql  MysqlConf
+	Log    LogConf
+	JWT    JWTConf
+	Redis  RedisConf
+	Mail   MailConf
+	Kafka  KafkaConf
 }
 
 type ServerConf struct {
@@ -69,6 +70,11 @@ type MailConf struct {
 	Password   string `json:"password"`
 	Encryption string `json:"encryption"`
 	FromName   string `json:"from_name"`
+}
+
+type KafkaConf struct {
+	Host string `json:"host"`
+	Port string `json:"port"`
 }
 
 var Conf = &Config{}

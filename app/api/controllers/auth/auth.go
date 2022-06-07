@@ -9,9 +9,9 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	requests2 "im-services/app/api/requests"
 	"im-services/app/helpers"
 	"im-services/app/models/user"
-	"im-services/app/requests"
 	"im-services/app/services"
 	"im-services/config"
 	"im-services/pkg/date"
@@ -39,16 +39,16 @@ type loginResponse struct {
 
 func (*AuthController) Login(cxt *gin.Context) {
 
-	params := requests.LoginForm{
+	params := requests2.LoginForm{
 		Email:    cxt.PostForm("email"),
 		Password: cxt.PostForm("password"),
 	}
 
-	validate := requests.ValidateTransInit()
+	validate := requests2.ValidateTransInit()
 	err := validate.Struct(params)
 
 	if err != nil {
-		response.FailResponse(http.StatusInternalServerError, requests.GetError(err)).WriteTo(cxt)
+		response.FailResponse(http.StatusInternalServerError, requests2.GetError(err)).WriteTo(cxt)
 		return
 	}
 
@@ -91,7 +91,7 @@ func (*AuthController) Login(cxt *gin.Context) {
 }
 
 func (*AuthController) Registered(cxt *gin.Context) {
-	params := requests.RegisteredForm{
+	params := requests2.RegisteredForm{
 		Email:          cxt.PostForm("email"),
 		Name:           cxt.PostForm("name"),
 		Password:       cxt.PostForm("password"),
@@ -124,7 +124,7 @@ func (*AuthController) SendRegisteredMail(cxt *gin.Context) {
 
 	email := cxt.Query("email")
 
-	ok, message := requests.IsEmailExits(email, "im_users")
+	ok, message := requests2.IsEmailExits(email, "im_users")
 	if !ok {
 		response.FailResponse(http.StatusInternalServerError, message).ToJson(cxt)
 		return

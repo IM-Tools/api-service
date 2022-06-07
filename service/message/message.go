@@ -12,9 +12,9 @@ import (
 )
 
 type MessageClient struct {
-	ReceiveId   int64 `json:"receive_id"`
-	ChannelType int   `json:"channel_type"`
-	Msg         *Message
+	ReceiveId   int64    `json:"receive_id"`
+	ChannelType int      `json:"channel_type"`
+	Msg         *Message `json:"msg"`
 }
 
 // ack机制
@@ -83,7 +83,6 @@ func (m *MessageHandler) ValidationMsg(msg []byte) (error, string, string) {
 	err := json.Unmarshal(msg, &userMsg)
 
 	if err != nil {
-
 		return err, fmt.Sprintf(`{"code":500,"message":"用户消息解析异常"}`), ""
 	}
 	userMsg.MsgId = date.TimeUnixNano()
