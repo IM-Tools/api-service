@@ -132,7 +132,7 @@ func (*AuthController) SendRegisteredMail(cxt *gin.Context) {
 
 	code := helpers.CreateEmailCode()
 
-	emailService := new(services.EmailService)
+	var emailService services.EmailService
 
 	html := fmt.Sprintf(`
 <!DOCTYPE html>

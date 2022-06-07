@@ -35,7 +35,7 @@ type Message struct {
 	ChannelType int         `json:"channel_type"`  // 频道类型 1.私聊 2.频道 3.广播
 	Message     string      `json:"message"`       // 消息
 	SendTime    string      `json:"send_time"`     // 消息发送时间
-	Data        interface{} // 自定义携带的数据
+	Data        interface{} `json:"data"`          // 自定义携带的数据
 }
 
 type BroadcastMessages struct {
@@ -62,11 +62,6 @@ func NewAck() *AckMsg {
 func NewMsg() *Message {
 	userMsg = new(Message)
 	return userMsg
-}
-
-func New() *MessageHandler {
-	MsgHandler = new(MessageHandler)
-	return MsgHandler
 }
 
 // 验证消息是否正确 此处可以做消息拦截。

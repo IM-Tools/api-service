@@ -10,7 +10,7 @@ import (
 	"github.com/valyala/fastjson"
 	"im-services/pkg/coroutine_poll"
 	"im-services/pkg/logger"
-	"im-services/service/queue"
+	"im-services/service/queue/nsq_queue"
 	"sync"
 )
 
@@ -94,7 +94,8 @@ func (manager *ImClientManager) LaunchMessage(message []byte) {
 		} else {
 			logger.Logger.Info("用户离线了" + string(message))
 			//离线消息进入kafka
-			queue.OfflineMessageSaveQueue([]byte(msg), 1)
+			nsq_queue.ProducerQueue.SendMessage([]byte(msg))
+
 		}
 	} else {
 		// todo 群聊消息

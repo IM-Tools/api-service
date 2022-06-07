@@ -7,7 +7,6 @@ package client
 
 import (
 	"github.com/gorilla/websocket"
-	"im-services/pkg/logger"
 	"im-services/service/message"
 	"sync"
 )
@@ -18,6 +17,10 @@ type ImClient struct {
 	Send   chan []byte     // 当前用户发送的消息
 	Mux    sync.RWMutex    // 互斥锁
 }
+
+var (
+	messageHandler message.MessageHandler
+)
 
 type ClientInterface interface {
 	Read()
@@ -45,15 +48,13 @@ func (client *ImClient) Read() {
 	for {
 		_, msg, err := client.Socket.ReadMessage()
 		if err != nil {
-			
+
 			ImManager.Unregister <- client
 			client.Close()
 			break
 		}
 
-		errs, msgString, ackMsg := message.New().ValidationMsg(msg)
-
-		logger.Logger.Info(ackMsg)
+		errs, msgString, ackMsg := messageHandler.ValidationMsg(msg)
 
 		if errs != nil {
 			client.Socket.WriteMessage(websocket.TextMessage,

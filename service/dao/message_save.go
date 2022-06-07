@@ -33,11 +33,10 @@ func (offline *OfflineMessageDao) PrivateOfflineMessageSave(msg string) {
 	var p fastjson.Parser
 	v, _ := p.Parse(msg)
 	ReceiveId := v.GetInt64("to_id")
-	msgId := v.GetInt64("msg_id")
+
 	sendTime := v.GetInt("send_time")
 
 	model.DB.Table("im_offline_messages").Create(&offline_message.ImOfflineMessages{
-		MsgId:     msgId,
 		Status:    0,
 		SendTime:  sendTime,
 		ReceiveId: ReceiveId,

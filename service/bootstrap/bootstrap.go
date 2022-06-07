@@ -11,9 +11,11 @@ import (
 	"im-services/pkg/coroutine_poll"
 	"im-services/pkg/logger"
 	"im-services/pkg/model"
+	"im-services/pkg/nsq"
 	"im-services/pkg/redis"
 	"im-services/router"
 	"im-services/service/client"
+	"im-services/service/queue/nsq_queue"
 )
 
 // 启动服务方法
@@ -34,6 +36,9 @@ func Start() {
 	setRoute(r)
 
 	gin.SetMode(config.Conf.Server.Mode)
+
+	nsq.InitNewProducerPoll()
+	go nsq_queue.ConsumersInit()
 
 	r.Run(config.Conf.Server.Listen)
 }
