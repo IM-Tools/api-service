@@ -7,10 +7,8 @@ package client
 
 import (
 	"fmt"
-	"github.com/valyala/fastjson"
 	"im-services/pkg/coroutine_poll"
 	"im-services/pkg/logger"
-	"im-services/service/queue/nsq_queue"
 	"sync"
 )
 
@@ -37,6 +35,8 @@ type ClientManagerInterface interface {
 	Start()                                  // 启动服务
 	ImSend(message []byte, client *ImClient) // 给指定客户端投递消息 该方法可能用不着了..
 	LaunchMessage(msg_byte []byte)
+	ConsumingOfflineMessages(client *ImClient) // 消费离线消息
+	RadioUserOnlineStatus(client *ImClient)    // 向好友广播在线状态
 }
 
 func (manager *ImClientManager) SetClient(client *ImClient) {
@@ -57,8 +57,10 @@ func (manager *ImClientManager) Start() {
 	for {
 		select {
 		case client := <-ImManager.Register:
+			// 设置客户端 拉去离线消息 推送在线状态
 			manager.SetClient(client)
-			logger.Logger.Debug(fmt.Sprintf("注册的客户端:%s", client.ID))
+			manager.ConsumingOfflineMessages(client)
+			manager.RadioUserOnlineStatus(client)
 
 		case client := <-ImManager.Unregister:
 			manager.DelClient(client)
@@ -77,27 +79,5 @@ func (manager *ImClientManager) ImSend(message []byte, client *ImClient) {
 	data, ok := manager.ImClientMap[client.ID]
 	if ok {
 		data.Send <- message
-	}
-}
-
-func (manager *ImClientManager) LaunchMessage(message []byte) {
-	var p fastjson.Parser
-	v, _ := p.Parse(string(message))
-	channelType := v.GetInt("channel_type")
-	ReceiveId := v.GetInt64("receive_id")
-	msg := v.Get("msg").String()
-	if channelType == 1 || channelType == 3 {
-		if client, ok := manager.ImClientMap[ReceiveId]; ok {
-			// todo 消息持久化
-			logger.Logger.Info("消息已经投递" + msg)
-			client.Send <- []byte(msg)
-		} else {
-			logger.Logger.Info("用户离线了" + string(message))
-			//离线消息进入kafka
-			nsq_queue.ProducerQueue.SendMessage([]byte(msg))
-
-		}
-	} else {
-		// todo 群聊消息
 	}
 }

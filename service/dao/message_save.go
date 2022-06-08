@@ -12,18 +12,15 @@ import (
 )
 
 type DataInterface interface {
-	PrivateOfflineMessageSave(string) //私聊离线消息
-	GroupOfflineMessageSave()         //群组离线消息
+	PrivateOfflineMessageSave(string)                                    //私聊离线消息
+	GroupOfflineMessageSave()                                            //群组离线消息
+	PullPrivateOfflineMessage(int64) []offline_message.ImOfflineMessages //拉取离线消息
+	UpdatePrivateOfflineMessageStatus(int64)                             //更新离线消息
 }
 
 var (
-	OfflineMessageSave *OfflineMessageDao
+	OfflineMessage OfflineMessageDao
 )
-
-func New() *OfflineMessageDao {
-	OfflineMessageSave = new(OfflineMessageDao)
-	return OfflineMessageSave
-}
 
 type OfflineMessageDao struct {
 }
