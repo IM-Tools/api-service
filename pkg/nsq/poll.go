@@ -9,6 +9,7 @@ import (
 	"errors"
 	"github.com/nsqio/go-nsq"
 	"github.com/silenceper/pool"
+	"im-services/config"
 	"time"
 )
 
@@ -16,7 +17,7 @@ var NsqProducerPool pool.Pool
 
 func InitNewProducerPoll() error {
 	factory := func() (interface{}, error) {
-		producer, err := nsq.NewProducer("0.0.0.0:4150", nsq.NewConfig())
+		producer, err := nsq.NewProducer(config.Conf.Nsq.ProducerHost, nsq.NewConfig())
 		if err != nil {
 			return nil, err
 		}

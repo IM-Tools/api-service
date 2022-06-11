@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/valyala/fastjson"
 	"im-services/pkg/logger"
-	"im-services/service/cache/firend"
+	"im-services/service/cache/firend_cache"
 	"im-services/service/dao"
 	"im-services/service/queue/nsq_queue"
 )
@@ -58,7 +58,7 @@ func (manager *ImClientManager) ConsumingOfflineMessages(client *ImClient) {
 // 广播在线用户在线状态
 func (manager *ImClientManager) RadioUserOnlineStatus(client *ImClient) {
 	// 从数据库拿好友列表id 从客户端拿好友在线id 进行在线状态推送
-	data, err := firend.FriendCache.Get(client.ID)
+	data, err := firend_cache.FriendCache.Get(client.ID)
 	if err != nil {
 
 	}

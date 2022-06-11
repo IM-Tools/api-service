@@ -22,6 +22,7 @@ type Handler struct {
 func (m *Handler) HandleMessage(msg *nsq.Message) (err error) {
 	message := string(msg.Body)
 	logger.Logger.Info("消费消息:" + message)
+
 	OfflineMessageSave.PrivateOfflineMessageSave(string(msg.Body))
 	return
 

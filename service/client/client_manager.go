@@ -17,6 +17,7 @@ type ImClientManager struct {
 	Broadcast   chan []byte
 	Register    chan *ImClient
 	Unregister  chan *ImClient
+	MutexKey    sync.RWMutex //读写锁
 }
 
 var (
@@ -26,7 +27,6 @@ var (
 		Register:    make(chan *ImClient),
 		Unregister:  make(chan *ImClient),
 	}
-	mutexKey sync.Mutex
 )
 
 type ClientManagerInterface interface {
@@ -37,20 +37,22 @@ type ClientManagerInterface interface {
 	LaunchMessage(msg_byte []byte)
 	ConsumingOfflineMessages(client *ImClient) // 消费离线消息
 	RadioUserOnlineStatus(client *ImClient)    // 向好友广播在线状态
+	GetOnlineNumber() int                      //在线人数
 }
 
 func (manager *ImClientManager) SetClient(client *ImClient) {
-	mutexKey.Lock()
+	manager.MutexKey.Lock()
+	defer manager.MutexKey.Unlock()
 	logger.Logger.Info(fmt.Sprintf("客户端链接:%d", client.ID))
 	manager.ImClientMap[client.ID] = client
-	mutexKey.Unlock()
+
 }
 
 func (manager *ImClientManager) DelClient(client *ImClient) {
+	manager.MutexKey.Lock()
 	client.Close()
-	mutexKey.Lock()
+	defer manager.MutexKey.Unlock()
 	delete(manager.ImClientMap, client.ID)
-	mutexKey.Unlock()
 }
 
 func (manager *ImClientManager) Start() {
@@ -80,4 +82,10 @@ func (manager *ImClientManager) ImSend(message []byte, client *ImClient) {
 	if ok {
 		data.Send <- message
 	}
+}
+
+func (manager *ImClientManager) GetOnlineNumber() int {
+	manager.MutexKey.RLock()
+	defer manager.MutexKey.RUnlock()
+	return len(manager.ImClientMap)
 }

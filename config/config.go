@@ -18,6 +18,7 @@ type Config struct {
 	Redis  RedisConf
 	Mail   MailConf
 	Kafka  KafkaConf
+	Nsq    NsqConf
 }
 
 type ServerConf struct {
@@ -75,6 +76,11 @@ type MailConf struct {
 type KafkaConf struct {
 	Host string `json:"host"`
 	Port string `json:"port"`
+}
+
+type NsqConf struct {
+	ConsumptionHost string `json:"consumption_host"`
+	ProducerHost    string `json:"producer_host"`
 }
 
 var Conf = &Config{}

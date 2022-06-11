@@ -3,7 +3,7 @@
   @data:2022/6/8
   @note
 **/
-package firend
+package firend_cache
 
 import (
 	"im-services/app/models/friend"

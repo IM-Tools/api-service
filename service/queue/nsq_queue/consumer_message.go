@@ -7,13 +7,13 @@ package nsq_queue
 
 import (
 	"fmt"
+	"im-services/config"
 	"im-services/pkg/nsq"
 	"im-services/service/queue"
 )
 
 func ConsumersInit() {
-	addr := "127.0.0.1:4161"
-	err := nsq.NewConsumers(queue.OfflinePrivateTopic, "channel-aa", addr)
+	err := nsq.NewConsumers(queue.OfflinePrivateTopic, "channel-aa", config.Conf.Nsq.ConsumptionHost)
 	if err != nil {
 		fmt.Println("new nsq consumer failed", err)
 		return

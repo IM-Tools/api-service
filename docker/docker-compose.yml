@@ -1,0 +1,58 @@
+version: '3'
+services:
+  nsqlookupd:
+    image: nsqio/nsq
+    command: /nsqlookupd
+    ports:
+      - ${NSQLOOKUPD_TCP_POST}:4160
+      - ${NSQLOOKUPD_HTTP_POST}:4161
+  nsqd:
+    image: nsqio/nsq
+    command: /nsqd --broadcast-address=127.0.0.1 --lookupd-tcp-address=nsqlookupd:${NSQLOOKUPD_TCP_POST}
+    depends_on:
+      - nsqlookupd
+    ports:
+      - ${NSQD_TCP_PORT}:4150
+      - ${NSQD_HTTP_PORT}:4151
+  nsqadmin:
+    image: nsqio/nsq
+    command: /nsqadmin --lookupd-http-address=nsqlookupd:4161
+    depends_on:
+      - nsqlookupd
+    ports:
+      - ${NSQD_ADMIN_HTTP_PORT}:4171
+  mysql:
+    image: mysql:${MYSQL_VERSION}
+    container_name: mysql_${MYSQL_VERSION}
+    ports:
+      - ${REAL_MYSQL_PORT}:3306
+    volumes:
+      - ${MYSQL_DIR}/data:/var/lib/mysql
+      - ${MYSQL_DIR}/my.cnf:/etc/mysql/my.cnf
+      - ${MYSQL_DIR}/logs:/logs
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_ROOT_HOST: ${MYSQL_ROOT_HOST}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200m"
+        max-file: "3"
+    restart: always
+  redis:
+    image: redis:${REDIS_VERSION}
+    container_name: redis_${REDIS_VERSION}
+    ports:
+      - ${REAL_REDIS_PORT}:6379
+    volumes:
+      - ${REDIS_DIR}/data:/data
+      - ${REDIS_DIR}/redis.conf:/etc/redis/redis.conf
+      - ${REDIS_DIR}/logs:/logs
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200m"
+        max-file: "3"
+    restart: always
+    command: ["redis-server", "/etc/redis/redis.conf"]

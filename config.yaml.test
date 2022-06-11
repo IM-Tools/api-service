@@ -21,20 +21,29 @@ log:
   max_age: 7 #最多保存多少天
   compress: false #是否压缩
 jwt:
-  secret: '90f1be15d' #密钥
+  secret: 'f890f1be15d964' #密钥
   ttl: 640000 #
 redis:
   host: '127.0.0.1'
-  port: 6397
-  password: ''
-  db: 0
+  port: 6379
+  password:
+  db: 1
   poll: 15 #连接池 默认为4倍cpu数
   conn: 10 #最小空闲连接数
 mail:
   driver: 'smtp'
   host: 'smtp.qq.com'
-  name: '2540463097@qq.com'
+  name: ''
   password: ''
   port: 465
   encryption: 'ssl'
   from_name: 'Im-Services'
+kafka:
+  host: '127.0.0.1'
+  port: 9506
+nsq:
+  host: '127.0.0.1'
+  port: 9506
+  consumption_host: '127.0.0.1:4161'
+  producer_host: '127.0.0.1:4150'
+
