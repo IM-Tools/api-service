@@ -28,7 +28,7 @@ services:
       - ${REAL_MYSQL_PORT}:3306
     volumes:
       - ${MYSQL_DIR}/data:/var/lib/mysql
-      - ${MYSQL_DIR}/my.cnf:/etc/mysql/my.cnf
+      - ${MYSQL_DIR}/my.cnf:/mysql/my.cnf
       - ${MYSQL_DIR}/logs:/logs
     environment:
       TZ: Asia/Shanghai
@@ -47,7 +47,7 @@ services:
       - ${REAL_REDIS_PORT}:6379
     volumes:
       - ${REDIS_DIR}/data:/data
-      - ${REDIS_DIR}/redis.conf:/etc/redis/redis.conf
+      - ${REDIS_DIR}/redis.conf:/redis/redis.conf
       - ${REDIS_DIR}/logs:/logs
     logging:
       driver: "json-file"
@@ -55,4 +55,4 @@ services:
         max-size: "200m"
         max-file: "3"
     restart: always
-    command: ["redis-server", "/etc/redis/redis.conf"]
+    command: ["redis-server", "/redis/redis.conf"]
