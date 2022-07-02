@@ -15,8 +15,11 @@ func (offline *OfflineMessageDao) PullPrivateOfflineMessage(id int64) []offline_
 
 	var list []offline_message.ImOfflineMessages
 
+	// 拉去最近半个月内的消息记录
+	//timeStamp := helpers.GetDayTime(-15)
+
 	model.DB.Table("im_offline_messages").
-		Where("status=0 and receive_id=?", id).
+		Where("status=0 and receive_id=? and send_time>", id, 163607878).
 		Find(&list)
 
 	return list

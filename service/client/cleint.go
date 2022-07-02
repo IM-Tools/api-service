@@ -54,17 +54,27 @@ func (client *ImClient) Read() {
 			break
 		}
 
-		errs, msgString, ackMsg := messageHandler.ValidationMsg(msg)
+		errs, msgString, ackMsg, channel := messageHandler.ValidationMsg(msg)
 
 		if errs != nil {
 			client.Socket.WriteMessage(websocket.TextMessage,
 				[]byte(msgString))
 		} else {
-
-			client.Socket.WriteMessage(websocket.TextMessage,
-				[]byte(ackMsg))
-			ImManager.Broadcast <- []byte(msgString)
-
+			// 将消费分发到不同的队列
+			switch channel {
+			case 1:
+				client.Socket.WriteMessage(websocket.TextMessage,
+					[]byte(ackMsg))
+				ImManager.PrivateChannel <- []byte(msgString)
+			case 2:
+				client.Socket.WriteMessage(websocket.TextMessage,
+					[]byte(ackMsg))
+				ImManager.GroupChannel <- []byte(msgString)
+			default:
+				client.Socket.WriteMessage(websocket.TextMessage,
+					[]byte(ackMsg))
+				ImManager.BroadcastChannel <- []byte(msgString)
+			}
 		}
 	}
 
@@ -74,12 +84,12 @@ func (client *ImClient) Write() {
 	defer client.Close()
 	for {
 		select {
-		case message, ok := <-client.Send:
+		case msg, ok := <-client.Send:
 			if !ok {
 				client.Socket.WriteMessage(websocket.CloseMessage, []byte{})
 				return
 			}
-			client.Socket.WriteMessage(websocket.TextMessage, message)
+			client.Socket.WriteMessage(websocket.TextMessage, msg)
 		}
 	}
 }

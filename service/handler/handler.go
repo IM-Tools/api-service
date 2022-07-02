@@ -10,6 +10,7 @@ import (
 	"im-services/pkg/helpers"
 	"im-services/pkg/ws"
 	wsClient "im-services/service/client"
+	"im-services/service/dispatch"
 	"net/http"
 )
 
@@ -27,9 +28,11 @@ func (*WsService) Connect(cxt *gin.Context) {
 		return
 	}
 
+	var dService dispatch.DispatchService
+
 	// 用户id
 	id := helpers.InterfaceToInt64(cxt.MustGet("id"))
-
+	dService.SetDispatchNode(id)
 	// 创建客户端
 	client := wsClient.NewClient(id, conn)
 	// 注册客户端

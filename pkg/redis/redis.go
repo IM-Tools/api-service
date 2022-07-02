@@ -15,8 +15,7 @@ import (
 var RedisDB *redis.Client
 
 // redis 连接
-func InitClient() (err error) {
-
+func InitClient() {
 	RedisDB = redis.NewClient(&redis.Options{
 		Network:      "tcp",
 		Addr:         config.Conf.Redis.Host + ":" + config.Conf.Redis.Port,
@@ -29,11 +28,9 @@ func InitClient() (err error) {
 		WriteTimeout: 5 * time.Second,
 		PoolTimeout:  5 * time.Second,
 	})
-	_, err = RedisDB.Ping().Result()
+	_, err := RedisDB.Ping().Result()
 
 	if err != nil {
 		log.Fatalln(err)
-		return err
 	}
-	return nil
 }

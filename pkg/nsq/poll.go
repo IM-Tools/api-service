@@ -7,17 +7,23 @@ package nsq
 
 import (
 	"errors"
+	"fmt"
 	"github.com/nsqio/go-nsq"
 	"github.com/silenceper/pool"
 	"im-services/config"
 	"time"
 )
 
-var NsqProducerPool pool.Pool
+var (
+	//addr            = config.Conf.Nsqe.Host + ":" + config.Conf.Nsqe.NsqdPort
+	addr            = "127.0.0.1:4150"
+	NsqProducerPool pool.Pool
+)
 
 func InitNewProducerPoll() error {
+	fmt.Println(config.Conf.Nsqe)
 	factory := func() (interface{}, error) {
-		producer, err := nsq.NewProducer(config.Conf.Nsq.ProducerHost, nsq.NewConfig())
+		producer, err := nsq.NewProducer(addr, nsq.NewConfig())
 		if err != nil {
 			return nil, err
 		}

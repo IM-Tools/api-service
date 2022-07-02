@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"im-services/pkg/date"
+	"im-services/service/dispatch"
 )
 
 type MessageClient struct {
@@ -64,13 +65,13 @@ func NewMsg() *Message {
 	return userMsg
 }
 
-// 验证消息是否正确 此处可以做消息拦截。
-func (m *MessageHandler) ValidationMsg(msg []byte) (error, string, string) {
+// 验证消息是否正确 此处可以做消息拦截
+func (m *MessageHandler) ValidationMsg(msg []byte) (error, string, string, int) {
 
 	var errs error
 
 	if len(msg) == 0 {
-		return errs, fmt.Sprintf(`{"code":500,"message":"请勿发送空消息"}`), ""
+		return errs, fmt.Sprintf(`{"code":500,"message":"请勿发送空消息"}`), "", 0
 	}
 
 	userMsg = NewMsg()
@@ -78,7 +79,7 @@ func (m *MessageHandler) ValidationMsg(msg []byte) (error, string, string) {
 	err := json.Unmarshal(msg, &userMsg)
 
 	if err != nil {
-		return err, fmt.Sprintf(`{"code":500,"message":"用户消息解析异常"}`), ""
+		return err, fmt.Sprintf(`{"code":500,"message":"用户消息解析异常"}`), "", 0
 	}
 	userMsg.MsgId = date.TimeUnixNano()
 	userMsg.SendTime = date.NewDate()
@@ -94,9 +95,17 @@ func (m *MessageHandler) ValidationMsg(msg []byte) (error, string, string) {
 		ChannelType: userMsg.ChannelType,
 		Msg:         userMsg,
 	})
+	var dService dispatch.DispatchService
+
+	isOk, node := dService.IsDispatchNode(userMsg.ToID)
+	if isOk == false && node != "" {
+		// 将消息分发到指定的客户端
+	} else {
+		// 消息继续 用户未上线直接丢入队列
+	}
 
 	ackMsgByte, _ := json.Marshal(ackMsg)
 
-	return nil, string(msgByte), string(ackMsgByte)
+	return nil, string(msgByte), string(ackMsgByte), userMsg.ChannelType
 
 }

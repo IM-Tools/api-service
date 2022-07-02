@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	enum "im-services/app/api/ enum"
 	requests2 "im-services/app/api/requests"
 	"im-services/app/helpers"
 	"im-services/app/models/user"
@@ -37,6 +38,7 @@ type loginResponse struct {
 	Ttl        int64  `json:"ttl"`
 }
 
+// 登录
 func (*AuthController) Login(cxt *gin.Context) {
 
 	params := requests2.LoginForm{
@@ -90,6 +92,7 @@ func (*AuthController) Login(cxt *gin.Context) {
 
 }
 
+// 注册
 func (*AuthController) Registered(cxt *gin.Context) {
 	params := requests2.RegisteredForm{
 		Email:          cxt.PostForm("email"),
@@ -102,7 +105,7 @@ func (*AuthController) Registered(cxt *gin.Context) {
 	err := validator.New().Struct(params)
 
 	if err != nil {
-		response.FailResponse(http.StatusInternalServerError, err.Error()).WriteTo(cxt)
+		response.FailResponse(enum.PARAMS_ERROR, err.Error()).WriteTo(cxt)
 		return
 	}
 
@@ -120,13 +123,14 @@ func (*AuthController) Registered(cxt *gin.Context) {
 	return
 }
 
+// 发送邮件
 func (*AuthController) SendRegisteredMail(cxt *gin.Context) {
 
 	email := cxt.Query("email")
 
 	ok, message := requests2.IsEmailExits(email, "im_users")
 	if !ok {
-		response.FailResponse(http.StatusInternalServerError, message).ToJson(cxt)
+		response.FailResponse(enum.PARAMS_ERROR, message).ToJson(cxt)
 		return
 	}
 
@@ -164,13 +168,13 @@ func (*AuthController) SendRegisteredMail(cxt *gin.Context) {
         <p class="code">%s</p>
         <p>请注意查收!谢谢</p>
 </div>
-<h3>如果可以请给项目点个star～<a target="_blank" href="https://github.com/pl1998/go-im">项目地址</a> </h3>
+<h3>如果可以请给项目点个star～<a target="_blank" href="https://github.com/IM-Tools/Im-Services">项目地址</a> </h3>
 </body>
 </html>`, code)
 
-	err := emailService.SendEmail(email, "欢迎👏注册Im-Services账号,这是一封邮箱验证码的邮件!🎉🎉🎉", html)
+	err := emailService.SendEmail(email, "欢迎👏注册Im Services账号,这是一封邮箱验证码的邮件!🎉🎉🎉", html)
 	if err != nil {
-		response.FailResponse(http.StatusInternalServerError, "邮件发送失败,请检查是否是可用邮箱").ToJson(cxt)
+		response.FailResponse(enum.API_ERROR, "邮件发送失败,请检查是否是可用邮箱").ToJson(cxt)
 		return
 	}
 

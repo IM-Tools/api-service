@@ -16,12 +16,29 @@ import (
 	"im-services/router"
 	"im-services/service/client"
 	"im-services/service/queue/nsq_queue"
+	"net/http"
+	_ "net/http/pprof"
 )
 
 // 启动服务方法
 func Start() {
 
 	r := gin.Default()
+
+	go client.ImManager.Start()
+
+	setRoute(r)
+
+	gin.SetMode(config.Conf.Server.Mode)
+
+	go func() {
+		http.ListenAndServe("0.0.0.0:6060", nil)
+	}()
+	_ = r.Run(config.Conf.Server.Listen)
+}
+
+// 启动第三方服务
+func LoadConfiguration() {
 
 	setUpLogger()
 
@@ -31,16 +48,9 @@ func Start() {
 
 	coroutine_poll.ConnectPool()
 
-	go client.ImManager.Start()
-
-	setRoute(r)
-
-	gin.SetMode(config.Conf.Server.Mode)
-
-	nsq.InitNewProducerPoll()
+	_ = nsq.InitNewProducerPoll()
 	go nsq_queue.ConsumersInit()
 
-	r.Run(config.Conf.Server.Listen)
 }
 
 // 初始化日志方法

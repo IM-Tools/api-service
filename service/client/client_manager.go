@@ -13,31 +13,45 @@ import (
 )
 
 type ImClientManager struct {
-	ImClientMap map[int64]*ImClient
-	Broadcast   chan []byte
-	Register    chan *ImClient
-	Unregister  chan *ImClient
-	MutexKey    sync.RWMutex //读写锁
+	ImClientMap      map[int64]*ImClient
+	BroadcastChannel chan []byte
+	PrivateChannel   chan []byte
+	GroupChannel     chan []byte
+	Register         chan *ImClient
+	Unregister       chan *ImClient
+	MutexKey         sync.RWMutex //读写锁
 }
 
 var (
 	ImManager = ImClientManager{
-		ImClientMap: make(map[int64]*ImClient),
-		Broadcast:   make(chan []byte),
-		Register:    make(chan *ImClient),
-		Unregister:  make(chan *ImClient),
+		ImClientMap:      make(map[int64]*ImClient),
+		BroadcastChannel: make(chan []byte),
+		PrivateChannel:   make(chan []byte),
+		GroupChannel:     make(chan []byte),
+		Register:         make(chan *ImClient),
+		Unregister:       make(chan *ImClient),
 	}
 )
 
 type ClientManagerInterface interface {
-	SetClient(client *ImClient)              // 设置客户端信息
-	DelClient(client *ImClient)              // 删除客户端信息
-	Start()                                  // 启动服务
-	ImSend(message []byte, client *ImClient) // 给指定客户端投递消息 该方法可能用不着了..
-	LaunchMessage(msg_byte []byte)
-	ConsumingOfflineMessages(client *ImClient) // 消费离线消息
-	RadioUserOnlineStatus(client *ImClient)    // 向好友广播在线状态
-	GetOnlineNumber() int                      //在线人数
+	// 设置客户端信息
+	SetClient(client *ImClient)
+	// 删除客户端信息
+	DelClient(client *ImClient)
+	// 启动服务
+	Start()
+	// 消息投递到指定客户端
+	ImSend(message []byte, client *ImClient)
+	// 私聊信息消费
+	LaunchPrivateMessage(msg_byte []byte)
+	// 群聊信息消费
+	LaunchGroupMessage(msg_byte []byte)
+	// 消费离线消息
+	ConsumingOfflineMessages(client *ImClient)
+	// 向好友广播在线状态
+	RadioUserOnlineStatus(client *ImClient)
+	// 获取在线人数
+	GetOnlineNumber() int
 }
 
 func (manager *ImClientManager) SetClient(client *ImClient) {
@@ -62,18 +76,22 @@ func (manager *ImClientManager) Start() {
 			// 设置客户端 拉去离线消息 推送在线状态
 			manager.SetClient(client)
 			manager.ConsumingOfflineMessages(client)
-			manager.RadioUserOnlineStatus(client)
-
+			//manager.RadioUserOnlineStatus(client)
 		case client := <-ImManager.Unregister:
 			manager.DelClient(client)
 			logger.Logger.Debug(fmt.Sprintf("离线的客户端%s:", client.ID))
 
-		case message := <-ImManager.Broadcast:
+		case message := <-ImManager.PrivateChannel:
 			coroutine_poll.AntsPool.Submit(func() {
-				manager.LaunchMessage(message)
+				manager.LaunchPrivateMessage(message)
 			})
-			logger.Logger.Debug(fmt.Sprintf("收到的消息:%s", string(message)))
+		case groupMessage := <-ImManager.GroupChannel:
+			coroutine_poll.AntsPool.Submit(func() {
+				manager.LaunchPrivateMessage(groupMessage)
+			})
+
 		}
+
 	}
 }
 

@@ -11,12 +11,24 @@ import (
 	"github.com/valyala/fastjson"
 	"im-services/pkg/logger"
 	"im-services/service/cache/firend_cache"
-	"im-services/service/dao"
 	"im-services/service/queue/nsq_queue"
 )
 
-// 消息分发
-func (manager *ImClientManager) LaunchMessage(message []byte) {
+//
+func (manager *ImClientManager) LaunchPrivateMessage(message []byte) {
+	var p fastjson.Parser
+	v, _ := p.Parse(string(message))
+	ReceiveId := v.GetInt64("receive_id")
+	msg := v.Get("msg").String()
+	if client, ok := manager.ImClientMap[ReceiveId]; ok {
+		client.Send <- []byte(msg)
+	} else {
+		nsq_queue.ProducerQueue.SendMessage([]byte(msg))
+	}
+}
+
+func (manager *ImClientManager) LaunchGroupMessage(message []byte) {
+
 	var p fastjson.Parser
 	v, _ := p.Parse(string(message))
 	channelType := v.GetInt("channel_type")
@@ -24,8 +36,6 @@ func (manager *ImClientManager) LaunchMessage(message []byte) {
 	msg := v.Get("msg").String()
 	if channelType == 1 || channelType == 3 {
 		if client, ok := manager.ImClientMap[ReceiveId]; ok {
-			// todo 消息持久化
-			logger.Logger.Info("消息已经投递" + msg)
 			client.Send <- []byte(msg)
 		} else {
 			logger.Logger.Info("用户离线了" + string(message))
@@ -40,19 +50,15 @@ func (manager *ImClientManager) LaunchMessage(message []byte) {
 
 // 消费离线消息
 func (manager *ImClientManager) ConsumingOfflineMessages(client *ImClient) {
-
 	// 读取离线消息
-	list := dao.OfflineMessage.PullPrivateOfflineMessage(client.ID)
-	logger.Logger.Info(fmt.Sprintf("ConsumingOfflineMessages 客户端链接:%d", client.ID))
-	for _, value := range list {
-		logger.Logger.Info(fmt.Sprintf("消息消费 客户端链接:%d", value.Message))
-		client.Socket.WriteMessage(websocket.TextMessage, []byte(value.Message))
-	}
-	// 更新离线消息状态
-
-	if len(list) > 0 {
-		dao.OfflineMessage.UpdatePrivateOfflineMessageStatus(client.ID)
-	}
+	//list := dao.OfflineMessage.PullPrivateOfflineMessage(client.ID)
+	//for _, value := range list {
+	//	client.Socket.WriteMessage(websocket.TextMessage, []byte(value.Message))
+	//}
+	//// 更新离线消息状态
+	//if len(list) > 0 {
+	//	dao.OfflineMessage.UpdatePrivateOfflineMessageStatus(client.ID)
+	//}
 }
 
 // 广播在线用户在线状态
@@ -63,7 +69,6 @@ func (manager *ImClientManager) RadioUserOnlineStatus(client *ImClient) {
 
 	}
 	for _, val := range data {
-		logger.Logger.Info("好友")
 		if friendClient, ok := manager.ImClientMap[val.FId]; ok {
 			// todo 消息持久化
 			friendClient.Socket.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf(`{"code":200,"message":"用户上线了"',"fo_id":%d}`, int(val.MId))))

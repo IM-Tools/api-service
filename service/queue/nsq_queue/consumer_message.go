@@ -7,13 +7,18 @@ package nsq_queue
 
 import (
 	"fmt"
-	"im-services/config"
 	"im-services/pkg/nsq"
 	"im-services/service/queue"
 )
 
+var (
+	//addr = config.Conf.Nsqe.Host + ":" + config.Conf.Nsqe.LookupdPort
+	addr = "127.0.0.1:4161"
+)
+
 func ConsumersInit() {
-	err := nsq.NewConsumers(queue.OfflinePrivateTopic, "channel-aa", config.Conf.Nsq.ConsumptionHost)
+	fmt.Println(addr)
+	err := nsq.NewConsumers(queue.OfflinePrivateTopic, "channel-aa", addr)
 	if err != nil {
 		fmt.Println("new nsq consumer failed", err)
 		return

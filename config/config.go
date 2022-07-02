@@ -18,7 +18,7 @@ type Config struct {
 	Redis  RedisConf
 	Mail   MailConf
 	Kafka  KafkaConf
-	Nsq    NsqConf
+	Nsqe   NsqConf
 }
 
 type ServerConf struct {
@@ -28,6 +28,8 @@ type ServerConf struct {
 	Env            string `json:"env"`
 	Lang           string `json:"lang"`
 	CoroutinesPoll int    `json:"coroutines_poll"`
+	Node           string `json:"node"`
+	ServiceOpen    bool   `json:"service_open"`
 }
 
 type JWTConf struct {
@@ -79,8 +81,9 @@ type KafkaConf struct {
 }
 
 type NsqConf struct {
-	ConsumptionHost string `json:"consumption_host"`
-	ProducerHost    string `json:"producer_host"`
+	Host        string `json:"host"`
+	LookupdPort string `json:"lookupd_port"`
+	NsqdPort    string `json:"nsqd_port"`
 }
 
 var Conf = &Config{}
