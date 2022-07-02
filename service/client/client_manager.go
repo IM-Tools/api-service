@@ -13,7 +13,7 @@ import (
 )
 
 type ImClientManager struct {
-	ImClientMap      map[int64]*ImClient
+	ImClientMap      map[string]*ImClient
 	BroadcastChannel chan []byte
 	PrivateChannel   chan []byte
 	GroupChannel     chan []byte
@@ -24,7 +24,7 @@ type ImClientManager struct {
 
 var (
 	ImManager = ImClientManager{
-		ImClientMap:      make(map[int64]*ImClient),
+		ImClientMap:      make(map[string]*ImClient),
 		BroadcastChannel: make(chan []byte),
 		PrivateChannel:   make(chan []byte),
 		GroupChannel:     make(chan []byte),

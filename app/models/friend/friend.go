@@ -10,6 +10,7 @@ type ImFriends struct {
 	MId       int64  `gorm:"column:m_id" json:"m_id"`
 	FId       int64  `gorm:"column:f_id" json:"f_id"`
 	CreatedAt string `gorm:"column:created_at" json:"created_at"`
+	Uid       string `gorm:"column:uid" json:"uid"`
 	Note      string `gorm:"column:note" json:"note"`
 	TopTime   string `gorm:"column:top_time" json:"top_time"`
 	Status    int    `gorm:"column:status" json:"status"` //0.未置顶 1.已置顶

@@ -10,32 +10,38 @@ import (
 	"fmt"
 	"im-services/config"
 	"im-services/pkg/logger"
+	"im-services/pkg/redis"
 	"net"
 	"net/smtp"
+	"time"
 )
 
-var (
-	host     = config.Conf.Mail.Host
-	name     = config.Conf.Mail.Name
-	password = config.Conf.Mail.Password
-	port     = config.Conf.Mail.Port
+const (
+	REGISTERED_CODE = 1 // 注册验证码
+	RESET_PS_CODE   = 2 // 重置密码
 )
 
 type EmailServiceInterface interface {
 	// 发送邮件方法
-	SendEmail(to string, subject string, body string) error
+	SendEmail(code string, emailType int, email string, subject string, body string) error
 	// 获取html模版内容
 	GetHtmlTemplate(text string) []byte
+	// 获取缓存key
+	getCacheFix(email string, emailType int) string
+
+	CheckCode(email string, code string, emailType int) bool
 }
 
 type EmailService struct{}
 
-func (s EmailService) SendEmail(to string, subject string, body string) error {
+// 发送邮件方法
+// code 验证码 emailType 邮件类型  email 发送邮箱 subject 主题 body 内容
+func (s EmailService) SendEmail(code string, emailType int, email string, subject string, body string) error {
 
 	header := make(map[string]string)
 
-	header["From"] = "GO-IM:" + "<" + name + ">"
-	header["To"] = to
+	header["From"] = "im-service:" + "<" + config.Conf.Mail.Name + ">"
+	header["To"] = email
 	header["Subject"] = subject
 	header["Content-Type"] = "text/html;chartset=UTF-8"
 
@@ -49,26 +55,53 @@ func (s EmailService) SendEmail(to string, subject string, body string) error {
 
 	auth := smtp.PlainAuth(
 		"",
-		name,
-		password,
-		host,
+		config.Conf.Mail.Name,
+		config.Conf.Mail.Password,
+		config.Conf.Mail.Host,
 	)
+
 	err := sendMailUsingTLS(
-		fmt.Sprintf("%s:%d", host, port),
+		fmt.Sprintf("%s:%d", config.Conf.Mail.Host, config.Conf.Mail.Port),
 		auth,
-		name,
-		[]string{to},
+		config.Conf.Mail.Name,
+		[]string{email},
 		[]byte(message),
 	)
 
 	if err != nil {
-		panic(err)
+		return err
 	}
-	return err
+	redis.RedisDB.Set(s.getCacheFix(email, emailType), code, time.Minute*5)
+	return nil
 }
 
-func (m EmailService) GetHtmlTemplate(text string) []byte {
+// 获取缓存key
+func (s EmailService) getCacheFix(email string, emailType int) string {
+	switch emailType {
+	case REGISTERED_CODE:
+		return fmt.Sprintf("%s.%d", email, REGISTERED_CODE)
+	case RESET_PS_CODE:
+		return fmt.Sprintf("%s.%d", email, RESET_PS_CODE)
+	default:
+		return fmt.Sprintf("%s.%d", email, REGISTERED_CODE)
+	}
+}
+
+func (s EmailService) GetHtmlTemplate(text string) []byte {
 	return []byte(text)
+}
+
+// 检查邮件是否正确
+func (s EmailService) CheckCode(email string, code string, emailType int) bool {
+	cacheFix := s.getCacheFix(email, emailType)
+
+	redisCmd := redis.RedisDB.Get(cacheFix)
+	val, _ := redisCmd.Result()
+	if val != code {
+		return false
+	}
+
+	return true
 }
 
 //return a smtp client

@@ -45,7 +45,7 @@ func TestWs(t *testing.T) {
 	for i = 0; i < userCount; i++ {
 		token := jwt.NewJWT().IssueToken(
 			i,
-			i,
+			"",
 			fmt.Sprintf("用户%d", i),
 			fmt.Sprintf("%dxxx@qq.com", i),
 			1749738653,

@@ -7,7 +7,6 @@ package dispatch
 
 import (
 	"github.com/gorilla/websocket"
-	"im-services/app/helpers"
 	"im-services/config"
 	"im-services/pkg/redis"
 	"sync"
@@ -22,15 +21,15 @@ type DispatchService struct {
 }
 
 type DispatchServiceInterface interface {
-	SetDispatchNode(uid int64, node string) // 设置当前节点信息
-	GetDispatchNode(uid int64, node string) // 获取当前节点信息
-	MessageDispatch(uid int64, node string) // 获取当前节点信息
-	IsDispatchNode(uid int64, node string)  // 获取当前节点信息
+	SetDispatchNode(uid string, node string) // 设置当前节点信息
+	GetDispatchNode(uid string, node string) // 获取当前节点信息
+	MessageDispatch(uid string, node string) // 获取当前节点信息
+	IsDispatchNode(uid string, node string)  // 获取当前节点信息
 }
 
-func (Service *DispatchService) IsDispatchNode(uid int64) (bool, string) {
+func (Service *DispatchService) IsDispatchNode(uid string) (bool, string) {
 
-	n, _ := redis.RedisDB.Exists(helpers.Int64ToString(uid)).Result()
+	n, _ := redis.RedisDB.Exists(uid).Result()
 	if n > 0 {
 		return true, ""
 	} else {
@@ -42,13 +41,13 @@ func (Service *DispatchService) IsDispatchNode(uid int64) (bool, string) {
 	}
 }
 
-func (Service *DispatchService) GetDispatchNode(uid int64) string {
-	return redis.RedisDB.Get(helpers.Int64ToString(uid)).Val()
+func (Service *DispatchService) GetDispatchNode(uid string) string {
+	return redis.RedisDB.Get(uid).Val()
 }
 
-func (Service *DispatchService) SetDispatchNode(uid int64) {
+func (Service *DispatchService) SetDispatchNode(uid string) {
 	mux.Lock()
-	redis.RedisDB.Set(helpers.Int64ToString(uid), node, 3600*10)
+	redis.RedisDB.Set(uid, node, 3600*10)
 	mux.Unlock()
 }
 

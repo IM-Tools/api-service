@@ -6,28 +6,36 @@
 package requests
 
 import (
+	"fmt"
+	"github.com/go-playground/validator/v10"
 	"im-services/pkg/model"
-	"regexp"
 )
 
-func IsEmail(email string) bool {
-	result, _ := regexp.MatchString(`^([\w\.\_\-]{2,10})@(\w{1,}).([a-z]{2,4})$`, email)
-	if result {
-		return true
-	} else {
-		return false
+func ValidateInit() *validator.Validate {
+	Validate := validator.New()
+	err := Validate.RegisterValidation("checkTableFiled", CheckTableFiled)
+	if err != nil {
+		fmt.Println("注册失败！")
 	}
+	return Validate
 }
 
-func IsEmailExits(email string, table string) (bool, string) {
-	if !IsEmail(email) {
-		return false, "不是一个正确的邮箱"
-	}
+func CheckTableFiled(f validator.FieldLevel) bool { // FieldLevel contains all the information and helper functions to validate a field
+	fmt.Println("字段参数", f.Field(), f.StructFieldName())
+
+	//model.DB.Table(data[0]).Where(fmt.Sprintf("%s=?", f.Field()))
+
+	return false
+}
+
+// 判断字段是否在表中存在
+func IsTableFliedExits(filed string, value string, table string) bool {
+
 	var count int64
-	model.DB.Table(table).Where("email=?", email).Count(&count)
+	model.DB.Table(table).Where(fmt.Sprintf("%s=?", filed), value).Count(&count)
 
 	if count > 0 {
-		return false, "邮箱已经存在了"
+		return true
 	}
-	return true, ""
+	return false
 }

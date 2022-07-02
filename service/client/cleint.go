@@ -12,10 +12,12 @@ import (
 )
 
 type ImClient struct {
-	ID     int64           // 客户端用户id
-	Socket *websocket.Conn // 当前socket握手对象
-	Send   chan []byte     // 当前用户发送的消息
-	Mux    sync.RWMutex    // 互斥锁
+	ID       string          // 客户端用户id
+	Uuid     string          // 用户唯一id
+	Socket   *websocket.Conn // 当前socket握手对象
+	Send     chan []byte     // 当前用户发送的消息
+	Mux      sync.RWMutex    // 互斥锁
+	Identity int             // 身份 1.游客 2.用户
 }
 
 var (
@@ -30,9 +32,11 @@ type ClientInterface interface {
 
 // 返回一个客户端实例
 // 并且设置当前客户端id以及socket握手实例
-func NewClient(ID int64, conn *websocket.Conn) *ImClient {
+func NewClient(ID string, uid string, identity int, conn *websocket.Conn) *ImClient {
 	client := new(ImClient)
 	client.ID = ID
+	client.Uuid = uid
+	client.Identity = identity
 	client.Send = make(chan []byte)
 	client.Socket = conn
 	return client

@@ -20,7 +20,7 @@ type JWT struct {
 
 type CustomClaims struct {
 	ID         int64  `json:"id"`
-	UID        int64  `json:"uid"`
+	UID        string `json:"uid"`
 	Name       string `json:"name"`
 	Email      string `json:"email"`
 	ExpireTime int64  `json:"expire_time"`
@@ -97,7 +97,7 @@ func (j *JWT) RefreshToken(tokenString string) (string, error) {
 	return "", TokenInvalid
 }
 
-func (jwt *JWT) IssueToken(ID int64, UID int64, Name string, Email string, expireAtTime int64) string {
+func (jwt *JWT) IssueToken(ID int64, UID string, Name string, Email string, expireAtTime int64) string {
 
 	claims := CustomClaims{
 		ID,

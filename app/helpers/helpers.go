@@ -7,8 +7,10 @@ package helpers
 
 import (
 	"fmt"
+	uuid "github.com/satori/go.uuid"
 	"math/rand"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -36,9 +38,39 @@ func Int64ToString(int64_ int64) string {
 	return strconv.Itoa(int(int64_))
 }
 
+func StringToInt(str string) int {
+	num, _ := strconv.Atoi(str)
+	return num
+}
+
 func FirstElement(args []string) string {
 	if len(args) > 0 {
 		return args[0]
 	}
 	return ""
+}
+
+func Explode(delimiter, text string) []string {
+	if len(delimiter) > len(text) {
+		return strings.Split(delimiter, text)
+	} else {
+		return strings.Split(text, delimiter)
+	}
+}
+
+func GetUuid() string {
+
+	u1 := uuid.NewV4()
+
+	return fmt.Sprintf("%s", u1)
+}
+
+func InterfaceToInt64(inter interface{}) int64 {
+
+	return inter.(int64)
+}
+
+func InterfaceToString(inter interface{}) string {
+
+	return inter.(string)
 }

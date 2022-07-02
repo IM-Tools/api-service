@@ -12,30 +12,30 @@ import (
 )
 
 type CacheInterface interface {
-	Set(id int64, friends *[]friend.ImFriends) // 设置缓存
-	Get(id int64) (*[]friend.ImFriends, error) // 读取缓存
+	Set(uid string, friends *[]friend.ImFriends) // 设置缓存
+	Get(uid string) (*[]friend.ImFriends, error) // 读取缓存
 }
 
 var (
 	FriendCache = FriendCacheClient{
-		CachetMap: make(map[int64]*[]friend.ImFriends),
+		CachetMap: make(map[string]*[]friend.ImFriends),
 	}
 	mux sync.Mutex
 )
 
 type FriendCacheClient struct {
-	CachetMap map[int64]*[]friend.ImFriends
+	CachetMap map[string]*[]friend.ImFriends
 }
 
 // 设置好友缓存
-func (FriendCache *FriendCacheClient) Set(id int64, friends *[]friend.ImFriends) {
+func (FriendCache *FriendCacheClient) Set(id string, friends *[]friend.ImFriends) {
 	mux.Lock()
 	FriendCache.CachetMap[id] = friends
 	mux.Unlock()
 }
 
 // 获取好友缓存
-func (FriendCache *FriendCacheClient) Get(id int64) ([]friend.ImFriends, error) {
+func (FriendCache *FriendCacheClient) Get(id string) ([]friend.ImFriends, error) {
 	var err error
 	data, ok := FriendCache.CachetMap[id]
 	if ok {

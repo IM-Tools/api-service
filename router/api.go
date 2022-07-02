@@ -22,9 +22,9 @@ func RegisterApiRoutes(router *gin.Engine) {
 	{
 		login := new(auth.AuthController)
 
-		authGroup.POST("/login", login.Login)                           //登录
-		authGroup.POST("/registered", login.Registered)                 //注册
-		authGroup.POST("/sendRegisteredMail", login.SendRegisteredMail) //发送注册邮件
+		authGroup.POST("/login", login.Login)                 //登录
+		authGroup.POST("/registered", login.Registered)       //注册
+		authGroup.POST("/sendEmailCode", login.SendEmailCode) //发送注册邮件
 	}
 
 	sessionGroup := api.Group("/session").Use(middleware.Auth())

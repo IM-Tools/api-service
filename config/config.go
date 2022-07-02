@@ -69,7 +69,7 @@ type MailConf struct {
 	Driver     string `json:"driver"`
 	Host       string `json:"host"`
 	Name       string `json:"name"`
-	Port       string `json:"port"`
+	Port       int    `json:"port"`
 	Password   string `json:"password"`
 	Encryption string `json:"encryption"`
 	FromName   string `json:"from_name"`

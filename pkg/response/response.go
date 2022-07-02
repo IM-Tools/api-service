@@ -27,10 +27,16 @@ func (resp *JsonResponse) ToJson(ctx *gin.Context) {
 
 //失败响应
 func FailResponse(code int, message string, data ...interface{}) *JsonResponse {
+	var r interface{}
+	if len(data) > 0 {
+		r = data
+	} else {
+		r = struct{}{}
+	}
 	return &JsonResponse{
 		Code:    code,
 		Message: message,
-		Data:    data,
+		Data:    r,
 	}
 }
 
@@ -38,6 +44,8 @@ func SuccessResponse(data ...interface{}) *JsonResponse {
 	var r interface{}
 	if len(data) > 0 {
 		r = data[0]
+	} else {
+		r = struct{}{}
 	}
 	return &JsonResponse{
 		Code:    http.StatusOK,
@@ -47,10 +55,17 @@ func SuccessResponse(data ...interface{}) *JsonResponse {
 }
 
 func ErrorResponse(status int, message string, data ...interface{}) *JsonResponse {
+	var r interface{}
+	if len(data) > 0 {
+		r = data
+	} else {
+		r = struct{}{}
+	}
+
 	return &JsonResponse{
 		Code:    status,
 		Message: message,
-		Data:    data,
+		Data:    r,
 	}
 }
 

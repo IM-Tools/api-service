@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	enum "im-services/app/api/ enum"
-	requests2 "im-services/app/api/requests"
+	"im-services/app/api/enum"
+	"im-services/app/api/requests"
 	"im-services/app/helpers"
 	"im-services/app/models/user"
 	"im-services/app/services"
@@ -19,7 +19,6 @@ import (
 	"im-services/pkg/hash"
 	"im-services/pkg/jwt"
 	"im-services/pkg/model"
-	"im-services/pkg/redis"
 	"im-services/pkg/response"
 	"net/http"
 	"time"
@@ -28,10 +27,23 @@ import (
 type AuthController struct {
 }
 
+type AuthControllerInterface interface {
+
+	// 登录
+	Login(cxt *gin.Context)
+
+	// 注册
+	Registered(cxt *gin.Context)
+
+	// 发送邮件
+	SendEmailCode(cxt *gin.Context)
+}
+
 type loginResponse struct {
 	ID         int64  `json:"id"`
-	UID        int64  `json:"uid"`
+	UID        string `json:"uid"`
 	Name       string `json:"name"`
+	Avatar     string `json:"avatar"`
 	Email      string `json:"email"`
 	Token      string `json:"token"`
 	ExpireTime int64  `json:"expire_time"`
@@ -41,16 +53,15 @@ type loginResponse struct {
 // 登录
 func (*AuthController) Login(cxt *gin.Context) {
 
-	params := requests2.LoginForm{
+	params := requests.LoginForm{
 		Email:    cxt.PostForm("email"),
 		Password: cxt.PostForm("password"),
 	}
 
-	validate := requests2.ValidateTransInit()
-	err := validate.Struct(params)
+	err := requests.ValidateInit().Struct(params)
 
 	if err != nil {
-		response.FailResponse(http.StatusInternalServerError, requests2.GetError(err)).WriteTo(cxt)
+		response.FailResponse(http.StatusInternalServerError, requests.GetError(err)).WriteTo(cxt)
 		return
 	}
 
@@ -63,6 +74,7 @@ func (*AuthController) Login(cxt *gin.Context) {
 		return
 	}
 
+	fmt.Println(users.Password)
 	if !hash.BcryptCheck(params.Password, users.Password) {
 		response.FailResponse(http.StatusInternalServerError, "密码错误").ToJson(cxt)
 		return
@@ -82,6 +94,7 @@ func (*AuthController) Login(cxt *gin.Context) {
 		ID:         users.ID,
 		UID:        users.Uid,
 		Name:       users.Name,
+		Avatar:     users.Avatar,
 		Email:      users.Email,
 		ExpireTime: expireAtTime,
 		Token:      token,
@@ -94,12 +107,14 @@ func (*AuthController) Login(cxt *gin.Context) {
 
 // 注册
 func (*AuthController) Registered(cxt *gin.Context) {
-	params := requests2.RegisteredForm{
+
+	params := requests.RegisteredForm{
 		Email:          cxt.PostForm("email"),
 		Name:           cxt.PostForm("name"),
+		EmailType:      helpers.StringToInt(cxt.DefaultPostForm("email_type", "1")),
 		Password:       cxt.PostForm("password"),
-		Code:           cxt.PostForm("code"),
 		PasswordRepeat: cxt.PostForm("password_repeat"),
+		Code:           cxt.PostForm("code"),
 	}
 
 	err := validator.New().Struct(params)
@@ -109,14 +124,36 @@ func (*AuthController) Registered(cxt *gin.Context) {
 		return
 	}
 
+	ok, filed := user.IsUserExits(params.Email, params.Name)
+
+	if ok {
+		response.FailResponse(enum.PARAMS_ERROR, fmt.Sprintf("%s已经存在了", filed)).WriteTo(cxt)
+		return
+	}
+
+	//var emailService services.EmailService
+	//
+	//if !emailService.CheckCode(params.Email, params.Code, params.EmailType) {
+	//	response.FailResponse(enum.PARAMS_ERROR, "邮件验证码不正确").WriteTo(cxt)
+	//	return
+	//}
+
 	createdAt := date.NewDate()
 
+	if err != nil {
+		fmt.Printf("Something went wrong: %s", err)
+		return
+	}
+
 	model.DB.Table("im_users").Create(&user.ImUsers{
-		Email:     params.Email,
-		Password:  hash.BcryptHash(params.Password),
-		Name:      params.Name,
-		CreatedAt: createdAt,
-		UpdatedAt: createdAt,
+		Email:         params.Email,
+		Password:      hash.BcryptHash(params.Password),
+		Name:          params.Name,
+		CreatedAt:     createdAt,
+		UpdatedAt:     createdAt,
+		Avatar:        fmt.Sprintf("https://api.multiavatar.com/Binx %s.png", params.Name),
+		LastLoginTime: createdAt,
+		Uid:           helpers.GetUuid(),
 	})
 
 	response.SuccessResponse().ToJson(cxt)
@@ -124,26 +161,48 @@ func (*AuthController) Registered(cxt *gin.Context) {
 }
 
 // 发送邮件
-func (*AuthController) SendRegisteredMail(cxt *gin.Context) {
+func (*AuthController) SendEmailCode(cxt *gin.Context) {
 
-	email := cxt.Query("email")
+	params := requests.SendEmailRequest{
+		Email:     cxt.PostForm("email"),
+		EmailType: helpers.StringToInt(cxt.PostForm("email_type")),
+	}
 
-	ok, message := requests2.IsEmailExits(email, "im_users")
-	if !ok {
-		response.FailResponse(enum.PARAMS_ERROR, message).ToJson(cxt)
+	err := validator.New().Struct(params)
+
+	if err != nil {
+		response.FailResponse(enum.PARAMS_ERROR, err.Error()).WriteTo(cxt)
 		return
 	}
 
-	code := helpers.CreateEmailCode()
+	ok := requests.IsTableFliedExits("email", params.Email, "im_users")
+
+	switch params.EmailType {
+
+	case services.REGISTERED_CODE:
+		if ok {
+			response.FailResponse(enum.PARAMS_ERROR, "邮箱已经被注册了").WriteTo(cxt)
+			return
+		}
+
+	case services.RESET_PS_CODE:
+		if !ok {
+			response.FailResponse(enum.PARAMS_ERROR, "邮箱未注册了").WriteTo(cxt)
+			return
+		}
+
+	}
 
 	var emailService services.EmailService
+
+	code := helpers.CreateEmailCode()
 
 	html := fmt.Sprintf(`
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Im-Services注册邮件</title>
+    <title>Im-Services邮件验证码</title>
 </head>
 <style>
     .mail{
@@ -163,7 +222,7 @@ func (*AuthController) SendRegisteredMail(cxt *gin.Context) {
 </style>
 <body>
 <div class="mail">
-    <h3>您好:您正在注册im-services应用账号!</h3>
+    <h3>您好 ~ im-services应用账号!</h3>
     <p>下面是您的验证码:</p>
         <p class="code">%s</p>
         <p>请注意查收!谢谢</p>
@@ -172,13 +231,13 @@ func (*AuthController) SendRegisteredMail(cxt *gin.Context) {
 </body>
 </html>`, code)
 
-	err := emailService.SendEmail(email, "欢迎👏注册Im Services账号,这是一封邮箱验证码的邮件!🎉🎉🎉", html)
+	subject := "欢迎使用～👏Im Services,这是一封邮箱验证码的邮件!🎉🎉🎉"
+
+	err = emailService.SendEmail(code, params.EmailType, params.Email, subject, html)
 	if err != nil {
 		response.FailResponse(enum.API_ERROR, "邮件发送失败,请检查是否是可用邮箱").ToJson(cxt)
 		return
 	}
-
-	redis.RedisDB.Set(email, code, time.Minute*5)
 
 	response.SuccessResponse().ToJson(cxt)
 	return

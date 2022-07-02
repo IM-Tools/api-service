@@ -11,6 +11,7 @@ import (
 	"github.com/valyala/fastjson"
 	"im-services/pkg/logger"
 	"im-services/service/cache/firend_cache"
+	"im-services/service/dao"
 	"im-services/service/queue/nsq_queue"
 )
 
@@ -18,7 +19,7 @@ import (
 func (manager *ImClientManager) LaunchPrivateMessage(message []byte) {
 	var p fastjson.Parser
 	v, _ := p.Parse(string(message))
-	ReceiveId := v.GetInt64("receive_id")
+	ReceiveId := v.Get("receive_id").String()
 	msg := v.Get("msg").String()
 	if client, ok := manager.ImClientMap[ReceiveId]; ok {
 		client.Send <- []byte(msg)
@@ -32,7 +33,7 @@ func (manager *ImClientManager) LaunchGroupMessage(message []byte) {
 	var p fastjson.Parser
 	v, _ := p.Parse(string(message))
 	channelType := v.GetInt("channel_type")
-	ReceiveId := v.GetInt64("receive_id")
+	ReceiveId := v.Get("receive_id").String()
 	msg := v.Get("msg").String()
 	if channelType == 1 || channelType == 3 {
 		if client, ok := manager.ImClientMap[ReceiveId]; ok {
@@ -51,14 +52,14 @@ func (manager *ImClientManager) LaunchGroupMessage(message []byte) {
 // 消费离线消息
 func (manager *ImClientManager) ConsumingOfflineMessages(client *ImClient) {
 	// 读取离线消息
-	//list := dao.OfflineMessage.PullPrivateOfflineMessage(client.ID)
-	//for _, value := range list {
-	//	client.Socket.WriteMessage(websocket.TextMessage, []byte(value.Message))
-	//}
-	//// 更新离线消息状态
-	//if len(list) > 0 {
-	//	dao.OfflineMessage.UpdatePrivateOfflineMessageStatus(client.ID)
-	//}
+	list := dao.OfflineMessage.PullPrivateOfflineMessage(client.ID)
+	for _, value := range list {
+		client.Socket.WriteMessage(websocket.TextMessage, []byte(value.Message))
+	}
+	// 更新离线消息状态
+	if len(list) > 0 {
+		dao.OfflineMessage.UpdatePrivateOfflineMessageStatus(client.ID)
+	}
 }
 
 // 广播在线用户在线状态
@@ -68,8 +69,9 @@ func (manager *ImClientManager) RadioUserOnlineStatus(client *ImClient) {
 	if err != nil {
 
 	}
+
 	for _, val := range data {
-		if friendClient, ok := manager.ImClientMap[val.FId]; ok {
+		if friendClient, ok := manager.ImClientMap[val.Uid]; ok {
 			// todo 消息持久化
 			friendClient.Socket.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf(`{"code":200,"message":"用户上线了"',"fo_id":%d}`, int(val.MId))))
 		}

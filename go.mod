@@ -25,6 +25,7 @@ require (
 	github.com/panjf2000/ants/v2 v2.5.0
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
+	github.com/satori/go.uuid v1.2.0
 	github.com/silenceper/pool v1.0.0
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/cobra v1.5.0

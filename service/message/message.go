@@ -8,12 +8,13 @@ package message
 import (
 	"encoding/json"
 	"fmt"
+	"im-services/app/helpers"
 	"im-services/pkg/date"
 	"im-services/service/dispatch"
 )
 
 type MessageClient struct {
-	ReceiveId   int64    `json:"receive_id"`
+	ReceiveId   string   `json:"receive_id"`
 	ChannelType int      `json:"channel_type"`
 	Msg         *Message `json:"msg"`
 }
@@ -32,6 +33,8 @@ type Message struct {
 	MsgCode     int         `json:"msg_code"`      // 定义的消息code
 	FormID      int64       `json:"form_id"`       // 发消息的人
 	ToID        int64       `json:"to_id"`         // 接收消息人的id
+	Uid         string      `json:"uid"`           // uid
+	ToUid       string      `json:"to_uid"`        // to uid
 	MsgType     int         `json:"msg_type"`      // 消息类型 例如 1.文本 2.语音 3.文件
 	ChannelType int         `json:"channel_type"`  // 频道类型 1.私聊 2.频道 3.广播
 	Message     string      `json:"message"`       // 消息
@@ -91,13 +94,13 @@ func (m *MessageHandler) ValidationMsg(msg []byte) (error, string, string, int) 
 	ackMsg.Ack = 1
 
 	msgByte, _ := json.Marshal(&MessageClient{
-		ReceiveId:   userMsg.ToID,
+		ReceiveId:   helpers.Int64ToString(userMsg.ToID),
 		ChannelType: userMsg.ChannelType,
 		Msg:         userMsg,
 	})
 	var dService dispatch.DispatchService
 
-	isOk, node := dService.IsDispatchNode(userMsg.ToID)
+	isOk, node := dService.IsDispatchNode(helpers.Int64ToString(userMsg.ToID))
 	if isOk == false && node != "" {
 		// 将消息分发到指定的客户端
 	} else {
