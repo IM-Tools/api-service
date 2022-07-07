@@ -46,6 +46,8 @@ type ClientManagerInterface interface {
 	LaunchPrivateMessage(msg_byte []byte)
 	// 群聊信息消费
 	LaunchGroupMessage(msg_byte []byte)
+	// 广播消息
+	LaunchBroadcastMessage(msg_byte []byte)
 	// 消费离线消息
 	ConsumingOfflineMessages(client *ImClient)
 	// 向好友广播在线状态
@@ -88,6 +90,11 @@ func (manager *ImClientManager) Start() {
 		case groupMessage := <-ImManager.GroupChannel:
 			coroutine_poll.AntsPool.Submit(func() {
 				manager.LaunchPrivateMessage(groupMessage)
+			})
+		case publicMessage := <-ImManager.BroadcastChannel:
+			logger.Logger.Info("广播消息")
+			coroutine_poll.AntsPool.Submit(func() {
+				manager.LaunchBroadcastMessage(publicMessage)
 			})
 
 		}

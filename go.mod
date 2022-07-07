@@ -30,6 +30,7 @@ require (
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.11.0
+	github.com/thedevsaddam/govalidator v1.9.10
 	github.com/ugorji/go v1.2.7 // indirect
 	github.com/valyala/fastjson v1.6.3
 	go.uber.org/zap v1.21.0

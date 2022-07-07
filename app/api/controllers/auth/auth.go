@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"im-services/app/api/enum"
 	"im-services/app/api/requests"
+	"im-services/app/enum"
 	"im-services/app/helpers"
 	"im-services/app/models/user"
 	"im-services/app/services"
@@ -18,6 +18,7 @@ import (
 	"im-services/pkg/date"
 	"im-services/pkg/hash"
 	"im-services/pkg/jwt"
+	"im-services/pkg/logger"
 	"im-services/pkg/model"
 	"im-services/pkg/response"
 	"net/http"
@@ -58,10 +59,10 @@ func (*AuthController) Login(cxt *gin.Context) {
 		Password: cxt.PostForm("password"),
 	}
 
-	err := requests.ValidateInit().Struct(params)
+	errs := requests.ValidateInit().Struct(params)
 
-	if err != nil {
-		response.FailResponse(http.StatusInternalServerError, requests.GetError(err)).WriteTo(cxt)
+	if errs != nil {
+		response.FailResponse(http.StatusInternalServerError, errs.Error()).WriteTo(cxt)
 		return
 	}
 
@@ -235,6 +236,7 @@ func (*AuthController) SendEmailCode(cxt *gin.Context) {
 
 	err = emailService.SendEmail(code, params.EmailType, params.Email, subject, html)
 	if err != nil {
+		logger.Logger.Error("发送失败邮箱:" + params.Email + "错误日志:" + err.Error())
 		response.FailResponse(enum.API_ERROR, "邮件发送失败,请检查是否是可用邮箱").ToJson(cxt)
 		return
 	}

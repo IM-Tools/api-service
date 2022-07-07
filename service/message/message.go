@@ -26,6 +26,23 @@ type AckMsg struct {
 	MsgClientId int64 `json:"msg_client_id"` //客户端生成的消息id
 }
 
+type CreateFriendMessage struct {
+	MsgCode     int    `json:"msg_code"`    // 定义的消息code
+	ID          int64  `json:"id"`          // 定义的消息code
+	FormId      int64  `json:"form_id"`     // 发消息的人
+	Status      int    `json:"status"`      // 发消息的人
+	CreatedAt   string `json:"created_at"`  // 发消息的人
+	ToID        int64  `json:"to_id"`       // 接收消息人的id
+	Information string `json:"information"` //内容
+	Users       Users  `json:"users"`       //请求人
+}
+
+type Users struct {
+	Name   string `json:"name"`
+	ID     int64  `json:"id"`
+	Avatar string `json:"avatar"`
+}
+
 // 用户发送的消息数据
 type Message struct {
 	MsgId       int64       `json:"msg_id"`        // 服务端消息唯一id

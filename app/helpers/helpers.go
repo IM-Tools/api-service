@@ -42,6 +42,10 @@ func StringToInt(str string) int {
 	num, _ := strconv.Atoi(str)
 	return num
 }
+func StringToInt64(str string) int64 {
+	num, _ := strconv.Atoi(str)
+	return int64(num)
+}
 
 func FirstElement(args []string) string {
 	if len(args) > 0 {

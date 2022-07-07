@@ -14,3 +14,7 @@ func NewDate() string {
 func TimeUnixNano() int64 {
 	return time.Now().UnixNano()
 }
+
+func TimeUnix() int64 {
+	return time.Now().Unix()
+}
