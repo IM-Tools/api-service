@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"im-services/app/api/controllers/auth"
 	"im-services/app/api/controllers/friend"
+	"im-services/app/api/controllers/message"
 	"im-services/app/api/controllers/session"
 	"im-services/app/middleware"
 )
@@ -52,4 +53,12 @@ func RegisterApiRoutes(router *gin.Engine) {
 
 	}
 
+	// 消息
+	messageGroup := api.Group("/messages").Use(middleware.Auth())
+	{
+		messages := new(message.MessageController)
+
+		messageGroup.GET("/", messages.Index)
+
+	}
 }
