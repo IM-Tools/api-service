@@ -7,6 +7,7 @@ package client
 
 import (
 	"github.com/gorilla/websocket"
+	"im-services/service/dispatch"
 	"im-services/service/message"
 	"sync"
 )
@@ -52,7 +53,6 @@ func (client *ImClient) Read() {
 	for {
 		_, msg, err := client.Socket.ReadMessage()
 		if err != nil {
-
 			ImManager.Unregister <- client
 			client.Close()
 			break
@@ -98,5 +98,7 @@ func (client *ImClient) Write() {
 }
 
 func (client *ImClient) Close() {
+	var _dispatch dispatch.DispatchService
+	_dispatch.DetDispatchNode(client.ID)
 	_ = client.Socket.Close()
 }

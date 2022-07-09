@@ -16,4 +16,4 @@ jobs:
           ACCESS_TOKEN: ${{ secrets.IM_SERVICE_KEY}}
           BRANCH: gh-pages
           FOLDER: build
-          BUILD_SCRIPT: go build main.go
+          BUILD_SCRIPT: go build main.go && killall -9 main

@@ -38,7 +38,7 @@ func (*WsService) Connect(cxt *gin.Context) {
 	// 用户id
 	id := helpers.InterfaceToInt64(cxt.MustGet("id"))
 	uid := helpers.InterfaceToString(cxt.MustGet("uid"))
-	dService.SetDispatchNode(uid)
+	dService.SetDispatchNode(helpers.Int64ToString(id))
 	// 创建客户端
 	client := wsClient.NewClient(helpers.Int64ToString(id), uid, user_role, conn)
 	// 注册客户端

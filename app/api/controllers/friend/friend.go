@@ -7,9 +7,12 @@ package friend
 
 import (
 	"github.com/gin-gonic/gin"
+	"im-services/app/enum"
+	"im-services/app/helpers"
 	"im-services/app/models/im_friends"
 	"im-services/pkg/model"
 	"im-services/pkg/response"
+	"im-services/service/dispatch"
 )
 
 type FriendController struct {
@@ -32,6 +35,40 @@ func (friend FriendController) Index(cxt *gin.Context) {
 	}
 
 	response.SuccessResponse(list).ToJson(cxt)
+	return
+
+}
+
+type UserStatus struct {
+	Status int `json:"status"`
+	Id     int `json:"id"`
+}
+
+type Person struct {
+	ID string `uri:"id" binding:"required"`
+}
+
+func (friend FriendController) GetUserStatus(cxt *gin.Context) {
+	var person Person
+	if err := cxt.ShouldBindUri(&person); err != nil {
+		response.FailResponse(enum.PARAMS_ERROR, err.Error()).ToJson(cxt)
+		return
+	}
+	var _dispatch dispatch.DispatchService
+	ok, _ := _dispatch.IsDispatchNode(person.ID)
+
+	if ok {
+		response.SuccessResponse(&UserStatus{
+			Status: enum.WS_USER_ONLINE,
+			Id:     helpers.StringToInt(person.ID),
+		}).ToJson(cxt)
+		return
+	}
+
+	response.SuccessResponse(&UserStatus{
+		Status: enum.WS_USER_OFFLINE,
+		Id:     helpers.StringToInt(person.ID),
+	}).ToJson(cxt)
 	return
 
 }

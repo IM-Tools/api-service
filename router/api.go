@@ -18,10 +18,11 @@ import (
 func RegisterApiRoutes(router *gin.Engine) {
 
 	var api *gin.RouterGroup
-	api = router.Group("/api")
 
+	api = router.Group("/api")
+	api.Use(middleware.Cors())
 	// 登录
-	authGroup := api.Group("/auth").Use(middleware.Cors())
+	authGroup := api.Group("/auth")
 	{
 		login := new(auth.AuthController)
 
@@ -47,6 +48,7 @@ func RegisterApiRoutes(router *gin.Engine) {
 		friendRecords := new(friend.FriendRecordController)
 
 		friendGroup.GET("/", friends.Index)
+		friendGroup.GET("/status/:id", friends.GetUserStatus)
 		friendGroup.POST("/record", friendRecords.Store) //发送好友请求
 		friendGroup.GET("/record", friendRecords.Index)  //发送好友请求
 		friendGroup.PUT("/record", friendRecords.Update) //同意好友请求

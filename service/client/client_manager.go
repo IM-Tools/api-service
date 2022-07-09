@@ -59,16 +59,16 @@ type ClientManagerInterface interface {
 func (manager *ImClientManager) SetClient(client *ImClient) {
 	manager.MutexKey.Lock()
 	defer manager.MutexKey.Unlock()
-	logger.Logger.Info(fmt.Sprintf("客户端链接:%d", client.ID))
 	manager.ImClientMap[client.ID] = client
 
 }
 
 func (manager *ImClientManager) DelClient(client *ImClient) {
-	logger.Logger.Info(fmt.Sprintf("客户端链接断开:%d", client.ID))
+
 	manager.MutexKey.Lock()
 	client.Close()
 	defer manager.MutexKey.Unlock()
+	logger.Logger.Info("客户端断开:" + client.ID)
 	delete(manager.ImClientMap, client.ID)
 }
 
@@ -93,7 +93,6 @@ func (manager *ImClientManager) Start() {
 				manager.LaunchPrivateMessage(groupMessage)
 			})
 		case publicMessage := <-ImManager.BroadcastChannel:
-			logger.Logger.Info("广播消息")
 			coroutine_poll.AntsPool.Submit(func() {
 				manager.LaunchBroadcastMessage(publicMessage)
 			})
