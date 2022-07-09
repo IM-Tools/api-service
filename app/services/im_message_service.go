@@ -7,6 +7,7 @@ package services
 
 import (
 	"encoding/json"
+	"fmt"
 	"im-services/app/api/requests"
 	"im-services/service/client"
 	"im-services/service/message"
@@ -30,7 +31,32 @@ func (s ImMessageService) SendFriendActionMessage(msg message.CreateFriendMessag
 	client.ImManager.BroadcastChannel <- jsonByte
 }
 
-func (s ImMessageService) SendPrivateMessage(msg requests.PrivateMessageRequest) {
+func (s ImMessageService) SendPrivateMessage(msg requests.PrivateMessageRequest) (bool, string) {
+
+	var handler message.MessageHandler
 	jsonByte, _ := json.Marshal(msg)
-	client.ImManager.PrivateChannel <- jsonByte
+
+	errs, msgString, _, channel := handler.ValidationMsg(jsonByte)
+
+	if errs != nil {
+		return false, "消息解析失败"
+	} else {
+		// 将消费分发到不同的队列
+		switch channel {
+		case 1:
+			client.ImManager.PrivateChannel <- msgString
+		case 2:
+
+		default:
+		}
+	}
+
+	return true, "Success"
+
+}
+
+func getKey() {
+	for key, _ := range client.ImManager.ImClientMap {
+		fmt.Println(key)
+	}
 }

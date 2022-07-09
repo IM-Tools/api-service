@@ -40,13 +40,12 @@ func IsUserExits(email string, name string) (bool, string) {
 
 	var user ImUsers
 
-	result := model.DB.Table("im_users").Where("email=? or name =?", email, name).First(&user)
-
-	if result.RowsAffected > 0 {
+	if result := model.DB.Table("im_users").Where("email=? or name =?", email, name).First(&user); result.RowsAffected > 0 {
 		if user.Email == email {
 			return true, "email"
 		}
 		return true, "name"
 	}
+
 	return false, ""
 }

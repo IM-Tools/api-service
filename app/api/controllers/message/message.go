@@ -7,6 +7,7 @@ package message
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"im-services/app/api/requests"
 	"im-services/app/enum"
 	"im-services/app/helpers"
@@ -82,7 +83,7 @@ func (m MessageController) SendPrivateMessage(cxt *gin.Context) {
 	params := requests.PrivateMessageRequest{
 		MsgId:       date.TimeUnixNano(),
 		MsgCode:     http.StatusOK,
-		MsgClientId: helpers.InterfaceToInt64(cxt.PostForm("msg_client_id")),
+		MsgClientId: helpers.StringToInt64(cxt.PostForm("msg_client_id")),
 		FormID:      helpers.InterfaceToInt64(id),
 		ToID:        helpers.StringToInt64(cxt.PostForm("to_id")),
 		ChannelType: 1,
@@ -90,6 +91,13 @@ func (m MessageController) SendPrivateMessage(cxt *gin.Context) {
 		Message:     cxt.PostForm("message"),
 		SendTime:    date.NewDate(),
 		Data:        cxt.PostForm("data"),
+	}
+
+	errs := validator.New().Struct(params)
+
+	if errs != nil {
+		response.FailResponse(enum.PARAMS_ERROR, errs.Error()).ToJson(cxt)
+		return
 	}
 
 	var count int64
@@ -104,7 +112,24 @@ func (m MessageController) SendPrivateMessage(cxt *gin.Context) {
 
 	// 消息投递
 	var messages services.ImMessageService
-	messages.SendPrivateMessage(params)
+	ok, msg := messages.SendPrivateMessage(params)
+	if !ok {
+		response.FailResponse(http.StatusInternalServerError, msg).ToJson(cxt)
+		return
+	}
+
+	message := im_messages.ImMessages{
+		Msg:       params.Message,
+		FormId:    params.FormID,
+		ToId:      params.ToID,
+		CreatedAt: params.SendTime,
+		IsRead:    0,
+		MsgType:   params.MsgType,
+		Status:    1,
+		Data:      helpers.InterfaceToString(params.Data),
+	}
+
+	model.DB.Save(&message)
 
 	response.SuccessResponse(params).ToJson(cxt)
 	return

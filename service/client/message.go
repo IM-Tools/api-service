@@ -18,19 +18,20 @@ import (
 
 //
 func (manager *ImClientManager) LaunchPrivateMessage(message []byte) {
-	var p fastjson.Parser
-	v, _ := p.Parse(string(message))
-	ReceiveId := v.Get("receive_id").String()
-	msg := v.Get("msg").String()
-	if client, ok := manager.ImClientMap[ReceiveId]; ok {
-		client.Send <- []byte(msg)
+
+	receiveId, userMsg := GetReceiveIdAndUserMsg(message)
+
+	logger.Logger.Info("私聊消息" + string(userMsg))
+	if client, ok := manager.ImClientMap[receiveId]; ok {
+		client.Send <- []byte(userMsg)
 	} else {
-		nsq_queue.ProducerQueue.SendMessage([]byte(msg))
+		nsq_queue.ProducerQueue.SendMessage([]byte(userMsg))
 	}
+
 }
 
 func (manager *ImClientManager) LaunchBroadcastMessage(message []byte) {
-	logger.Logger.Info("广播消息")
+
 	var p fastjson.Parser
 	v, _ := p.Parse(string(message))
 
@@ -42,8 +43,7 @@ func (manager *ImClientManager) LaunchBroadcastMessage(message []byte) {
 	} else {
 		ReceiveId = v.Get("form_id").String()
 	}
-	
-	logger.Logger.Info("广播消息id:" + ReceiveId)
+
 	if client, ok := manager.ImClientMap[ReceiveId]; ok {
 		client.Send <- message
 	}
@@ -51,16 +51,12 @@ func (manager *ImClientManager) LaunchBroadcastMessage(message []byte) {
 
 func (manager *ImClientManager) LaunchGroupMessage(message []byte) {
 
-	var p fastjson.Parser
-	v, _ := p.Parse(string(message))
-	ReceiveId := v.Get("receive_id").String()
-	msg := v.Get("msg").String()
-	if client, ok := manager.ImClientMap[ReceiveId]; ok {
-		client.Send <- []byte(msg)
+	receiveId, userMsg := GetReceiveIdAndUserMsg(message)
+
+	if client, ok := manager.ImClientMap[receiveId]; ok {
+		client.Send <- []byte(userMsg)
 	} else {
-		logger.Logger.Info("用户离线了" + string(message))
-		//离线消息进入nsq
-		nsq_queue.ProducerQueue.SendMessage([]byte(msg))
+		nsq_queue.ProducerQueue.SendMessage([]byte(userMsg))
 
 	}
 }
@@ -85,11 +81,16 @@ func (manager *ImClientManager) RadioUserOnlineStatus(client *ImClient) {
 	if err != nil {
 
 	}
-
 	for _, val := range data {
 		if friendClient, ok := manager.ImClientMap[val.Uid]; ok {
-			// todo 消息持久化
-			friendClient.Socket.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf(`{"code":200,"message":"用户上线了"',"fo_id":%d}`, int(val.ToId))))
+			_ = friendClient.Socket.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf(`{"code":200,"message":"用户上线了"',"fo_id":%d}`, int(val.ToId))))
 		}
 	}
+}
+
+// 拿消息投递id
+func GetReceiveIdAndUserMsg(msg []byte) (string, string) {
+	var p fastjson.Parser
+	v, _ := p.Parse(string(msg))
+	return fastjson.GetString(msg, "receive_id"), v.GetObject("msg").String()
 }

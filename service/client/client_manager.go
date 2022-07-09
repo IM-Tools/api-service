@@ -65,6 +65,7 @@ func (manager *ImClientManager) SetClient(client *ImClient) {
 }
 
 func (manager *ImClientManager) DelClient(client *ImClient) {
+	logger.Logger.Info(fmt.Sprintf("客户端链接断开:%d", client.ID))
 	manager.MutexKey.Lock()
 	client.Close()
 	defer manager.MutexKey.Unlock()

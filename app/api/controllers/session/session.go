@@ -7,6 +7,7 @@ package session
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"im-services/app/api/requests"
 	"im-services/app/dao/session_dao"
 	"im-services/app/enum"
@@ -50,7 +51,7 @@ func (s SessionController) Store(cxt *gin.Context) {
 		Type: helpers.StringToInt(cxt.PostForm("type")),
 	}
 
-	errs := requests.ValidateInit().Struct(params)
+	errs := validator.New().Struct(params)
 
 	if errs != nil {
 		response.FailResponse(enum.PARAMS_ERROR, errs.Error()).ToJson(cxt)

@@ -14,9 +14,9 @@ import (
 )
 
 type MessageClient struct {
-	ReceiveId   string   `json:"receive_id"`
-	ChannelType int      `json:"channel_type"`
-	Msg         *Message `json:"msg"`
+	ReceiveId   string  `json:"receive_id"`
+	ChannelType int     `json:"channel_type"`
+	Msg         Message `json:"msg"`
 }
 
 // ack机制
@@ -62,12 +62,6 @@ type Message struct {
 type BroadcastMessages struct {
 }
 
-var (
-	MsgHandler *MessageHandler
-	userMsg    *Message
-	ackMsg     *AckMsg
-)
-
 type MessageInterface interface {
 	ValidationMsg(msg []byte) (error, string)
 }
@@ -75,57 +69,48 @@ type MessageInterface interface {
 type MessageHandler struct {
 }
 
-func NewAck() *AckMsg {
-	ackMsg = new(AckMsg)
-	return ackMsg
-}
-
-func NewMsg() *Message {
-	userMsg = new(Message)
-	return userMsg
-}
-
 // 验证消息是否正确 此处可以做消息拦截
-func (m *MessageHandler) ValidationMsg(msg []byte) (error, string, string, int) {
+func (m *MessageHandler) ValidationMsg(msg []byte) (error, []byte, []byte, int) {
 
 	var errs error
 
 	if len(msg) == 0 {
-		return errs, fmt.Sprintf(`{"code":500,"message":"请勿发送空消息"}`), "", 0
+		return errs, []byte(`{"code":500,"message":"请勿发送空消息"}`), []byte(``), 0
 	}
 
-	userMsg = NewMsg()
+	var userMsg Message
 
 	err := json.Unmarshal(msg, &userMsg)
 
 	if err != nil {
-		return err, fmt.Sprintf(`{"code":500,"message":"用户消息解析异常"}`), "", 0
+		return err, []byte(`{"code":500,"message":"用户消息解析异常"}`), []byte(``), 0
 	}
 	userMsg.MsgId = date.TimeUnixNano()
 	userMsg.SendTime = date.NewDate()
 
-	ackMsg = NewAck()
+	var ackMsg AckMsg
 
 	ackMsg.MsgId = userMsg.MsgId
 	ackMsg.MsgClientId = userMsg.MsgClientId
 	ackMsg.Ack = 1
 
+	fmt.Println(userMsg)
 	msgByte, _ := json.Marshal(&MessageClient{
 		ReceiveId:   helpers.Int64ToString(userMsg.ToID),
 		ChannelType: userMsg.ChannelType,
 		Msg:         userMsg,
 	})
+
+	fmt.Println(string(msgByte))
+
 	var dService dispatch.DispatchService
 
-	isOk, node := dService.IsDispatchNode(helpers.Int64ToString(userMsg.ToID))
-	if isOk == false && node != "" {
+	ok, node := dService.IsDispatchNode(helpers.Int64ToString(userMsg.ToID))
+	if !ok && node != "" {
 		// 将消息分发到指定的客户端
-	} else {
-		// 消息继续 用户未上线直接丢入队列
 	}
-
 	ackMsgByte, _ := json.Marshal(ackMsg)
 
-	return nil, string(msgByte), string(ackMsgByte), userMsg.ChannelType
+	return nil, msgByte, ackMsgByte, userMsg.ChannelType
 
 }

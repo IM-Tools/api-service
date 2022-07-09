@@ -15,7 +15,10 @@ require (
 	github.com/go-playground/universal-translator v0.18.0
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/go-redis/redis v6.15.9+incompatible
+	github.com/gobuffalo/envy v1.10.1 // indirect
+	github.com/gobuffalo/packd v1.0.1 // indirect
 	github.com/golang-jwt/jwt/v4 v4.4.1
+	github.com/golang-module/carbon v1.6.8
 	github.com/gorilla/websocket v1.5.0
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d
@@ -25,6 +28,7 @@ require (
 	github.com/panjf2000/ants/v2 v2.5.0
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
+	github.com/rogpeppe/go-internal v1.8.1 // indirect
 	github.com/satori/go.uuid v1.2.0
 	github.com/silenceper/pool v1.0.0
 	github.com/spf13/cast v1.5.0 // indirect

@@ -74,6 +74,10 @@ func InterfaceToInt64(inter interface{}) int64 {
 	return inter.(int64)
 }
 
+func InterfaceToInt64String(inter interface{}) string {
+	int64Val := inter.(int64)
+	return Int64ToString(int64Val)
+}
 func InterfaceToString(inter interface{}) string {
 
 	return inter.(string)

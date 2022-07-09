@@ -7,6 +7,7 @@ package friend
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"im-services/app/api/requests"
 	"im-services/app/dao/friend_dao"
 	"im-services/app/dao/session_dao"
@@ -51,7 +52,7 @@ func (friend FriendRecordController) Store(cxt *gin.Context) {
 		Information: cxt.PostForm("information"),
 	}
 
-	errs := requests.ValidateInit().Struct(params)
+	errs := validator.New().Struct(params)
 
 	if errs != nil {
 		response.ErrorResponse(enum.PARAMS_ERROR, errs.Error()).ToJson(cxt)
@@ -79,7 +80,7 @@ func (friend FriendRecordController) Store(cxt *gin.Context) {
 		Information: params.Information,
 	}
 
-	model.DB.Create(records)
+	model.DB.Save(&records)
 
 	var messageService services.ImMessageService
 
@@ -104,19 +105,17 @@ func (friend FriendRecordController) Store(cxt *gin.Context) {
 
 // 同意好友请求
 func (friend FriendRecordController) Update(cxt *gin.Context) {
-
+	id := cxt.MustGet("id")
 	params := requests.UpdateFriendRequest{
 		Status: helpers.StringToInt(cxt.PostForm("status")),
 		ID:     cxt.PostForm("id"),
 	}
 
-	errs := requests.ValidateInit().Struct(params)
+	errs := validator.New().Struct(params)
 	if errs != nil {
 		response.ErrorResponse(enum.PARAMS_ERROR, errs.Error()).ToJson(cxt)
 		return
 	}
-
-	id := cxt.MustGet("id")
 
 	var records im_friend_records.ImFriendRecords
 
@@ -132,7 +131,7 @@ func (friend FriendRecordController) Update(cxt *gin.Context) {
 
 	records.Status = params.Status
 
-	model.DB.Save(&records)
+	model.DB.Updates(&records)
 
 	var messageService services.ImMessageService
 
