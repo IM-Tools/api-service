@@ -59,6 +59,7 @@ func RegisterApiRoutes(router *gin.Engine) {
 		messages := new(message.MessageController)
 
 		messageGroup.GET("/", messages.Index)
+		messageGroup.POST("/private", messages.SendPrivateMessage) //发送私聊消息
 
 	}
 }

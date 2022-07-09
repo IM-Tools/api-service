@@ -14,5 +14,6 @@ const (
 	WS_CREATE       = 1000 //添加好友
 	WS_FRIEND_OK    = 1001 //同意好友申请
 	WS_FRIEND_ERROR = 1002 //拒绝好友申请
+	WS_NOT_FRIEND   = 1003 //非好友关系
 
 )

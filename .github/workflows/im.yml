@@ -1,0 +1,19 @@
+name: Im-Services
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Im-Services
+        uses: actions/Im-Services@master
+
+      - name: Build and Deploy
+        uses: IM-Tools/Im-Services@master
+        env:
+          ACCESS_TOKEN: ${{ secrets.IM_SERVICE_KEY}}
+          BRANCH: gh-pages
+          FOLDER: build
+          BUILD_SCRIPT: go build main.go

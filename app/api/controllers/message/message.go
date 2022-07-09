@@ -7,9 +7,13 @@ package message
 
 import (
 	"github.com/gin-gonic/gin"
+	"im-services/app/api/requests"
+	"im-services/app/enum"
 	"im-services/app/helpers"
 	"im-services/app/models/im_messages"
 	"im-services/app/models/user"
+	"im-services/app/services"
+	"im-services/pkg/date"
 	"im-services/pkg/model"
 	"im-services/pkg/response"
 	"net/http"
@@ -68,4 +72,40 @@ func (m MessageController) Index(cxt *gin.Context) {
 		}}, http.StatusOK).ToJson(cxt)
 	return
 
+}
+
+// 私聊消息投递
+
+func (m MessageController) SendPrivateMessage(cxt *gin.Context) {
+
+	id := cxt.MustGet("id")
+	params := requests.PrivateMessageRequest{
+		MsgId:       date.TimeUnixNano(),
+		MsgCode:     http.StatusOK,
+		MsgClientId: helpers.InterfaceToInt64(cxt.PostForm("msg_client_id")),
+		FormID:      helpers.InterfaceToInt64(id),
+		ToID:        helpers.StringToInt64(cxt.PostForm("to_id")),
+		ChannelType: 1,
+		MsgType:     helpers.StringToInt(cxt.PostForm("msg_type")),
+		Message:     cxt.PostForm("message"),
+		SendTime:    date.NewDate(),
+		Data:        cxt.PostForm("data"),
+	}
+
+	var count int64
+	model.DB.Table("im_friends").
+		Where("to_id=? and form_id=?", id, params.ToID).
+		Count(&count)
+
+	if count == 0 {
+		response.FailResponse(enum.WS_NOT_FRIEND, "非好友关系,不能聊天...").ToJson(cxt)
+		return
+	}
+
+	// 消息投递
+	var messages services.ImMessageService
+	messages.SendPrivateMessage(params)
+
+	response.SuccessResponse(params).ToJson(cxt)
+	return
 }
