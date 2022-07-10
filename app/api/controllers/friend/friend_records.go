@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"im-services/app/api/requests"
+	"im-services/app/api/service/message"
 	"im-services/app/dao/friend_dao"
 	"im-services/app/dao/session_dao"
 	"im-services/app/enum"
@@ -20,7 +21,6 @@ import (
 	"im-services/pkg/date"
 	"im-services/pkg/model"
 	"im-services/pkg/response"
-	"im-services/service/message"
 	"net/http"
 )
 

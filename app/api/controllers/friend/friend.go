@@ -7,12 +7,12 @@ package friend
 
 import (
 	"github.com/gin-gonic/gin"
+	"im-services/app/api/service/dispatch"
 	"im-services/app/enum"
 	"im-services/app/helpers"
 	"im-services/app/models/im_friends"
 	"im-services/pkg/model"
 	"im-services/pkg/response"
-	"im-services/service/dispatch"
 )
 
 type FriendController struct {

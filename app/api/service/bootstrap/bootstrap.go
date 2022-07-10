@@ -7,15 +7,15 @@ package bootstrap
 
 import (
 	"github.com/gin-gonic/gin"
+	"im-services/app/api/service/client"
+	"im-services/app/api/service/queue/nsq_queue"
+	router2 "im-services/app/router"
 	"im-services/config"
 	"im-services/pkg/coroutine_poll"
 	"im-services/pkg/logger"
 	"im-services/pkg/model"
 	"im-services/pkg/nsq"
 	"im-services/pkg/redis"
-	"im-services/router"
-	"im-services/service/client"
-	"im-services/service/queue/nsq_queue"
 	"net/http"
 	_ "net/http/pprof"
 )
@@ -68,6 +68,6 @@ func setUpLogger() {
 
 // 注册路由方法
 func setRoute(r *gin.Engine) {
-	router.RegisterApiRoutes(r)
-	router.RegisterWsRouters(r)
+	router2.RegisterApiRoutes(r)
+	router2.RegisterWsRouters(r)
 }

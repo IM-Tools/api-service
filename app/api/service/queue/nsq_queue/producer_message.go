@@ -6,9 +6,9 @@
 package nsq_queue
 
 import (
+	"im-services/app/api/service/queue"
 	"im-services/pkg/logger"
 	"im-services/pkg/nsq"
-	"im-services/service/queue"
 )
 
 var (

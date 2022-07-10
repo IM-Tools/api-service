@@ -36,8 +36,10 @@ func RegisterApiRoutes(router *gin.Engine) {
 	{
 		sessions := new(session.SessionController)
 
-		sessionGroup.GET("/", sessions.Index)
-		sessionGroup.POST("/", sessions.Store)
+		sessionGroup.GET("/", sessions.Index)        // 获取会话列表
+		sessionGroup.POST("/", sessions.Store)       // 更新会话
+		sessionGroup.PUT("/:id", sessions.Update)    // 更新会话
+		sessionGroup.DELETE("/:id", sessions.Delete) // 删除会话
 
 	}
 

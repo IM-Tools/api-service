@@ -9,8 +9,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"im-services/app/api/requests"
-	"im-services/service/client"
-	"im-services/service/message"
+	"im-services/app/api/service/client"
+	"im-services/app/api/service/message"
 )
 
 type ImMessageService struct {

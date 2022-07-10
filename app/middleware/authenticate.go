@@ -14,7 +14,7 @@ import (
 	"strings"
 )
 
-// 后台校验中间件
+// 身份校验中间件
 func Auth() gin.HandlerFunc {
 
 	return func(cxt *gin.Context) {

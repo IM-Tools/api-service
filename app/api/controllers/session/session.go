@@ -73,3 +73,35 @@ func (s SessionController) Store(cxt *gin.Context) {
 	return
 
 }
+
+type Person struct {
+	ID string `uri:"id" binding:"required"`
+}
+
+// 更新会话
+func (s SessionController) Update(cxt *gin.Context) {
+	var person Person
+	if err := cxt.ShouldBindUri(&person); err != nil {
+		response.FailResponse(enum.PARAMS_ERROR, err.Error()).ToJson(cxt)
+		return
+	}
+
+	response.SuccessResponse().ToJson(cxt)
+	return
+
+}
+
+// 删除会话
+func (s SessionController) Delete(cxt *gin.Context) {
+	var person Person
+	if err := cxt.ShouldBindUri(&person); err != nil {
+		response.FailResponse(enum.PARAMS_ERROR, err.Error()).ToJson(cxt)
+		return
+	}
+
+	model.DB.Delete(&im_sessions.ImSessions{}, person.ID)
+
+	response.SuccessResponse().ToJson(cxt)
+
+	return
+}

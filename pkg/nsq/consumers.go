@@ -8,8 +8,8 @@ package nsq
 import (
 	"fmt"
 	"github.com/nsqio/go-nsq"
+	"im-services/app/api/service/dao"
 	"im-services/pkg/logger"
-	"im-services/service/dao"
 )
 
 var (

@@ -56,3 +56,15 @@ services:
         max-file: "3"
     restart: always
     command: ["redis-server", "/redis/redis.conf"]
+  etcd:
+      build:
+        context: ./etcd                    # 指定构建使用的 Dockerfile 文件
+      environment:
+        - TZ=${TZ}
+        - ALLOW_NONE_AUTHENTICATION=yes
+        - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+      ports: # 设置端口映射
+        - "${ETCD_PORT}:2379"
+#      networks:
+#        - backend
+      restart: always

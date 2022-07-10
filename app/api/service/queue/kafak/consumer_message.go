@@ -8,13 +8,14 @@ package kafak
 import (
 	"fmt"
 	"gopkg.in/Shopify/sarama.v1"
+	dao2 "im-services/app/api/service/dao"
 	"im-services/config"
 	"im-services/service/dao"
 	"sync"
 )
 
 var (
-	offlineMessageDao *dao.OfflineMessageDao
+	offlineMessageDao *dao2.OfflineMessageDao
 )
 
 func ConsumerInit() {

@@ -7,7 +7,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"im-services/service/bootstrap"
+	"im-services/app/api/service/bootstrap"
 )
 
 var CmdServe = &cobra.Command{

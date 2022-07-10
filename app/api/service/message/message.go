@@ -8,9 +8,9 @@ package message
 import (
 	"encoding/json"
 	"fmt"
+	"im-services/app/api/service/dispatch"
 	"im-services/app/helpers"
 	"im-services/pkg/date"
-	"im-services/service/dispatch"
 )
 
 type MessageClient struct {

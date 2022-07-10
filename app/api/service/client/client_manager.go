@@ -13,13 +13,20 @@ import (
 )
 
 type ImClientManager struct {
-	ImClientMap      map[string]*ImClient
+	// 储存客户端实例
+	ImClientMap map[string]*ImClient
+	// 公共频道
 	BroadcastChannel chan []byte
-	PrivateChannel   chan []byte
-	GroupChannel     chan []byte
-	Register         chan *ImClient
-	Unregister       chan *ImClient
-	MutexKey         sync.RWMutex //读写锁
+	// 私聊频道
+	PrivateChannel chan []byte
+	// 群聊频道
+	GroupChannel chan []byte
+	// 注册客户端
+	Register chan *ImClient
+	// 关闭客户端
+	Unregister chan *ImClient
+	// 锁
+	MutexKey sync.RWMutex
 }
 
 var (
