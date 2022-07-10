@@ -8,8 +8,8 @@ package message
 import (
 	"encoding/json"
 	"fmt"
-	"im-services/app/api/service/dispatch"
 	"im-services/app/helpers"
+	"im-services/app/service/dispatch"
 	"im-services/pkg/date"
 )
 

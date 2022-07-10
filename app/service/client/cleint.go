@@ -7,8 +7,8 @@ package client
 
 import (
 	"github.com/gorilla/websocket"
-	"im-services/app/api/service/dispatch"
-	"im-services/app/api/service/message"
+	"im-services/app/service/dispatch"
+	"im-services/app/service/message"
 	"sync"
 )
 

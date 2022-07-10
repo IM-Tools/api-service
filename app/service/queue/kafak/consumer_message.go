@@ -8,7 +8,7 @@ package kafak
 import (
 	"fmt"
 	"gopkg.in/Shopify/sarama.v1"
-	dao2 "im-services/app/api/service/dao"
+	dao2 "im-services/app/service/dao"
 	"im-services/config"
 	"im-services/service/dao"
 	"sync"

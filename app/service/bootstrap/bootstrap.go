@@ -7,9 +7,9 @@ package bootstrap
 
 import (
 	"github.com/gin-gonic/gin"
-	"im-services/app/api/service/client"
-	"im-services/app/api/service/queue/nsq_queue"
 	router2 "im-services/app/router"
+	"im-services/app/service/client"
+	"im-services/app/service/queue/nsq_queue"
 	"im-services/config"
 	"im-services/pkg/coroutine_poll"
 	"im-services/pkg/logger"

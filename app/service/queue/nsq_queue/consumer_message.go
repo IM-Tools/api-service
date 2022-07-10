@@ -7,7 +7,7 @@ package nsq_queue
 
 import (
 	"fmt"
-	"im-services/app/api/service/queue"
+	"im-services/app/service/queue"
 	"im-services/pkg/nsq"
 )
 

@@ -7,8 +7,8 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"im-services/app/api/service/handler"
 	"im-services/app/middleware"
+	"im-services/app/service/handler"
 )
 
 // 注册websocket长链接路由

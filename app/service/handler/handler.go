@@ -7,9 +7,9 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	client3 "im-services/app/api/service/client"
-	"im-services/app/api/service/dispatch"
 	"im-services/app/helpers"
+	client2 "im-services/app/service/client"
+	"im-services/app/service/dispatch"
 	"im-services/pkg/ws"
 	"net/http"
 )
@@ -40,9 +40,9 @@ func (*WsService) Connect(cxt *gin.Context) {
 	uid := helpers.InterfaceToString(cxt.MustGet("uid"))
 	dService.SetDispatchNode(helpers.Int64ToString(id))
 	// 创建客户端
-	client := client3.NewClient(helpers.Int64ToString(id), uid, user_role, conn)
+	client := client2.NewClient(helpers.Int64ToString(id), uid, user_role, conn)
 	// 注册客户端
-	client3.ImManager.Register <- client
+	client2.ImManager.Register <- client
 	// 监听读写
 
 	go client.Read()

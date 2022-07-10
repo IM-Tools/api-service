@@ -9,10 +9,10 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"github.com/valyala/fastjson"
-	"im-services/app/api/service/cache/firend_cache"
-	"im-services/app/api/service/dao"
-	"im-services/app/api/service/queue/nsq_queue"
 	"im-services/app/enum"
+	"im-services/app/service/cache/firend_cache"
+	"im-services/app/service/dao"
+	"im-services/app/service/queue/nsq_queue"
 	"im-services/pkg/logger"
 )
 
