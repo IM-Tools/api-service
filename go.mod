@@ -29,6 +29,7 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/klauspost/reedsolomon v1.10.0 // indirect
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d
+	github.com/micro/go-micro v1.18.0 // indirect
 	github.com/miekg/dns v1.1.50 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/nakabonne/ali v0.7.5 // indirect
@@ -51,6 +52,7 @@ require (
 	golang.org/x/net v0.0.0-20220708220712-1185a9018129 // indirect
 	golang.org/x/sync v0.0.0-20220601150217-0de741cfad7f // indirect
 	golang.org/x/sys v0.0.0-20220708085239-5a0f0661e09d // indirect
+	google.golang.org/grpc v1.48.0 // indirect
 	gopkg.in/Shopify/sarama.v1 v1.20.1
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gorm.io/driver/mysql v1.3.3

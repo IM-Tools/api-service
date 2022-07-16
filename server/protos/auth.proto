@@ -1,0 +1,26 @@
+/**
+  @author:panliang
+  @data:2022/7/14
+  @note
+**/
+syntax = "proto3";
+option go_package="./server/grpc/auth/;grpcAuth";
+service Greeter {
+  rpc CheckAuth(CheckAuthRequest) returns (CheckAuthResponse) {}
+}
+
+message CheckAuthRequest {
+  string token = 1;
+}
+
+
+message CheckAuthResponse {
+
+  int64 id = 2;
+  string uid = 3;
+  string name = 4;
+  string email = 5;
+  int64 expire_time = 6;
+
+
+}

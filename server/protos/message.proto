@@ -1,0 +1,22 @@
+/**
+  @author:panliang
+  @data:2022/7/14
+  @note
+**/
+syntax = "proto3";
+option go_package="./server/grpc/message/;grpcMessage";
+service Greeter {
+  rpc CheckAuth(CheckMessageRequest) returns (CheckMessageResponse) {}
+}
+
+message CheckMessageRequest {
+  string token = 1;
+}
+
+
+message CheckMessageResponse {
+
+  int64 id = 2;
+
+
+}
