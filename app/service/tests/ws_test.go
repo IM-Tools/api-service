@@ -24,7 +24,7 @@ var (
 	ClientMapALL = ClientMap{
 		ClientMap: make(map[int64]*Client),
 	}
-	userCount int64 = 10000
+	userCount int64 = 200
 )
 
 type ClientMap struct {
@@ -42,7 +42,7 @@ var mux sync.RWMutex
 func TestWs(t *testing.T) {
 	var i int64
 	i = 1
-	for i = 0; i < userCount; i++ {
+	for i = 37; i < userCount; i++ {
 		token := jwt.NewJWT().IssueToken(
 			i,
 			"",
@@ -87,7 +87,7 @@ func testUserSendMsg() {
 		userId := getUserInt(userCount, 1)
 		mux.RLock()
 		if data, ok := ClientMapALL.ClientMap[userId]; ok {
-			sendMsg(data, userId, getUserInt(10000000, userId))
+			sendMsg(data, userId, 36)
 		}
 		mux.RUnlock()
 	}
@@ -104,7 +104,7 @@ func getUserInt(count int64, repeat int64) int64 {
 
 func sendMsg(client *Client, formId int64, toiD int64) {
 
-	msg := fmt.Sprintf(`{"msg_id":1,"msg_client_id":1,"msg_code":200,"form_id":%d,"to_id":%d,"msg_type":1,"channel_type":1,"message":"你好！"}`, formId, toiD)
+	msg := fmt.Sprintf(`{"msg_id":1,"msg_client_id":1,"msg_code":200,"form_id":%d,"to_id":%d,"msg_type":1,"channel_type":1,"message":"你好！"}`, formId, 36)
 
 	fmt.Sprintf("%d向%d发送消息", formId, toiD)
 	mux.Lock()

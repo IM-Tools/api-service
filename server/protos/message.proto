@@ -5,7 +5,7 @@
 **/
 syntax = "proto3";
 option go_package="./server/grpc/message/;grpcMessage";
-service Greeter {
+service ImMessage {
   rpc CheckAuth(CheckMessageRequest) returns (CheckMessageResponse) {}
 }
 

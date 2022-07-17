@@ -14,86 +14,86 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// GreeterClient is the client API for Greeter service.
+// ImAuthClient is the client API for ImAuth service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type GreeterClient interface {
+type ImAuthClient interface {
 	CheckAuth(ctx context.Context, in *CheckAuthRequest, opts ...grpc.CallOption) (*CheckAuthResponse, error)
 }
 
-type greeterClient struct {
+type imAuthClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewGreeterClient(cc grpc.ClientConnInterface) GreeterClient {
-	return &greeterClient{cc}
+func NewImAuthClient(cc grpc.ClientConnInterface) ImAuthClient {
+	return &imAuthClient{cc}
 }
 
-func (c *greeterClient) CheckAuth(ctx context.Context, in *CheckAuthRequest, opts ...grpc.CallOption) (*CheckAuthResponse, error) {
+func (c *imAuthClient) CheckAuth(ctx context.Context, in *CheckAuthRequest, opts ...grpc.CallOption) (*CheckAuthResponse, error) {
 	out := new(CheckAuthResponse)
-	err := c.cc.Invoke(ctx, "/Greeter/CheckAuth", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ImAuth/CheckAuth", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// GreeterServer is the server API for Greeter service.
-// All implementations must embed UnimplementedGreeterServer
+// ImAuthServer is the server API for ImAuth service.
+// All implementations must embed UnimplementedImAuthServer
 // for forward compatibility
-type GreeterServer interface {
+type ImAuthServer interface {
 	CheckAuth(context.Context, *CheckAuthRequest) (*CheckAuthResponse, error)
-	mustEmbedUnimplementedGreeterServer()
+	mustEmbedUnimplementedImAuthServer()
 }
 
-// UnimplementedGreeterServer must be embedded to have forward compatible implementations.
-type UnimplementedGreeterServer struct {
+// UnimplementedImAuthServer must be embedded to have forward compatible implementations.
+type UnimplementedImAuthServer struct {
 }
 
-func (UnimplementedGreeterServer) CheckAuth(context.Context, *CheckAuthRequest) (*CheckAuthResponse, error) {
+func (UnimplementedImAuthServer) CheckAuth(context.Context, *CheckAuthRequest) (*CheckAuthResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckAuth not implemented")
 }
-func (UnimplementedGreeterServer) mustEmbedUnimplementedGreeterServer() {}
+func (UnimplementedImAuthServer) mustEmbedUnimplementedImAuthServer() {}
 
-// UnsafeGreeterServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to GreeterServer will
+// UnsafeImAuthServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ImAuthServer will
 // result in compilation errors.
-type UnsafeGreeterServer interface {
-	mustEmbedUnimplementedGreeterServer()
+type UnsafeImAuthServer interface {
+	mustEmbedUnimplementedImAuthServer()
 }
 
-func RegisterGreeterServer(s grpc.ServiceRegistrar, srv GreeterServer) {
-	s.RegisterService(&Greeter_ServiceDesc, srv)
+func RegisterImAuthServer(s grpc.ServiceRegistrar, srv ImAuthServer) {
+	s.RegisterService(&ImAuth_ServiceDesc, srv)
 }
 
-func _Greeter_CheckAuth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ImAuth_CheckAuth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CheckAuthRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GreeterServer).CheckAuth(ctx, in)
+		return srv.(ImAuthServer).CheckAuth(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/Greeter/CheckAuth",
+		FullMethod: "/ImAuth/CheckAuth",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GreeterServer).CheckAuth(ctx, req.(*CheckAuthRequest))
+		return srv.(ImAuthServer).CheckAuth(ctx, req.(*CheckAuthRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Greeter_ServiceDesc is the grpc.ServiceDesc for Greeter service.
+// ImAuth_ServiceDesc is the grpc.ServiceDesc for ImAuth service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Greeter_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "Greeter",
-	HandlerType: (*GreeterServer)(nil),
+var ImAuth_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "ImAuth",
+	HandlerType: (*ImAuthServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CheckAuth",
-			Handler:    _Greeter_CheckAuth_Handler,
+			Handler:    _ImAuth_CheckAuth_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

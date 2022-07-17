@@ -18,18 +18,19 @@ type Config struct {
 	Redis  RedisConf
 	Mail   MailConf
 	Kafka  KafkaConf
-	Nsqe   NsqConf
+	Nsq    NsqConf
 }
 
 type ServerConf struct {
-	Name           string `json:"name"`
-	Listen         string `json:"listen"`
-	Mode           string `json:"mode"`
-	Env            string `json:"env"`
-	Lang           string `json:"lang"`
-	CoroutinesPoll int    `json:"coroutines_poll"`
-	Node           string `json:"node"`
-	ServiceOpen    bool   `json:"service_open"`
+	Name          string `json:"name"`
+	Listen        string `json:"listen"`
+	Mode          string `json:"mode"`
+	Env           string `json:"env"`
+	Lang          string `json:"lang"`
+	CoroutinePoll int    `json:"coroutinePoll"`
+	Node          string `json:"node"`
+	ServiceOpen   bool   `json:"serviceOpen"`
+	GrpcListen    string `json:"grpcListen"`
 }
 
 type JWTConf struct {
@@ -50,9 +51,9 @@ type LogConf struct {
 	Level     string `json:"level"`
 	Type      string `json:"type"`
 	FileName  string `json:"filename"`
-	MaxSize   int    `json:"max_size"`
-	MaxBackup int    `json:"max_backup"`
-	MaxAge    int    `json:"max_age"`
+	MaxSize   int    `json:"maxSize"`
+	MaxBackup int    `json:"maxBackup"`
+	MaxAge    int    `json:"maxAge"`
 	Compress  bool   `json:"compress"`
 }
 
@@ -72,7 +73,7 @@ type MailConf struct {
 	Port       int    `json:"port"`
 	Password   string `json:"password"`
 	Encryption string `json:"encryption"`
-	FromName   string `json:"from_name"`
+	FromName   string `json:"fromName"`
 }
 
 type KafkaConf struct {
@@ -81,9 +82,8 @@ type KafkaConf struct {
 }
 
 type NsqConf struct {
-	Host        string `json:"host"`
-	LookupdPort string `json:"lookupd_port"`
-	NsqdPort    string `json:"nsqd_port"`
+	LookupHost string `json:"lookupHost"`
+	NsqHost    string `json:"nsqHost"`
 }
 
 var Conf = &Config{}

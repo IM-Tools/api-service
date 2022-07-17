@@ -132,19 +132,14 @@ func (*AuthController) Registered(cxt *gin.Context) {
 		return
 	}
 
-	//var emailService services.EmailService
-	//
-	//if !emailService.CheckCode(params.Email, params.Code, params.EmailType) {
-	//	response.FailResponse(enum.PARAMS_ERROR, "邮件验证码不正确").WriteTo(cxt)
-	//	return
-	//}
+	var emailService services.EmailService
 
-	createdAt := date.NewDate()
-
-	if err != nil {
-		fmt.Printf("Something went wrong: %s", err)
+	if !emailService.CheckCode(params.Email, params.Code, params.EmailType) {
+		response.FailResponse(enum.PARAMS_ERROR, "邮件验证码不正确").WriteTo(cxt)
 		return
 	}
+
+	createdAt := date.NewDate()
 
 	model.DB.Table("im_users").Create(&user.ImUsers{
 		Email:         params.Email,

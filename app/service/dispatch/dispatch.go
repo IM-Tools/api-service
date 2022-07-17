@@ -9,12 +9,7 @@ import (
 	"github.com/gorilla/websocket"
 	"im-services/config"
 	"im-services/pkg/redis"
-	"sync"
 	"time"
-)
-
-var (
-	mux sync.Mutex
 )
 
 type DispatchService struct {
@@ -49,9 +44,8 @@ func (Service *DispatchService) DetDispatchNode(uid string) {
 }
 
 func (Service *DispatchService) SetDispatchNode(uid string) {
-	mux.Lock()
+
 	redis.RedisDB.Set(uid, config.Conf.Server.Node, time.Hour*24)
-	mux.Unlock()
 }
 
 func (Service *DispatchService) MessageDispatch(conn *websocket.Conn) {

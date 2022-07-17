@@ -14,3 +14,15 @@ type ImFriendList struct {
 	Information string `gorm:"column:information" json:"information"` //请求信息
 
 }
+type UserStatus struct {
+	Status int `json:"status"`
+	Id     int `json:"id"`
+}
+
+type Person struct {
+	ID string `uri:"id" binding:"required"`
+}
+
+type Params struct {
+	ToId string `uri:"to_id" binding:"required"`
+}

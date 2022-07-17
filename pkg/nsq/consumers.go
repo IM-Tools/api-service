@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"github.com/nsqio/go-nsq"
 	"im-services/app/service/dao"
-	"im-services/pkg/logger"
 )
 
 var (
@@ -20,9 +19,6 @@ type Handler struct {
 }
 
 func (m *Handler) HandleMessage(msg *nsq.Message) (err error) {
-	message := string(msg.Body)
-	logger.Logger.Info("消费消息:" + message)
-
 	OfflineMessageSave.PrivateOfflineMessageSave(string(msg.Body))
 	return
 

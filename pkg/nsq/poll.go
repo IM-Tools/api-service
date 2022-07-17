@@ -15,15 +15,13 @@ import (
 )
 
 var (
-	//addr            = config.Conf.Nsqe.Host + ":" + config.Conf.Nsqe.NsqdPort
-	addr            = "127.0.0.1:4150"
 	NsqProducerPool pool.Pool
 )
 
 func InitNewProducerPoll() error {
-	fmt.Println(config.Conf.Nsqe)
+	fmt.Println(config.Conf.Nsq)
 	factory := func() (interface{}, error) {
-		producer, err := nsq.NewProducer(addr, nsq.NewConfig())
+		producer, err := nsq.NewProducer(config.Conf.Nsq.NsqHost, nsq.NewConfig())
 		if err != nil {
 			return nil, err
 		}

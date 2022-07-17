@@ -39,15 +39,6 @@ func (friend FriendController) Index(cxt *gin.Context) {
 
 }
 
-type UserStatus struct {
-	Status int `json:"status"`
-	Id     int `json:"id"`
-}
-
-type Person struct {
-	ID string `uri:"id" binding:"required"`
-}
-
 func (friend FriendController) GetUserStatus(cxt *gin.Context) {
 	var person Person
 	if err := cxt.ShouldBindUri(&person); err != nil {
@@ -71,8 +62,4 @@ func (friend FriendController) GetUserStatus(cxt *gin.Context) {
 	}).ToJson(cxt)
 	return
 
-}
-
-type Params struct {
-	ToId string `uri:"to_id" binding:"required"`
 }

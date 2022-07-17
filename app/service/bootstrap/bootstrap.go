@@ -16,7 +16,7 @@ import (
 	"im-services/pkg/model"
 	"im-services/pkg/nsq"
 	"im-services/pkg/redis"
-	"net/http"
+	"im-services/server"
 	_ "net/http/pprof"
 )
 
@@ -31,9 +31,11 @@ func Start() {
 
 	gin.SetMode(config.Conf.Server.Mode)
 
-	go func() {
-		http.ListenAndServe("0.0.0.0:6060", nil)
-	}()
+	//go func() {
+	//	http.ListenAndServe("0.0.0.0:6060", nil)
+	//}()
+	go server.StartGrpc()
+
 	_ = r.Run(config.Conf.Server.Listen)
 }
 
