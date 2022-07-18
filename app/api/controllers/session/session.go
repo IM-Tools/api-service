@@ -25,7 +25,7 @@ type SessionController struct {
 func (s SessionController) Index(cxt *gin.Context) {
 	id := cxt.MustGet("id")
 
-	var list im_sessions.ImSessions
+	var list []im_sessions.ImSessions
 
 	if result := model.DB.Model(&im_sessions.ImSessions{}).
 		Preload("Users").
