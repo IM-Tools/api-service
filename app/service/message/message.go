@@ -8,6 +8,8 @@ package message
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/valyala/fastjson"
+	"im-services/app/enum"
 	"im-services/app/helpers"
 	"im-services/app/service/dispatch"
 	"im-services/pkg/date"
@@ -26,6 +28,7 @@ type AckMsg struct {
 	MsgClientId int64 `json:"msg_client_id"` //客户端生成的消息id
 }
 
+// 私聊内容
 type CreateFriendMessage struct {
 	MsgCode     int    `json:"msg_code"`    // 定义的消息code
 	ID          int64  `json:"id"`          // 定义的消息code
@@ -59,6 +62,12 @@ type Message struct {
 	Data        interface{} `json:"data"`          // 自定义携带的数据
 }
 
+// 心跳消息
+type PingMessage struct {
+	MsgCode int    `json:"msg_code"`
+	Message string `json:"message"`
+}
+
 type BroadcastMessages struct {
 }
 
@@ -73,6 +82,15 @@ type MessageHandler struct {
 func (m *MessageHandler) ValidationMsg(msg []byte) (error, []byte, []byte, int) {
 
 	var errs error
+
+	var p fastjson.Parser
+	v, _ := p.Parse(string(msg))
+
+	msgCode, _ := v.Get("msg_code").Int()
+
+	if msgCode == enum.WS_PING {
+		return errs, []byte(fmt.Sprintf(`{"code":%d,"message":"ping"}`, msgCode)), []byte(``), 0
+	}
 
 	if len(msg) == 0 {
 		return errs, []byte(`{"code":500,"message":"请勿发送空消息"}`), []byte(``), 0

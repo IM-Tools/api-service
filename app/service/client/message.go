@@ -13,15 +13,13 @@ import (
 	"im-services/app/service/cache/firend_cache"
 	"im-services/app/service/dao"
 	"im-services/app/service/queue/nsq_queue"
-	"im-services/pkg/logger"
 )
 
 //
 func (manager *ImClientManager) LaunchPrivateMessage(message []byte) {
 
 	receiveId, userMsg := GetReceiveIdAndUserMsg(message)
-
-	logger.Logger.Info("私聊消息" + string(userMsg))
+	
 	if client, ok := manager.ImClientMap[receiveId]; ok {
 		client.Send <- []byte(userMsg)
 	} else {

@@ -15,6 +15,7 @@ const (
 	WS_FRIEND_OK    = 1001 // 同意好友申请
 	WS_FRIEND_ERROR = 1002 // 拒绝好友申请
 	WS_NOT_FRIEND   = 1003 // 非好友关系
+	WS_PING         = 1004 // 心跳
 
 	WS_USER_OFFLINE   = 2000 // 用户离线
 	WS_USER_ONLINE    = 2001 // 用户在线

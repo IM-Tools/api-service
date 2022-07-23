@@ -26,7 +26,7 @@ type MessageController struct {
 /**
 获取消息列表
 */
-func (m MessageController) Index(cxt *gin.Context) {
+func (m *MessageController) Index(cxt *gin.Context) {
 
 	id := cxt.MustGet("id")
 	page := helpers.StringToInt(cxt.DefaultQuery("page", "1"))
@@ -75,9 +75,14 @@ func (m MessageController) Index(cxt *gin.Context) {
 
 }
 
+// 消息撤回
+func (m *MessageController) RecallMessage(cxt *gin.Context) {
+
+}
+
 // 私聊消息投递
 
-func (m MessageController) SendPrivateMessage(cxt *gin.Context) {
+func (m *MessageController) SendPrivateMessage(cxt *gin.Context) {
 
 	id := cxt.MustGet("id")
 	params := requests.PrivateMessageRequest{

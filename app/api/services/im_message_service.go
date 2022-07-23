@@ -23,7 +23,7 @@ type ImMessageServiceInterface interface {
 	SendFriendActionMessage(msg message.CreateFriendMessage)
 
 	// 发送私聊消息
-	SendPrivateMessage(msg requests.PrivateMessageRequest)
+	SendPrivateMessage(msg requests.PrivateMessageRequest) (bool, string)
 }
 
 func (s ImMessageService) SendFriendActionMessage(msg message.CreateFriendMessage) {
