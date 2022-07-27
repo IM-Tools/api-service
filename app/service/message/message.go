@@ -24,6 +24,7 @@ type MessageClient struct {
 // ack机制
 type AckMsg struct {
 	Ack         int   `json:"ack"`           // 1.消息已经投递到服务器了
+	MsgCode     int   `json:"msg_code"`      // 1.消息已经投递到服务器了
 	MsgId       int64 `json:"msg_id"`        //服务器生成的消息id
 	MsgClientId int64 `json:"msg_client_id"` //客户端生成的消息id
 }
@@ -89,11 +90,11 @@ func (m *MessageHandler) ValidationMsg(msg []byte) (error, []byte, []byte, int) 
 	msgCode, _ := v.Get("msg_code").Int()
 
 	if msgCode == enum.WS_PING {
-		return errs, []byte(fmt.Sprintf(`{"code":%d,"message":"ping"}`, msgCode)), []byte(``), 0
+		return nil, []byte(`{"msg_code":1004,"message":"ping"}`), []byte(``), 3
 	}
 
 	if len(msg) == 0 {
-		return errs, []byte(`{"code":500,"message":"请勿发送空消息"}`), []byte(``), 0
+		return errs, []byte(`{"msg_code":500,"message":"请勿发送空消息"}`), []byte(``), 0
 	}
 
 	var userMsg Message
@@ -101,7 +102,7 @@ func (m *MessageHandler) ValidationMsg(msg []byte) (error, []byte, []byte, int) 
 	err := json.Unmarshal(msg, &userMsg)
 
 	if err != nil {
-		return err, []byte(`{"code":500,"message":"用户消息解析异常"}`), []byte(``), 0
+		return err, []byte(`{"msg_code":500,"message":"用户消息解析异常"}`), []byte(``), 0
 	}
 	userMsg.MsgId = date.TimeUnixNano()
 	userMsg.SendTime = date.NewDate()
@@ -111,6 +112,7 @@ func (m *MessageHandler) ValidationMsg(msg []byte) (error, []byte, []byte, int) 
 	ackMsg.MsgId = userMsg.MsgId
 	ackMsg.MsgClientId = userMsg.MsgClientId
 	ackMsg.Ack = 1
+	ackMsg.MsgCode = enum.WS_ACK
 
 	fmt.Println(userMsg)
 	msgByte, _ := json.Marshal(&MessageClient{

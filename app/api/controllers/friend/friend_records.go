@@ -29,7 +29,7 @@ type FriendRecordController struct {
 
 // 获取好友请求列表
 func (friend FriendRecordController) Index(cxt *gin.Context) {
-	var list im_friend_records.ImFriendRecords
+	var list []im_friend_records.ImFriendRecords
 	id := cxt.MustGet("id")
 	if result := model.DB.Model(&im_friend_records.ImFriendRecords{}).Preload("Users").
 		Where("to_id=? or form_id=?", id, id).

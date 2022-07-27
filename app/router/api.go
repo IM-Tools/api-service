@@ -49,10 +49,10 @@ func RegisterApiRoutes(router *gin.Engine) {
 		friends := new(friend.FriendController)
 		friendRecords := new(friend.FriendRecordController)
 
-		friendGroup.GET("/", friends.Index)
+		friendGroup.GET("/", friends.Index) //获取好友列表
 		friendGroup.GET("/status/:id", friends.GetUserStatus)
 		friendGroup.POST("/record", friendRecords.Store) //发送好友请求
-		friendGroup.GET("/record", friendRecords.Index)  //发送好友请求
+		friendGroup.GET("/record", friendRecords.Index)  //获取好友申请记录列表
 		friendGroup.PUT("/record", friendRecords.Update) //同意好友请求
 
 	}
@@ -61,7 +61,6 @@ func RegisterApiRoutes(router *gin.Engine) {
 	messageGroup := api.Group("/messages").Use(middleware.Auth())
 	{
 		messages := new(message.MessageController)
-
 		messageGroup.GET("/", messages.Index)
 		messageGroup.POST("/private", messages.SendPrivateMessage) // 发送私聊消息
 		messageGroup.POST("/recall", messages.RecallMessage)       // 消息撤回

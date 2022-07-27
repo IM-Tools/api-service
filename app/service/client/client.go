@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/websocket"
 	"im-services/app/service/dispatch"
 	"im-services/app/service/message"
+	"im-services/pkg/logger"
 	"sync"
 )
 
@@ -61,6 +62,7 @@ func (client *ImClient) Read() {
 		errs, msgByte, ackMsg, channel := messageHandler.ValidationMsg(msg)
 
 		if errs != nil {
+			logger.Logger.Info(string(msgByte))
 			_ = client.Socket.WriteMessage(websocket.TextMessage, msgByte)
 		} else {
 			// 将消费分发到不同的队列
@@ -73,6 +75,9 @@ func (client *ImClient) Read() {
 				_ = client.Socket.WriteMessage(websocket.TextMessage,
 					ackMsg)
 				ImManager.GroupChannel <- msgByte
+			case 3:
+				_ = client.Socket.WriteMessage(websocket.TextMessage,
+					msgByte)
 			default:
 				_ = client.Socket.WriteMessage(websocket.TextMessage,
 					ackMsg)

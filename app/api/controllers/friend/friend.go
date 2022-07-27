@@ -22,7 +22,7 @@ type FriendController struct {
 func (friend FriendController) Index(cxt *gin.Context) {
 	id := cxt.MustGet("id")
 
-	var list im_friends.ImFriends
+	var list []im_friends.ImFriends
 
 	result := model.DB.Model(&im_friends.ImFriends{}).Preload("Users").
 		Where("form_id=?", id).
