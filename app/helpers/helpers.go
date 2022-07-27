@@ -1,13 +1,9 @@
-/**
-  @author:panliang
-  @data:2022/5/21
-  @note
-**/
 package helpers
 
 import (
 	"fmt"
 	uuid "github.com/satori/go.uuid"
+	"im-services/pkg/logger"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -81,4 +77,12 @@ func InterfaceToInt64String(inter interface{}) string {
 func InterfaceToString(inter interface{}) string {
 
 	return inter.(string)
+}
+func ErrorHandler(err error) {
+	if err != nil {
+		logger.Logger.Error(err.Error())
+		fmt.Println(err.Error())
+		return
+	}
+	return
 }

@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/6/6
-  @note
-**/
 package dao
 
 import (
@@ -26,7 +21,7 @@ var (
 type OfflineMessageDao struct {
 }
 
-// 消息入库
+// PrivateOfflineMessageSave 消息入库
 func (offline *OfflineMessageDao) PrivateOfflineMessageSave(msg string) {
 	var p fastjson.Parser
 	v, _ := p.Parse(msg)

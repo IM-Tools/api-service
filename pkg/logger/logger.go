@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/5/21
-  @note
-**/
 package logger
 
 import (
@@ -17,6 +12,7 @@ import (
 )
 
 // 参考 https://learnku.com/courses/go-api/1.17/using-zap/11782
+
 // Logger 全局 Logger 对象
 var Logger *zap.Logger
 
@@ -83,7 +79,7 @@ func customTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 	enc.AppendString(t.Format("2006-01-02 15:04:05"))
 }
 
-// getLogWriter 日志记录介质。Gohub 中使用了两种介质，os.Stdout 和文件
+// getLogWriter 日志记录介质。Github 中使用了两种介质，os.Stdout 和文件
 func getLogWriter(filename string, maxSize, maxBackup, maxAge int, compress bool, logType string) zapcore.WriteSyncer {
 
 	// 如果配置了按照日期记录日志文件

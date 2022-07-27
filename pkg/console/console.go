@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/7/2
-  @note
-**/
 // Package console 命令行辅助方法
 package console
 

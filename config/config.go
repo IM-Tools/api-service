@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/5/15
-  @note
-**/
 package config
 
 import (
@@ -88,7 +83,7 @@ type NsqConf struct {
 
 var Conf = &Config{}
 
-// 初始化配置函数
+// InitConfig 初始化配置函数
 func InitConfig(configPath string) *Config {
 
 	// 设置文件类型

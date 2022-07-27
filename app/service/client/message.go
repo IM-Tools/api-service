@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/6/8
-  @note
-**/
 package client
 
 import (
@@ -15,11 +10,10 @@ import (
 	"im-services/app/service/queue/nsq_queue"
 )
 
-//
 func (manager *ImClientManager) LaunchPrivateMessage(message []byte) {
 
 	receiveId, userMsg := GetReceiveIdAndUserMsg(message)
-	
+
 	if client, ok := manager.ImClientMap[receiveId]; ok {
 		client.Send <- []byte(userMsg)
 	} else {
@@ -36,7 +30,7 @@ func (manager *ImClientManager) LaunchBroadcastMessage(message []byte) {
 	msgCode, _ := v.Get("msg_code").Int()
 
 	var ReceiveId string
-	if msgCode == enum.WS_CREATE {
+	if msgCode == enum.WsCreate {
 		ReceiveId = v.Get("to_id").String()
 	} else {
 		ReceiveId = v.Get("form_id").String()
@@ -60,11 +54,12 @@ func (manager *ImClientManager) LaunchGroupMessage(message []byte) {
 }
 
 // 消费离线消息
+
 func (manager *ImClientManager) ConsumingOfflineMessages(client *ImClient) {
 	// 读取离线消息
 	list := dao.OfflineMessage.PullPrivateOfflineMessage(client.ID)
 	for _, value := range list {
-		client.Socket.WriteMessage(websocket.TextMessage, []byte(value.Message))
+		_ = client.Socket.WriteMessage(websocket.TextMessage, []byte(value.Message))
 	}
 	// 更新离线消息状态
 	if len(list) > 0 {
@@ -73,8 +68,9 @@ func (manager *ImClientManager) ConsumingOfflineMessages(client *ImClient) {
 }
 
 // 广播在线用户在线状态
+
 func (manager *ImClientManager) RadioUserOnlineStatus(client *ImClient) {
-	// 从数据库拿好友列表id 从客户端拿好友在线id 进行在线状态推送
+
 	data, err := firend_cache.FriendCache.Get(client.ID)
 	if err != nil {
 
@@ -86,7 +82,8 @@ func (manager *ImClientManager) RadioUserOnlineStatus(client *ImClient) {
 	}
 }
 
-// 拿消息投递id
+// GetReceiveIdAndUserMsg 拿消息投递id
+
 func GetReceiveIdAndUserMsg(msg []byte) (string, string) {
 	var p fastjson.Parser
 	v, _ := p.Parse(string(msg))

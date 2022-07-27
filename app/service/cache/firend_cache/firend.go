@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/6/8
-  @note
-**/
 package firend_cache
 
 import (
@@ -27,14 +22,14 @@ type FriendCacheClient struct {
 	CachetMap map[string]*[]im_friends.ImFriends
 }
 
-// 设置好友缓存
+// Set 设置好友缓存
 func (FriendCache *FriendCacheClient) Set(id string, friends *[]im_friends.ImFriends) {
 	mux.Lock()
 	FriendCache.CachetMap[id] = friends
 	mux.Unlock()
 }
 
-// 获取好友缓存
+// Get 获取好友缓存
 func (FriendCache *FriendCacheClient) Get(id string) ([]im_friends.ImFriends, error) {
 	var err error
 	data, ok := FriendCache.CachetMap[id]

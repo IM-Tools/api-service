@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/6/13
-  @note
-**/
 package middleware
 
 import (
@@ -10,7 +5,6 @@ import (
 	"net/http"
 )
 
-// Cors 跨域
 func Cors() gin.HandlerFunc {
 	return func(cxt *gin.Context) {
 		method := cxt.Request.Method

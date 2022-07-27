@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/6/7
-  @note
-**/
 package nsq
 
 import (
@@ -35,7 +30,6 @@ func NewConsumers(t string, c string, addr string) error {
 	nc.AddHandler(consumer)
 
 	if err := nc.ConnectToNSQLookupd(addr); err != nil {
-		fmt.Println("connect nsqlookupd failed ", err)
 		return err
 	}
 	return nil

@@ -8,9 +8,9 @@ package kafak
 import (
 	"fmt"
 	"gopkg.in/Shopify/sarama.v1"
+	"im-services/app/helpers"
 	dao2 "im-services/app/service/dao"
 	"im-services/config"
-	"im-services/service/dao"
 	"sync"
 )
 
@@ -19,8 +19,6 @@ var (
 )
 
 func ConsumerInit() {
-
-	offlineMessageDao = dao.New()
 
 	var wg sync.WaitGroup
 	consumer, err := sarama.NewConsumer([]string{fmt.Sprintf("%s:%s", config.Conf.Kafka.Host, config.Conf.Kafka.Port)}, nil)
@@ -54,5 +52,7 @@ func ConsumerInit() {
 		}(pc)
 	}
 	wg.Wait()
-	consumer.Close()
+	err = consumer.Close()
+	helpers.ErrorHandler(err)
+
 }

@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/7/3
-  @note
-**/
 package dao
 
 import "im-services/pkg/model"

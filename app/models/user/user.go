@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/5/17
-  @note
-**/
 package user
 
 import "im-services/pkg/model"
@@ -15,9 +10,9 @@ type ImUsers struct {
 	Password      string `gorm:"column:password" json:"password"`
 	CreatedAt     string `gorm:"column:created_at" json:"created_at"`
 	UpdatedAt     string `gorm:"column:updated_at" json:"updated_at"`
-	Avatar        string `gorm:"column:avatar" json:"avatar"`           //头像
-	OauthId       string `gorm:"column:oauth_id" json:"oauth_id"`       //第三方id
-	BoundOauth    int8   `gorm:"column:bound_oauth" json:"bound_oauth"` //1.github 2.gitee
+	Avatar        string `gorm:"column:avatar" json:"avatar"`     //头像
+	OauthId       string `gorm:"column:oauth_id" json:"oauth_id"` //第三方id
+	BoundOauth    int8   `gorm:"column:bound_oauth" json:"bound_oauth"`
 	OauthType     int8   `gorm:"column:oauth_type" json:"oauth_type"`   //1.微博 2.github
 	Status        int8   `gorm:"column:status" json:"status"`           //0 离线 1 在线
 	Bio           string `gorm:"column:bio" json:"bio"`                 //用户简介
@@ -26,14 +21,6 @@ type ImUsers struct {
 	Age           int    `gorm:"column:age" json:"age"`
 	LastLoginTime string `gorm:"column:last_login_time" json:"last_login_time"` //最后登录时间
 	Uid           string `gorm:"column:uid" json:"uid"`                         //uid 关联
-}
-
-func IsEmailExists(email string) bool {
-	if model.DB.Model(&ImUsers{}).Where("email=?", email).RowsAffected > 0 {
-		return true
-	} else {
-		return false
-	}
 }
 
 func IsUserExits(email string, name string) (bool, string) {

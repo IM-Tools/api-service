@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/6/5
-  @note
-**/
 package redis
 
 import (
@@ -14,7 +9,7 @@ import (
 
 var RedisDB *redis.Client
 
-// redis 连接
+// InitClient redis 连接
 func InitClient() {
 	RedisDB = redis.NewClient(&redis.Options{
 		Network:      "tcp",

@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/7/8
-  @note
-**/
 package requests
 
 type PrivateMessageRequest struct {

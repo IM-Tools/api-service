@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/7/6
-  @note
-**/
 package friend
 
 import (
@@ -27,7 +22,6 @@ import (
 type FriendRecordController struct {
 }
 
-// 获取好友请求列表
 func (friend FriendRecordController) Index(cxt *gin.Context) {
 	var list []im_friend_records.ImFriendRecords
 	id := cxt.MustGet("id")
@@ -43,7 +37,6 @@ func (friend FriendRecordController) Index(cxt *gin.Context) {
 
 }
 
-// 添加好友请求
 func (friend FriendRecordController) Store(cxt *gin.Context) {
 	id := cxt.MustGet("id")
 
@@ -55,27 +48,27 @@ func (friend FriendRecordController) Store(cxt *gin.Context) {
 	errs := validator.New().Struct(params)
 
 	if errs != nil {
-		response.ErrorResponse(enum.PARAMS_ERROR, errs.Error()).ToJson(cxt)
+		response.ErrorResponse(enum.ParamError, errs.Error()).ToJson(cxt)
 		return
 	}
 	var users user.ImUsers
 
 	if result := model.DB.Table("im_users").Where("id=?", params.ToId).First(&users); result.RowsAffected == 0 {
-		response.ErrorResponse(enum.PARAMS_ERROR, "用户不存在").ToJson(cxt)
+		response.ErrorResponse(enum.ParamError, "用户不存在").ToJson(cxt)
 		return
 	}
 
 	var friends im_friends.ImFriends
 
 	if result := model.DB.Table("im_friends").Where("form_id=? and to_id=?", id, params.ToId).First(&friends); result.RowsAffected > 0 {
-		response.ErrorResponse(enum.PARAMS_ERROR, "用户已经是好友关系了...").ToJson(cxt)
+		response.ErrorResponse(enum.ParamError, "用户已经是好友关系了...").ToJson(cxt)
 		return
 	}
 
 	records := im_friend_records.ImFriendRecords{
 		FormId:      helpers.InterfaceToInt64(id),
 		ToId:        helpers.StringToInt64(params.ToId),
-		Status:      im_friend_records.WAITING_STATUS,
+		Status:      im_friend_records.WaitingStatus,
 		CreatedAt:   date.NewDate(),
 		Information: params.Information,
 	}
@@ -86,7 +79,7 @@ func (friend FriendRecordController) Store(cxt *gin.Context) {
 
 	var msg message.CreateFriendMessage
 
-	msg.MsgCode = enum.WS_CREATE
+	msg.MsgCode = enum.WsCreate
 	msg.ID = records.Id
 	msg.ToID = records.ToId
 	msg.FormId = records.FormId
@@ -103,7 +96,6 @@ func (friend FriendRecordController) Store(cxt *gin.Context) {
 	return
 }
 
-// 同意好友请求
 func (friend FriendRecordController) Update(cxt *gin.Context) {
 	id := cxt.MustGet("id")
 	params := requests.UpdateFriendRequest{
@@ -113,7 +105,7 @@ func (friend FriendRecordController) Update(cxt *gin.Context) {
 
 	errs := validator.New().Struct(params)
 	if errs != nil {
-		response.ErrorResponse(enum.PARAMS_ERROR, errs.Error()).ToJson(cxt)
+		response.ErrorResponse(enum.ParamError, errs.Error()).ToJson(cxt)
 		return
 	}
 
@@ -139,7 +131,7 @@ func (friend FriendRecordController) Update(cxt *gin.Context) {
 	var msgCode int
 
 	if params.Status == 1 {
-		msgCode = enum.WS_FRIEND_OK
+		msgCode = enum.WsFriendOk
 		var friendDao friend_dao.FriendDao
 		//添加好友关系
 		friendDao.AgreeFriendRequest(records.FormId, records.ToId)
@@ -151,7 +143,7 @@ func (friend FriendRecordController) Update(cxt *gin.Context) {
 		sessionDao.CreateSession(records.ToId, records.FormId, 1)
 
 	} else {
-		msgCode = enum.WS_FRIEND_ERROR
+		msgCode = enum.WsFriendError
 	}
 
 	msg.MsgCode = msgCode

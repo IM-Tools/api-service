@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/7/3
-  @note
-**/
 package friend
 
 import (
@@ -18,7 +13,6 @@ import (
 type FriendController struct {
 }
 
-// 获取好友列表
 func (friend FriendController) Index(cxt *gin.Context) {
 	id := cxt.MustGet("id")
 
@@ -42,7 +36,7 @@ func (friend FriendController) Index(cxt *gin.Context) {
 func (friend FriendController) GetUserStatus(cxt *gin.Context) {
 	var person Person
 	if err := cxt.ShouldBindUri(&person); err != nil {
-		response.FailResponse(enum.PARAMS_ERROR, err.Error()).ToJson(cxt)
+		response.FailResponse(enum.ParamError, err.Error()).ToJson(cxt)
 		return
 	}
 	var _dispatch dispatch.DispatchService
@@ -50,14 +44,14 @@ func (friend FriendController) GetUserStatus(cxt *gin.Context) {
 
 	if ok {
 		response.SuccessResponse(&UserStatus{
-			Status: enum.WS_USER_ONLINE,
+			Status: enum.WsUserOnline,
 			Id:     helpers.StringToInt(person.ID),
 		}).ToJson(cxt)
 		return
 	}
 
 	response.SuccessResponse(&UserStatus{
-		Status: enum.WS_USER_OFFLINE,
+		Status: enum.WsUserOffline,
 		Id:     helpers.StringToInt(person.ID),
 	}).ToJson(cxt)
 	return

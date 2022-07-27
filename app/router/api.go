@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/5/16
-  @note
-**/
 package router
 
 import (
@@ -14,7 +9,7 @@ import (
 	"im-services/app/middleware"
 )
 
-// 注册api路由
+// RegisterApiRoutes 注册api路由
 func RegisterApiRoutes(router *gin.Engine) {
 
 	var api *gin.RouterGroup

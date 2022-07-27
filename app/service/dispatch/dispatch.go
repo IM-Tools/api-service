@@ -1,12 +1,6 @@
-/**
-  @author:panliang
-  @data:2022/6/22
-  @note
-**/
 package dispatch
 
 import (
-	"github.com/gorilla/websocket"
 	"im-services/config"
 	"im-services/pkg/redis"
 	"time"
@@ -48,6 +42,6 @@ func (Service *DispatchService) SetDispatchNode(uid string) {
 	redis.RedisDB.Set(uid, config.Conf.Server.Node, time.Hour*24)
 }
 
-func (Service *DispatchService) MessageDispatch(conn *websocket.Conn) {
+func (Service *DispatchService) MessageDispatch() {
 
 }

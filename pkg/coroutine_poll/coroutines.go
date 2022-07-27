@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/6/5
-  @note
-**/
 package coroutine_poll
 
 import (

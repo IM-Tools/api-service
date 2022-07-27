@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/6/6
-  @note
-**/
 package kafka
 
 import (
@@ -60,5 +55,9 @@ func (p *Producer) SendMessage(txt []byte) {
 }
 
 func (p *Producer) Close() {
-	p.Producer.Close()
+	err := p.Producer.Close()
+
+	if err != nil {
+		fmt.Println(err)
+	}
 }

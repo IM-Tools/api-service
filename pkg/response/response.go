@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/6/3
-  @note
-**/
 package response
 
 import (
@@ -16,7 +11,7 @@ type JsonResponse struct {
 	Data    interface{} `json:"data"`
 }
 
-//响应json
+// ToJson 响应json
 func (resp *JsonResponse) ToJson(ctx *gin.Context) {
 	code := 200
 	if resp.Code > 500 {
@@ -25,7 +20,7 @@ func (resp *JsonResponse) ToJson(ctx *gin.Context) {
 	ctx.JSON(code, resp)
 }
 
-//失败响应
+// FailResponse 失败响应
 func FailResponse(code int, message string, data ...interface{}) *JsonResponse {
 	var r interface{}
 	if len(data) > 0 {
@@ -69,14 +64,14 @@ func ErrorResponse(status int, message string, data ...interface{}) *JsonRespons
 	}
 }
 
-// 将 json 设为响应体.
+// WriteTo 将 json 设为响应体.
 // HTTP 状态码由应用状态码决定
 func (resp *JsonResponse) WriteTo(ctx *gin.Context) {
 	code := 200
 	ctx.JSON(code, resp)
 }
 
-// 获取 HTTP 状态码. HTTP 状态码由 应用状态码映射
+// responseCode 获取 HTTP 状态码. HTTP 状态码由 应用状态码映射
 func (that *JsonResponse) responseCode() int {
 	// todo 完善应用状态码对应 http 状态码
 	if that.Code != http.StatusOK {

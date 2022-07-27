@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/5/27
-  @note
-**/
 package router
 
 import (
@@ -11,7 +6,7 @@ import (
 	"im-services/app/service/handler"
 )
 
-// 注册websocket长链接路由
+// RegisterWsRouters 注册websocket路由
 func RegisterWsRouters(router *gin.Engine) {
 
 	WsService := new(handler.WsService)

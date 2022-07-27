@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/5/27
-  @note
-**/
 package bootstrap
 
 import (
@@ -20,7 +15,7 @@ import (
 	_ "net/http/pprof"
 )
 
-// 启动服务方法
+// Start 启动服务方法
 func Start() {
 
 	r := gin.Default()
@@ -39,7 +34,7 @@ func Start() {
 	_ = r.Run(config.Conf.Server.Listen)
 }
 
-// 启动第三方服务
+// LoadConfiguration 加载连接池
 func LoadConfiguration() {
 
 	setUpLogger()

@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/6/3
-  @note
-**/
 package requests
 
 type LoginForm struct {

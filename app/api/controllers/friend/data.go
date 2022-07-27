@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/7/6
-  @note
-**/
 package friend
 
 type ImFriendList struct {

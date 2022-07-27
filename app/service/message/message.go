@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/5/27
-  @note
-**/
 package message
 
 import (
@@ -21,7 +16,7 @@ type MessageClient struct {
 	Msg         Message `json:"msg"`
 }
 
-// ack机制
+// AckMsg ack消息
 type AckMsg struct {
 	Ack         int   `json:"ack"`           // 1.消息已经投递到服务器了
 	MsgCode     int   `json:"msg_code"`      // 1.消息已经投递到服务器了
@@ -29,7 +24,7 @@ type AckMsg struct {
 	MsgClientId int64 `json:"msg_client_id"` //客户端生成的消息id
 }
 
-// 私聊内容
+// CreateFriendMessage 私聊内容
 type CreateFriendMessage struct {
 	MsgCode     int    `json:"msg_code"`    // 定义的消息code
 	ID          int64  `json:"id"`          // 定义的消息code
@@ -47,7 +42,7 @@ type Users struct {
 	Avatar string `json:"avatar"`
 }
 
-// 用户发送的消息数据
+// Message 用户发送的消息
 type Message struct {
 	MsgId       int64       `json:"msg_id"`        // 服务端消息唯一id
 	MsgClientId int64       `json:"msg_client_id"` // 客户端消息唯一id
@@ -63,7 +58,7 @@ type Message struct {
 	Data        interface{} `json:"data"`          // 自定义携带的数据
 }
 
-// 心跳消息
+// PingMessage 心跳消息
 type PingMessage struct {
 	MsgCode int    `json:"msg_code"`
 	Message string `json:"message"`
@@ -79,7 +74,7 @@ type MessageInterface interface {
 type MessageHandler struct {
 }
 
-// 验证消息是否正确 此处可以做消息拦截
+// ValidationMsg 验证消息是否正确 此处可以做消息拦截
 func (m *MessageHandler) ValidationMsg(msg []byte) (error, []byte, []byte, int) {
 
 	var errs error
@@ -89,7 +84,7 @@ func (m *MessageHandler) ValidationMsg(msg []byte) (error, []byte, []byte, int) 
 
 	msgCode, _ := v.Get("msg_code").Int()
 
-	if msgCode == enum.WS_PING {
+	if msgCode == enum.WsPing {
 		return nil, []byte(`{"msg_code":1004,"message":"ping"}`), []byte(``), 3
 	}
 
@@ -112,7 +107,7 @@ func (m *MessageHandler) ValidationMsg(msg []byte) (error, []byte, []byte, int) 
 	ackMsg.MsgId = userMsg.MsgId
 	ackMsg.MsgClientId = userMsg.MsgClientId
 	ackMsg.Ack = 1
-	ackMsg.MsgCode = enum.WS_ACK
+	ackMsg.MsgCode = enum.WsAck
 
 	fmt.Println(userMsg)
 	msgByte, _ := json.Marshal(&MessageClient{
@@ -127,7 +122,7 @@ func (m *MessageHandler) ValidationMsg(msg []byte) (error, []byte, []byte, int) 
 
 	ok, node := dService.IsDispatchNode(helpers.Int64ToString(userMsg.ToID))
 	if !ok && node != "" {
-		// 将消息分发到指定的客户端
+		// todo 将消息分发到指定的客户端
 	}
 	ackMsgByte, _ := json.Marshal(ackMsg)
 

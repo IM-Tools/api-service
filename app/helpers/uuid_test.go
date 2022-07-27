@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/7/2
-  @note
-**/
 package helpers
 
 import (

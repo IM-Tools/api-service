@@ -1,12 +1,7 @@
-/**
-  @author:panliang
-  @data:2022/5/27
-  @note
-**/
 package client
 
 import (
-	"fmt"
+	"im-services/app/helpers"
 	"im-services/pkg/coroutine_poll"
 	"im-services/pkg/logger"
 	"sync"
@@ -41,25 +36,25 @@ var (
 )
 
 type ClientManagerInterface interface {
-	// 设置客户端信息
+	// SetClient 设置客户端信息
 	SetClient(client *ImClient)
-	// 删除客户端信息
+	// DelClient 删除客户端信息
 	DelClient(client *ImClient)
-	// 启动服务
+	// Start 启动服务
 	Start()
-	// 消息投递到指定客户端
+	// ImSend 消息投递到指定客户端 消息投递到指定客户端
 	ImSend(message []byte, client *ImClient)
-	// 私聊信息消费
+	// LaunchPrivateMessage 私聊信息消费
 	LaunchPrivateMessage(msg_byte []byte)
-	// 群聊信息消费
+	// LaunchGroupMessage 群聊信息消费
 	LaunchGroupMessage(msg_byte []byte)
-	// 广播消息
+	// LaunchBroadcastMessage 广播消息
 	LaunchBroadcastMessage(msg_byte []byte)
-	// 消费离线消息
+	// ConsumingOfflineMessages 消费离线消息
 	ConsumingOfflineMessages(client *ImClient)
-	// 向好友广播在线状态
+	// RadioUserOnlineStatus 向好友广播在线状态
 	RadioUserOnlineStatus(client *ImClient)
-	// 获取在线人数
+	// GetOnlineNumber 获取在线人数
 	GetOnlineNumber() int
 }
 
@@ -89,21 +84,22 @@ func (manager *ImClientManager) Start() {
 			//manager.RadioUserOnlineStatus(client)
 		case client := <-ImManager.Unregister:
 			manager.DelClient(client)
-			logger.Logger.Debug(fmt.Sprintf("离线的客户端%s:", client.ID))
 
 		case message := <-ImManager.PrivateChannel:
-			coroutine_poll.AntsPool.Submit(func() {
+			err := coroutine_poll.AntsPool.Submit(func() {
 				manager.LaunchPrivateMessage(message)
 			})
+			helpers.ErrorHandler(err)
 		case groupMessage := <-ImManager.GroupChannel:
-			coroutine_poll.AntsPool.Submit(func() {
+			err := coroutine_poll.AntsPool.Submit(func() {
 				manager.LaunchPrivateMessage(groupMessage)
 			})
+			helpers.ErrorHandler(err)
 		case publicMessage := <-ImManager.BroadcastChannel:
-			coroutine_poll.AntsPool.Submit(func() {
+			err := coroutine_poll.AntsPool.Submit(func() {
 				manager.LaunchBroadcastMessage(publicMessage)
 			})
-
+			helpers.ErrorHandler(err)
 		}
 
 	}

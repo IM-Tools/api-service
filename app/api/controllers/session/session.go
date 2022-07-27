@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/6/30
-  @note
-**/
 package session
 
 import (
@@ -21,7 +16,6 @@ import (
 type SessionController struct {
 }
 
-// 获取会话列表
 func (s SessionController) Index(cxt *gin.Context) {
 	id := cxt.MustGet("id")
 
@@ -42,7 +36,6 @@ func (s SessionController) Index(cxt *gin.Context) {
 	return
 }
 
-// 添加会话
 func (s SessionController) Store(cxt *gin.Context) {
 
 	id := cxt.MustGet("id")
@@ -54,7 +47,7 @@ func (s SessionController) Store(cxt *gin.Context) {
 	errs := validator.New().Struct(params)
 
 	if errs != nil {
-		response.FailResponse(enum.PARAMS_ERROR, errs.Error()).ToJson(cxt)
+		response.FailResponse(enum.ParamError, errs.Error()).ToJson(cxt)
 		return
 	}
 
@@ -78,11 +71,10 @@ type Person struct {
 	ID string `uri:"id" binding:"required"`
 }
 
-// 更新会话
 func (s SessionController) Update(cxt *gin.Context) {
 	var person Person
 	if err := cxt.ShouldBindUri(&person); err != nil {
-		response.FailResponse(enum.PARAMS_ERROR, err.Error()).ToJson(cxt)
+		response.FailResponse(enum.ParamError, err.Error()).ToJson(cxt)
 		return
 	}
 
@@ -91,11 +83,10 @@ func (s SessionController) Update(cxt *gin.Context) {
 
 }
 
-// 删除会话
 func (s SessionController) Delete(cxt *gin.Context) {
 	var person Person
 	if err := cxt.ShouldBindUri(&person); err != nil {
-		response.FailResponse(enum.PARAMS_ERROR, err.Error()).ToJson(cxt)
+		response.FailResponse(enum.ParamError, err.Error()).ToJson(cxt)
 		return
 	}
 

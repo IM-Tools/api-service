@@ -18,7 +18,7 @@ type ImFriends struct {
 	TopTime   string  `gorm:"column:top_time" json:"top_time"`
 	Status    int     `gorm:"column:status" json:"status"` //0.未置顶 1.已置顶
 	Uid       string  `gorm:"column:uid" json:"uid"`
-	Users     ImUsers `gorm:"foreignkey:ID;references:ToId"`
+	Users     ImUsers `gorm:"foreignKey:ID;references:ToId"`
 }
 
 type ImUsers struct {

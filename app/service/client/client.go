@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/5/27
-  @note
-**/
 package client
 
 import (
@@ -32,7 +27,7 @@ type ClientInterface interface {
 	Close()
 }
 
-// 返回一个客户端实例
+// NewClient 返回一个客户端实例
 // 并且设置当前客户端id以及socket握手实例
 func NewClient(ID string, uid string, identity int, conn *websocket.Conn) *ImClient {
 	client := new(ImClient)

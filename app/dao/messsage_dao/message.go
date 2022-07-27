@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/7/8
-  @note
-**/
 package messsage_dao
 
 import (
@@ -15,6 +10,6 @@ type MessageDao struct {
 
 func (m MessageDao) CreateMessage() {
 	var message im_messages.ImMessages
-	
+
 	model.DB.Save(&message)
 }

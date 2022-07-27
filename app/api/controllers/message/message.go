@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/7/7
-  @note
-**/
 package message
 
 import (
@@ -23,9 +18,6 @@ import (
 type MessageController struct {
 }
 
-/**
-获取消息列表
-*/
 func (m *MessageController) Index(cxt *gin.Context) {
 
 	id := cxt.MustGet("id")
@@ -75,12 +67,10 @@ func (m *MessageController) Index(cxt *gin.Context) {
 
 }
 
-// 消息撤回
 func (m *MessageController) RecallMessage(cxt *gin.Context) {
-
+	response.SuccessResponse().ToJson(cxt)
+	return
 }
-
-// 私聊消息投递
 
 func (m *MessageController) SendPrivateMessage(cxt *gin.Context) {
 
@@ -101,7 +91,7 @@ func (m *MessageController) SendPrivateMessage(cxt *gin.Context) {
 	errs := validator.New().Struct(params)
 
 	if errs != nil {
-		response.FailResponse(enum.PARAMS_ERROR, errs.Error()).ToJson(cxt)
+		response.FailResponse(enum.ParamError, errs.Error()).ToJson(cxt)
 		return
 	}
 
@@ -111,7 +101,7 @@ func (m *MessageController) SendPrivateMessage(cxt *gin.Context) {
 		Count(&count)
 
 	if count == 0 {
-		response.FailResponse(enum.WS_NOT_FRIEND, "非好友关系,不能聊天...").ToJson(cxt)
+		response.FailResponse(enum.WsNotFriend, "非好友关系,不能聊天...").ToJson(cxt)
 		return
 	}
 

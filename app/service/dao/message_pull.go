@@ -1,8 +1,3 @@
-/**
-  @author:panliang
-  @data:2022/6/8
-  @note
-**/
 package dao
 
 import (
@@ -12,7 +7,7 @@ import (
 	"im-services/pkg/model"
 )
 
-// 拉取离线私聊消息
+// PullPrivateOfflineMessage 拉取离线私聊消息
 func (offline *OfflineMessageDao) PullPrivateOfflineMessage(id string) []offline_message.ImOfflineMessages {
 
 	var list []offline_message.ImOfflineMessages
@@ -27,7 +22,7 @@ func (offline *OfflineMessageDao) PullPrivateOfflineMessage(id string) []offline
 	return list
 }
 
-// 更新消息状态
+// UpdatePrivateOfflineMessageStatus 更新消息状态
 func (offline *OfflineMessageDao) UpdatePrivateOfflineMessageStatus(id string) {
 	model.DB.Table("im_offline_messages").
 		Where("status=0 and receive_id=?", id).

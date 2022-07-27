@@ -17,7 +17,7 @@ type ImSessions struct {
 	Name        string  `gorm:"column:name" json:"name"`                 //会话名称
 	Avatar      string  `gorm:"column:avatar" json:"avatar"`             //会话头像
 	Status      int     `gorm:"column:status" json:"status"`             //会话状态 0.正常 1.禁用
-	Users       ImUsers `gorm:"foreignkey:ID;references:ToId"`
+	Users       ImUsers `gorm:"primaryKey:ID;references:ToId"`
 }
 
 type ImUsers struct {
@@ -35,8 +35,8 @@ type ImUsers struct {
 }
 
 const (
-	SESSION_STATUS_OK   = 0
-	SESSION_STATUS_DOWN = 1
-	TOP_STATUS_OK       = 1
-	TOP_STATUS          = 0
+	SessionStatusOk = 0
+	SessionStatusNo = 1
+	TopStatusOk     = 1
+	TopStatus       = 0
 )
