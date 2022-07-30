@@ -4,7 +4,7 @@ const (
 	ParamError = 1000 // 参数错误
 	ApiError   = 1001 // 接口异常 比如调用第三方接口 或者代码异常
 
-	WsSuccess      = 200  // 聊天消息
+	WsChantMessage = 200  // 聊天消息
 	WsCreate       = 1000 // 添加好友
 	WsFriendOk     = 1001 // 同意好友申请
 	WsFriendError  = 1002 // 拒绝

@@ -17,12 +17,12 @@ type ImSessions struct {
 	Name        string  `gorm:"column:name" json:"name"`                 //会话名称
 	Avatar      string  `gorm:"column:avatar" json:"avatar"`             //会话头像
 	Status      int     `gorm:"column:status" json:"status"`             //会话状态 0.正常 1.禁用
-	Users       ImUsers `gorm:"primaryKey:ID;references:ToId"`
+	Users       ImUsers `gorm:"foreignKey:ID;references:ToId"`
 }
 
 type ImUsers struct {
 	//model.BaseModel
-	ID            int64  `gorm:"column:id;primaryKey" json:"id"`
+	ID            int64  `gorm:"column:id;foreignKey" json:"id"`
 	Name          string `gorm:"column:name" json:"name"`
 	Email         string `gorm:"column:email" json:"email"`
 	Avatar        string `gorm:"column:avatar" json:"avatar"`           //头像

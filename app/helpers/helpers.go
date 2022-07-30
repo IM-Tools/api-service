@@ -81,7 +81,6 @@ func InterfaceToString(inter interface{}) string {
 func ErrorHandler(err error) {
 	if err != nil {
 		logger.Logger.Error(err.Error())
-		fmt.Println(err.Error())
 		return
 	}
 	return

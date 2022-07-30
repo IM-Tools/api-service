@@ -18,7 +18,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ImMessageClient interface {
-	CheckAuth(ctx context.Context, in *CheckMessageRequest, opts ...grpc.CallOption) (*CheckMessageResponse, error)
+	SendMessageHandler(ctx context.Context, in *SendMessageRequest, opts ...grpc.CallOption) (*SendMessageResponse, error)
 }
 
 type imMessageClient struct {
@@ -29,9 +29,9 @@ func NewImMessageClient(cc grpc.ClientConnInterface) ImMessageClient {
 	return &imMessageClient{cc}
 }
 
-func (c *imMessageClient) CheckAuth(ctx context.Context, in *CheckMessageRequest, opts ...grpc.CallOption) (*CheckMessageResponse, error) {
-	out := new(CheckMessageResponse)
-	err := c.cc.Invoke(ctx, "/ImMessage/CheckAuth", in, out, opts...)
+func (c *imMessageClient) SendMessageHandler(ctx context.Context, in *SendMessageRequest, opts ...grpc.CallOption) (*SendMessageResponse, error) {
+	out := new(SendMessageResponse)
+	err := c.cc.Invoke(ctx, "/ImMessage/SendMessageHandler", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (c *imMessageClient) CheckAuth(ctx context.Context, in *CheckMessageRequest
 // All implementations must embed UnimplementedImMessageServer
 // for forward compatibility
 type ImMessageServer interface {
-	CheckAuth(context.Context, *CheckMessageRequest) (*CheckMessageResponse, error)
+	SendMessageHandler(context.Context, *SendMessageRequest) (*SendMessageResponse, error)
 	mustEmbedUnimplementedImMessageServer()
 }
 
@@ -50,8 +50,8 @@ type ImMessageServer interface {
 type UnimplementedImMessageServer struct {
 }
 
-func (UnimplementedImMessageServer) CheckAuth(context.Context, *CheckMessageRequest) (*CheckMessageResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CheckAuth not implemented")
+func (UnimplementedImMessageServer) SendMessageHandler(context.Context, *SendMessageRequest) (*SendMessageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendMessageHandler not implemented")
 }
 func (UnimplementedImMessageServer) mustEmbedUnimplementedImMessageServer() {}
 
@@ -66,20 +66,20 @@ func RegisterImMessageServer(s grpc.ServiceRegistrar, srv ImMessageServer) {
 	s.RegisterService(&ImMessage_ServiceDesc, srv)
 }
 
-func _ImMessage_CheckAuth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CheckMessageRequest)
+func _ImMessage_SendMessageHandler_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendMessageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ImMessageServer).CheckAuth(ctx, in)
+		return srv.(ImMessageServer).SendMessageHandler(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ImMessage/CheckAuth",
+		FullMethod: "/ImMessage/SendMessageHandler",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ImMessageServer).CheckAuth(ctx, req.(*CheckMessageRequest))
+		return srv.(ImMessageServer).SendMessageHandler(ctx, req.(*SendMessageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -92,8 +92,8 @@ var ImMessage_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ImMessageServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CheckAuth",
-			Handler:    _ImMessage_CheckAuth_Handler,
+			MethodName: "SendMessageHandler",
+			Handler:    _ImMessage_SendMessageHandler_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

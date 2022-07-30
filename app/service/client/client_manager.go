@@ -3,7 +3,6 @@ package client
 import (
 	"im-services/app/helpers"
 	"im-services/pkg/coroutine_poll"
-	"im-services/pkg/logger"
 	"sync"
 )
 
@@ -70,7 +69,6 @@ func (manager *ImClientManager) DelClient(client *ImClient) {
 	manager.MutexKey.Lock()
 	client.Close()
 	defer manager.MutexKey.Unlock()
-	logger.Logger.Info("客户端断开:" + client.ID)
 	delete(manager.ImClientMap, client.ID)
 }
 

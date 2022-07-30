@@ -2,6 +2,7 @@ package bootstrap
 
 import (
 	"github.com/gin-gonic/gin"
+	"im-services/app/middleware"
 	router2 "im-services/app/router"
 	"im-services/app/service/client"
 	"im-services/app/service/queue/nsq_queue"
@@ -22,13 +23,12 @@ func Start() {
 
 	go client.ImManager.Start()
 
+	r.Use(middleware.Recover)
+
 	setRoute(r)
 
 	gin.SetMode(config.Conf.Server.Mode)
 
-	//go func() {
-	//	http.ListenAndServe("0.0.0.0:6060", nil)
-	//}()
 	go server.StartGrpc()
 
 	_ = r.Run(config.Conf.Server.Listen)

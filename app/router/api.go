@@ -6,6 +6,7 @@ import (
 	"im-services/app/api/controllers/friend"
 	"im-services/app/api/controllers/message"
 	"im-services/app/api/controllers/session"
+	"im-services/app/api/controllers/user"
 	"im-services/app/middleware"
 )
 
@@ -24,6 +25,15 @@ func RegisterApiRoutes(router *gin.Engine) {
 		authGroup.POST("/login", login.Login)                 //登录
 		authGroup.POST("/registered", login.Registered)       //注册
 		authGroup.POST("/sendEmailCode", login.SendEmailCode) //发送注册邮件
+	}
+
+	// 登录
+	userGroup := api.Group("/user")
+	{
+		users := new(user.UsersController)
+
+		userGroup.GET("/:id", users.Info) //获取用户信息
+
 	}
 
 	// 会话
@@ -46,9 +56,10 @@ func RegisterApiRoutes(router *gin.Engine) {
 
 		friendGroup.GET("/", friends.Index) //获取好友列表
 		friendGroup.GET("/status/:id", friends.GetUserStatus)
-		friendGroup.POST("/record", friendRecords.Store) //发送好友请求
-		friendGroup.GET("/record", friendRecords.Index)  //获取好友申请记录列表
-		friendGroup.PUT("/record", friendRecords.Update) //同意好友请求
+		friendGroup.POST("/record", friendRecords.Store)       //发送好友请求
+		friendGroup.GET("/record", friendRecords.Index)        //获取好友申请记录列表
+		friendGroup.PUT("/record", friendRecords.Update)       //同意好友请求
+		friendGroup.GET("/userQuery", friendRecords.UserQuery) //非好友用户查询
 
 	}
 

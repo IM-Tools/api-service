@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc"
 	"im-services/config"
 	grpcAuth "im-services/server/grpc/auth"
+	grpcMessage "im-services/server/grpc/message"
 	"log"
 	"net"
 )
@@ -16,8 +17,13 @@ import (
 var RpcServer = grpc.NewServer()
 
 func StartGrpc() {
-	var auth grpcAuth.ImAuthServer
-	grpcAuth.RegisterImAuthServer(RpcServer, auth)
+	
+	var auth grpcAuth.ImAuthHandlerServer
+	var message grpcMessage.ImMessageServer
+
+	grpcAuth.RegisterImAuthHandlerServer(RpcServer, auth)
+	grpcMessage.RegisterImMessageServer(RpcServer, message)
+
 	listener, err := net.Listen("tcp", config.Conf.Server.GrpcListen)
 	if err != nil {
 		log.Fatal("grpc服务启动失败", err)

@@ -22,7 +22,7 @@ import (
 type FriendRecordController struct {
 }
 
-func (friend FriendRecordController) Index(cxt *gin.Context) {
+func (friend *FriendRecordController) Index(cxt *gin.Context) {
 	var list []im_friend_records.ImFriendRecords
 	id := cxt.MustGet("id")
 	if result := model.DB.Model(&im_friend_records.ImFriendRecords{}).Preload("Users").
@@ -37,7 +37,7 @@ func (friend FriendRecordController) Index(cxt *gin.Context) {
 
 }
 
-func (friend FriendRecordController) Store(cxt *gin.Context) {
+func (friend *FriendRecordController) Store(cxt *gin.Context) {
 	id := cxt.MustGet("id")
 
 	params := requests.CreateFriendRequest{
@@ -96,7 +96,7 @@ func (friend FriendRecordController) Store(cxt *gin.Context) {
 	return
 }
 
-func (friend FriendRecordController) Update(cxt *gin.Context) {
+func (friend *FriendRecordController) Update(cxt *gin.Context) {
 	id := cxt.MustGet("id")
 	params := requests.UpdateFriendRequest{
 		Status: helpers.StringToInt(cxt.PostForm("status")),
@@ -162,4 +162,27 @@ func (friend FriendRecordController) Update(cxt *gin.Context) {
 	response.SuccessResponse().ToJson(cxt)
 	return
 
+}
+
+// QueryUser 查询非好友用户
+
+func (friend *FriendRecordController) UserQuery(cxt *gin.Context) {
+
+	id := cxt.MustGet("id")
+
+	params := requests.QueryUserRequest{
+		Email: cxt.Query("email"),
+	}
+	errs := validator.New().Struct(params)
+	if errs != nil {
+		response.ErrorResponse(enum.ParamError, errs.Error()).ToJson(cxt)
+		return
+	}
+	var friendDao friend_dao.FriendDao
+
+	users := friendDao.GetNotFriendList(id, params.Email)
+
+	response.SuccessResponse(users).ToJson(cxt)
+
+	return
 }

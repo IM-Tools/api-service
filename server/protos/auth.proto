@@ -5,7 +5,7 @@
 **/
 syntax = "proto3";
 option go_package="./server/grpc/auth/;grpcAuth";
-service ImAuth {
+service ImAuthHandler {
   rpc CheckAuth(CheckAuthRequest) returns (CheckAuthResponse) {}
 }
 

@@ -8,3 +8,7 @@ type CreateFriendRequest struct {
 	ToId        string `json:"to_id" validate:"required"`
 	Information string `json:"information" validate:"required"`
 }
+
+type QueryUserRequest struct {
+	Email string `json:"email" validate:"required,email"`
+}

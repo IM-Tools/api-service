@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"im-services/app/api/requests"
 	"im-services/app/service/client"
-	"im-services/app/service/message"
+	messageHandler "im-services/app/service/message"
 )
 
 type ImMessageService struct {
@@ -15,35 +15,30 @@ type ImMessageServiceInterface interface {
 
 	// 发送-好友申请或者拒绝❌好友请求
 
-	SendFriendActionMessage(msg message.CreateFriendMessage)
+	SendFriendActionMessage(msg messageHandler.CreateFriendMessage)
 
 	// 发送私聊消息
 	SendPrivateMessage(msg requests.PrivateMessageRequest) (bool, string)
 }
 
-func (s ImMessageService) SendFriendActionMessage(msg message.CreateFriendMessage) {
+func (s ImMessageService) SendFriendActionMessage(msg messageHandler.CreateFriendMessage) {
 	jsonByte, _ := json.Marshal(msg)
 	client.ImManager.BroadcastChannel <- jsonByte
 }
 
-func (s ImMessageService) SendPrivateMessage(msg requests.PrivateMessageRequest) (bool, string) {
+func (s ImMessageService) SendPrivateMessage(message requests.PrivateMessageRequest) (bool, string) {
 
-	var handler message.MessageHandler
-	jsonByte, _ := json.Marshal(msg)
+	var handler messageHandler.MessageHandler
 
-	errs, msgString, _, channel := handler.ValidationMsg(jsonByte)
+	msgString := handler.GetPrivateChatMessages(message)
 
-	if errs != nil {
-		return false, "消息解析失败"
-	} else {
-		// 将消费分发到不同的队列
-		switch channel {
-		case 1:
-			client.ImManager.PrivateChannel <- msgString
-		case 2:
-
-		default:
-		}
+	// 将消费分发到不同的队列
+	switch message.ChannelType {
+	case 1:
+		client.ImManager.PrivateChannel <- []byte(msgString)
+	case 2:
+		client.ImManager.GroupChannel <- []byte(msgString)
+	default:
 	}
 
 	return true, "Success"

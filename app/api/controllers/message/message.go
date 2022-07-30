@@ -77,7 +77,7 @@ func (m *MessageController) SendPrivateMessage(cxt *gin.Context) {
 	id := cxt.MustGet("id")
 	params := requests.PrivateMessageRequest{
 		MsgId:       date.TimeUnixNano(),
-		MsgCode:     http.StatusOK,
+		MsgCode:     enum.WsChantMessage,
 		MsgClientId: helpers.StringToInt64(cxt.PostForm("msg_client_id")),
 		FormID:      helpers.InterfaceToInt64(id),
 		ToID:        helpers.StringToInt64(cxt.PostForm("to_id")),

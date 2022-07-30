@@ -6,16 +6,17 @@ import (
 )
 
 type JsonResponse struct {
-	Code    int         `json:"code"`
-	Message string      `json:"message"`
-	Data    interface{} `json:"data"`
+	Code     int         `json:"code"`
+	Message  string      `json:"message"`
+	Data     interface{} `json:"data"`
+	HttpCode int
 }
 
 // ToJson 响应json
 func (resp *JsonResponse) ToJson(ctx *gin.Context) {
 	code := 200
-	if resp.Code > 500 {
-		code = 500
+	if resp.HttpCode != 200 {
+		code = resp.HttpCode
 	}
 	ctx.JSON(code, resp)
 }
@@ -69,6 +70,10 @@ func ErrorResponse(status int, message string, data ...interface{}) *JsonRespons
 func (resp *JsonResponse) WriteTo(ctx *gin.Context) {
 	code := 200
 	ctx.JSON(code, resp)
+}
+func (resp *JsonResponse) SetHttpCode(httpCode int) *JsonResponse {
+	resp.HttpCode = httpCode
+	return resp
 }
 
 // responseCode 获取 HTTP 状态码. HTTP 状态码由 应用状态码映射
