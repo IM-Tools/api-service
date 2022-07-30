@@ -48,3 +48,33 @@ func (f *FriendDao) GetNotFriendList(id interface{}, email string) []APIUsers {
 
 	return users
 }
+
+// 查询好友详情
+func (f *FriendDao) GetFriends(id interface{}) (error, interface{}) {
+	var err error
+	var list im_friends.ImFriends
+	result := model.DB.Model(&im_friends.ImFriends{}).Preload("Users").
+		Where("form_id=?", id).
+		Order("status desc").
+		Order("top_time desc").
+		Find(&list)
+	if result.RowsAffected == 0 {
+		return err, list
+	}
+	return nil, list
+}
+
+// 查询好友详情
+func (f *FriendDao) GetFriendLists(id interface{}) (error, interface{}) {
+	var err error
+	var list []im_friends.ImFriends
+	result := model.DB.Model(&im_friends.ImFriends{}).Preload("Users").
+		Where("form_id=?", id).
+		Order("status desc").
+		Order("top_time desc").
+		Find(&list)
+	if result.RowsAffected == 0 {
+		return err, list
+	}
+	return nil, list
+}

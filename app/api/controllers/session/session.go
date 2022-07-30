@@ -3,6 +3,7 @@ package session
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"im-services/app/api/controllers"
 	"im-services/app/api/requests"
 	"im-services/app/dao/session_dao"
 	"im-services/app/enum"
@@ -84,8 +85,9 @@ func (s SessionController) Update(cxt *gin.Context) {
 }
 
 func (s SessionController) Delete(cxt *gin.Context) {
-	var person Person
-	if err := cxt.ShouldBindUri(&person); err != nil {
+
+	err, person := controllers.GetPersonId(cxt)
+	if err != nil {
 		response.FailResponse(enum.ParamError, err.Error()).ToJson(cxt)
 		return
 	}
