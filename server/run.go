@@ -17,7 +17,7 @@ import (
 var RpcServer = grpc.NewServer()
 
 func StartGrpc() {
-	
+
 	var auth grpcAuth.ImAuthHandlerServer
 	var message grpcMessage.ImMessageServer
 

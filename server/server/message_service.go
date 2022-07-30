@@ -3,7 +3,7 @@
   @data:2022/7/30
   @note
 **/
-package server
+package grpcMessage
 
 import (
 	"context"
@@ -12,19 +12,14 @@ import (
 	"im-services/app/service/client"
 	messageHandler "im-services/app/service/message"
 	"im-services/pkg/date"
-	grpcMessage "im-services/server/grpc/message"
+	"im-services/pkg/logger"
 )
 
-type GrpcMessageServiceInterface interface {
-	// SendGpcMessage 消息发送到指定节点
-	SendGpcMessage(message []byte, node string)
-}
-
-type MessageService struct {
+type ImGrpcMessage struct {
 }
 
 // ReceivesGrpcPrivateMessage 接收消息
-func (ps *MessageService) ReceivesGrpcPrivateMessage(ctx context.Context, request *grpcMessage.SendMessageRequest) (*grpcMessage.SendMessageResponse, error) {
+func (ps *ImGrpcMessage) SendMessageHandler(ctx context.Context, request *SendMessageRequest) (*SendMessageResponse, error) {
 
 	params := requests.PrivateMessageRequest{
 		MsgId:       date.TimeUnixNano(),
@@ -39,6 +34,7 @@ func (ps *MessageService) ReceivesGrpcPrivateMessage(ctx context.Context, reques
 		Data:        request.Data,
 	}
 
+	logger.Logger.Error(params.Message)
 	var handler messageHandler.MessageHandler
 
 	msgString := handler.GetPrivateChatMessages(params)
@@ -47,7 +43,7 @@ func (ps *MessageService) ReceivesGrpcPrivateMessage(ctx context.Context, reques
 	case 1:
 		client.ImManager.PrivateChannel <- []byte(msgString)
 	case 2:
-
+		client.ImManager.GroupChannel <- []byte(msgString)
 	}
-	return &grpcMessage.SendMessageResponse{Code: 200}, nil
+	return &SendMessageResponse{Code: 200, Message: "Success"}, nil
 }

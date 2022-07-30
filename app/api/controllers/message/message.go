@@ -27,7 +27,7 @@ func (m *MessageController) Index(cxt *gin.Context) {
 
 	var list []im_messages.ImMessages
 
-	query := model.DB.Table("im_messages").Where("form_id=? and to_id=?", id, toId).
+	query := model.DB.Table("im_messages").Where("(form_id=? and to_id=?) or (form_id=? and to_id=?)", id, toId, toId, id).
 		Order("created_at desc")
 
 	var users user.ImUsers
