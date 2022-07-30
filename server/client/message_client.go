@@ -7,6 +7,7 @@ package client
 
 import (
 	"context"
+	"fmt"
 	"github.com/valyala/fastjson"
 	"google.golang.org/grpc"
 	"im-services/app/enum"
@@ -36,24 +37,28 @@ func (messageService *GrpcMessageService) SendGpcMessage(message []byte, node st
 	var p fastjson.Parser
 	v, _ := p.Parse(string(message))
 
-	resp, err := ImRpcServiceClient.
-		SendMessageHandler(context.Background(),
-			&grpcMessage.SendMessageRequest{
-				MsgId:       0,
-				MsgClientId: date.TimeUnix(),
-				MsgCode:     enum.WsChantMessage,
-				FormId:      v.GetInt64("form_id"),
-				ToId:        v.GetInt64("to_id"),
-				MsgType:     v.GetInt64("msg_type"),
-				ChannelType: v.GetInt64("channel_type"),
-				Message:     v.Get("message").String(),
-				SendTime:    v.GetInt64("send_time"),
-				Data:        v.Get("data").String(),
-			})
-	if err != nil {
+	params := &grpcMessage.SendMessageRequest{
+		MsgId:       0,
+		MsgClientId: date.TimeUnix(),
+		MsgCode:     enum.WsChantMessage,
+		FormId:      v.GetInt64("form_id"),
+		ToId:        v.GetInt64("to_id"),
+		MsgType:     v.GetInt64("msg_type"),
+		ChannelType: v.GetInt64("channel_type"),
+		Message:     v.Get("message").String(),
+		SendTime:    v.GetInt64("send_time"),
+		Data:        v.Get("data").String(),
+	}
 
+	fmt.Println(v.Get("data").String())
+
+	resp, err := ImRpcServiceClient.
+		SendMessageHandler(context.Background(), params)
+	if err != nil {
+		fmt.Println(err.Error())
 		return
 	}
+	fmt.Println("调用成功")
 	logger.Logger.Error(resp.Message)
 	return
 }

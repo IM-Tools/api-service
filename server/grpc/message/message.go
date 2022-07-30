@@ -15,12 +15,15 @@ import (
 	"im-services/pkg/logger"
 )
 
+// ImGrpcMessage 实现 ImMessageServer 接口
 type ImGrpcMessage struct {
 }
 
-// ReceivesGrpcPrivateMessage 接收消息
-func (ps *ImGrpcMessage) SendMessageHandler(ctx context.Context, request *SendMessageRequest) (*SendMessageResponse, error) {
+func (ImGrpcMessage) mustEmbedUnimplementedImMessageServer() {}
 
+// ReceivesGrpcPrivateMessage 接收消息
+func (ImGrpcMessage) SendMessageHandler(c context.Context, request *SendMessageRequest) (*SendMessageResponse, error) {
+	logger.Logger.Error(request.Message)
 	params := requests.PrivateMessageRequest{
 		MsgId:       date.TimeUnixNano(),
 		MsgCode:     enum.WsChantMessage,
@@ -34,7 +37,6 @@ func (ps *ImGrpcMessage) SendMessageHandler(ctx context.Context, request *SendMe
 		Data:        request.Data,
 	}
 
-	logger.Logger.Error(params.Message)
 	var handler messageHandler.MessageHandler
 
 	msgString := handler.GetPrivateChatMessages(params)

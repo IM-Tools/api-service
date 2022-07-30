@@ -27,7 +27,7 @@ func RegisterApiRoutes(router *gin.Engine) {
 		authGroup.POST("/sendEmailCode", login.SendEmailCode) //发送注册邮件
 	}
 
-	// 登录
+	// 用户
 	userGroup := api.Group("/user")
 	{
 		users := new(user.UsersController)

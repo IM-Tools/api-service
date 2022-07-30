@@ -6,6 +6,7 @@ require (
 	github.com/DataDog/zstd v1.5.2 // indirect
 	github.com/Shopify/sarama v1.34.0
 	github.com/armon/go-metrics v0.4.0 // indirect
+	github.com/aws/aws-sdk-go v1.23.0
 	github.com/eapache/go-resiliency v1.2.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
