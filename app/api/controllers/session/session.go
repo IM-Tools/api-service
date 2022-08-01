@@ -62,7 +62,7 @@ func (s SessionController) Store(cxt *gin.Context) {
 
 	sessionDao.CreateSession(helpers.InterfaceToInt64(id), params.Id, params.Type)
 
-	response.SuccessResponse().ToJson(cxt)
+	response.SuccessResponse(session).ToJson(cxt)
 
 	return
 
