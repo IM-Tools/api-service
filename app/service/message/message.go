@@ -145,8 +145,8 @@ func (m *MessageHandler) GetPrivateChatMessages(message requests.PrivateMessageR
                 "to_id": %d,
                 "msg_type": %d,
                 "channel_type": %d,
-                "message": %s,
-                "data": %s
+                "message": "%s",
+                "data": "%s"
         }`, message.MsgId, message.MsgClientId, message.MsgCode, message.FormID, message.ToID, message.MsgType, message.ChannelType, message.Message, message.Data)
 
 	msgString := fmt.Sprintf(`{

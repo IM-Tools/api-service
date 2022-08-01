@@ -11,7 +11,6 @@ import (
 	"im-services/app/models/im_sessions"
 	"im-services/pkg/model"
 	"im-services/pkg/response"
-	"net/http"
 )
 
 type SessionController struct {
@@ -54,7 +53,7 @@ func (s SessionController) Store(cxt *gin.Context) {
 
 	var session im_sessions.ImSessions
 	if result := model.DB.Table("im_sessions").Where("form_id=? and to_id=?", id, params.Id).First(&session); result.RowsAffected > 0 {
-		response.FailResponse(http.StatusInternalServerError, "已存在会话").ToJson(cxt)
+		response.SuccessResponse(session).ToJson(cxt)
 		return
 	}
 
