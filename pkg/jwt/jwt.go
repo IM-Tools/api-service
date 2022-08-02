@@ -3,7 +3,7 @@ package jwt
 import (
 	"errors"
 	goJwt "github.com/golang-jwt/jwt/v4"
-	"im-services/config"
+	"im-services/internal/config"
 	"im-services/pkg/logger"
 	"time"
 )

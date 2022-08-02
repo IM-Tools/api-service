@@ -3,7 +3,7 @@ package kafka
 import (
 	"fmt"
 	"gopkg.in/Shopify/sarama.v1"
-	config2 "im-services/config"
+	config2 "im-services/internal/config"
 	"im-services/pkg/logger"
 )
 

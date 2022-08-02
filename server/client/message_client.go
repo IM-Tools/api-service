@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"github.com/valyala/fastjson"
 	"google.golang.org/grpc"
-	"im-services/app/enum"
+	"im-services/internal/enum"
 	"im-services/pkg/date"
 	"im-services/pkg/logger"
 	grpcMessage "im-services/server/grpc/message"
@@ -37,8 +37,9 @@ func (messageService *GrpcMessageService) SendGpcMessage(message []byte, node st
 	var p fastjson.Parser
 	v, _ := p.Parse(string(message))
 
+	fmt.Println(v.Get("message").String())
 	params := &grpcMessage.SendMessageRequest{
-		MsgId:       0,
+		MsgId:       date.TimeUnixNano(),
 		MsgClientId: date.TimeUnix(),
 		MsgCode:     enum.WsChantMessage,
 		FormId:      v.GetInt64("form_id"),
@@ -46,19 +47,17 @@ func (messageService *GrpcMessageService) SendGpcMessage(message []byte, node st
 		MsgType:     v.GetInt64("msg_type"),
 		ChannelType: v.GetInt64("channel_type"),
 		Message:     v.Get("message").String(),
-		SendTime:    v.GetInt64("send_time"),
+		SendTime:    date.TimeUnixNano(),
 		Data:        v.Get("data").String(),
 	}
 
-	fmt.Println(v.Get("data").String())
-
+	fmt.Println(params)
 	resp, err := ImRpcServiceClient.
 		SendMessageHandler(context.Background(), params)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
-	fmt.Println("调用成功")
 	logger.Logger.Error(resp.Message)
 	return
 }

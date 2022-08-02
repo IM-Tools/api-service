@@ -5,7 +5,7 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
-	"im-services/config"
+	"im-services/internal/config"
 	"os"
 	"strings"
 	"time"

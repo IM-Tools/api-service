@@ -21,7 +21,7 @@ func TestMessage(t *testing.T) {
   "to_id":35,
   "msg_type":1,
   "channel_type":1,
-  "message":"你好！",
+  "message":"你好",
   "data":""
 }`), "127.0.0.1:8002")
 }

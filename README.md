@@ -32,11 +32,12 @@
 
   * 项目结构
 ```shell
-   ─ app //应用核心
+   ─ internal //应用核心
 │   ├── api //接口
 │   │   ├── controllers // Api控制器
 │   │   ├── requests  // 接口请求校验
 │   │   └── services //封装服务层
+│   ├── config //配置文件
 │   ├── dao //数据层
 │   ├── enum    //枚举
 │   ├── helpers //辅助函数
@@ -55,7 +56,6 @@
 │       └── tests // 测试文件
 ├── cmd // cli 命令工具
 │   ├── cmd
-├── config // 配置文件加载
 ├── config.yaml // 配置文件
 ├── config.yaml.test
 ├── docker // docker配置文件 应用环境

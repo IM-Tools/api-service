@@ -3,7 +3,7 @@ package nsq
 import (
 	"fmt"
 	"github.com/nsqio/go-nsq"
-	"im-services/app/service/dao"
+	"im-services/internal/service/dao"
 )
 
 var (

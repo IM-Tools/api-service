@@ -5,7 +5,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"im-services/config"
+	"im-services/internal/config"
 )
 
 var DB *gorm.DB

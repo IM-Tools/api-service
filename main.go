@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"im-services/app/service/bootstrap"
 	"im-services/cmd"
 	cmd2 "im-services/cmd/cmd"
-	"im-services/config"
+	"im-services/internal/config"
+	"im-services/internal/service/bootstrap"
 	"im-services/pkg/console"
 	"os"
 )

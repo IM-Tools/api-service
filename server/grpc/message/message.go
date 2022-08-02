@@ -7,10 +7,10 @@ package grpcMessage
 
 import (
 	"context"
-	"im-services/app/api/requests"
-	"im-services/app/enum"
-	"im-services/app/service/client"
-	messageHandler "im-services/app/service/message"
+	"im-services/internal/api/requests"
+	"im-services/internal/enum"
+	"im-services/internal/service/client"
+	messageHandler "im-services/internal/service/message"
 	"im-services/pkg/date"
 	"im-services/pkg/logger"
 )
@@ -39,7 +39,7 @@ func (ImGrpcMessage) SendMessageHandler(c context.Context, request *SendMessageR
 
 	var handler messageHandler.MessageHandler
 
-	msgString := handler.GetPrivateChatMessages(params)
+	msgString := handler.GetGrpcPrivateChatMessages(params)
 
 	switch request.ChannelType {
 	case 1:

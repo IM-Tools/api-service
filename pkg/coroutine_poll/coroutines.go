@@ -2,7 +2,7 @@ package coroutine_poll
 
 import (
 	"github.com/panjf2000/ants/v2"
-	"im-services/config"
+	"im-services/internal/config"
 )
 
 var AntsPool *ants.Pool

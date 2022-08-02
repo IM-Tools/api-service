@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"im-services/app/helpers"
+	"im-services/internal/helpers"
 	"os"
 )
 

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/nsqio/go-nsq"
 	"github.com/silenceper/pool"
-	"im-services/config"
+	"im-services/internal/config"
 	"time"
 )
 

@@ -4,7 +4,7 @@ config.yaml
 .idea
 gin.log
 关于im从0到1.md
-app/service/tests/cpu.svg
-app/service/tests/.DS_Store
-app/service/.DS_Store
+internal/service/tests/cpu.svg
+internal/service/tests/.DS_Store
+internal/service/.DS_Store
 pkg/.DS_Store
