@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Im-Services
-        uses: actions/Im-Services@master
+        uses: actions/IM-Tools/Im-Services@master
 
       - name: Build and Deploy
         uses: IM-Tools/Im-Services@master
