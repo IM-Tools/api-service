@@ -50,7 +50,19 @@ type loginResponse struct {
 }
 
 // Login 登录
+// @BasePath /api
 
+// PingExample godoc
+// @Summary ping example
+// @Schemes
+// @Description do ping
+// @Tags example
+// @Accept multipart/form-data
+// @Produce json
+// @Param email formData string true "账号"
+// @Param password formData string true "密码"
+// @Success 200 {string} json
+// @Router /auth/login [post]
 func (*AuthHandler) Login(cxt *gin.Context) {
 
 	params := requests.LoginForm{

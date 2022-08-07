@@ -1,10 +1,11 @@
 package client
 
 import (
+	"fmt"
 	"github.com/gorilla/websocket"
 	"im-services/internal/service/dispatch"
-	"im-services/internal/service/message"
 	"im-services/pkg/logger"
+	GrpcClient "im-services/server/client"
 	"sync"
 )
 
@@ -18,10 +19,12 @@ type ImClient struct {
 }
 
 var (
-	messageHandler message.MessageHandler
+	messageHandler MessageHandler
+	grpcClient     GrpcClient.GrpcMessageService
+	dispatchNode   dispatch.DispatchService
 )
 
-type ClientInterface interface {
+type WsClientInterface interface {
 	Read()
 	Write()
 	Close()
@@ -54,7 +57,7 @@ func (client *ImClient) Read() {
 			break
 		}
 
-		errs, msgByte, ackMsg, channel := messageHandler.ValidationMsg(msg)
+		errs, msgByte, ackMsg, channel, node := messageHandler.ValidationMsg(msg)
 
 		if errs != nil {
 			logger.Logger.Info(string(msgByte))
@@ -62,17 +65,22 @@ func (client *ImClient) Read() {
 		} else {
 			// 将消费分发到不同的队列
 			switch channel {
-			case 1:
+			case PRIVATE:
 				_ = client.Socket.WriteMessage(websocket.TextMessage,
 					ackMsg)
 				ImManager.PrivateChannel <- msgByte
-			case 2:
+			case GROUP:
+				_ = client.Socket.WriteMessage(websocket.TextMessage,
+					msgByte)
+			case PING:
 				_ = client.Socket.WriteMessage(websocket.TextMessage,
 					ackMsg)
 				ImManager.GroupChannel <- msgByte
-			case 3:
+			case FORWARDING:
 				_ = client.Socket.WriteMessage(websocket.TextMessage,
 					msgByte)
+				fmt.Println(node)
+				grpcClient.SendGpcMessage(string(msgByte), node)
 			default:
 				_ = client.Socket.WriteMessage(websocket.TextMessage,
 					ackMsg)
@@ -98,7 +106,6 @@ func (client *ImClient) Write() {
 }
 
 func (client *ImClient) Close() {
-	var _dispatch dispatch.DispatchService
-	_dispatch.DetDispatchNode(client.ID)
+	dispatchNode.DetDispatchNode(client.ID)
 	_ = client.Socket.Close()
 }

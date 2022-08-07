@@ -12,7 +12,7 @@ import (
 	"im-services/internal/models/im_friend_records"
 	"im-services/internal/models/im_friends"
 	"im-services/internal/models/user"
-	"im-services/internal/service/message"
+	"im-services/internal/service/client"
 	"im-services/pkg/date"
 	"im-services/pkg/model"
 	"im-services/pkg/response"
@@ -77,7 +77,7 @@ func (friend *FriendRecordHandler) Store(cxt *gin.Context) {
 
 	var messageService services.ImMessageService
 
-	var msg message.CreateFriendMessage
+	var msg client.CreateFriendMessage
 
 	msg.MsgCode = enum.WsCreate
 	msg.ID = records.Id
@@ -127,7 +127,7 @@ func (friend *FriendRecordHandler) Update(cxt *gin.Context) {
 
 	var messageService services.ImMessageService
 
-	var msg message.CreateFriendMessage
+	var msg client.CreateFriendMessage
 	var msgCode int
 
 	if params.Status == 1 {

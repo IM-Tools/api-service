@@ -20,9 +20,11 @@ type DispatchServiceInterface interface {
 func (Service *DispatchService) IsDispatchNode(uid string) (bool, string) {
 
 	n, _ := redis.RedisDB.Exists(uid).Result()
-
 	if n > 0 {
 		uNode := Service.GetDispatchNode(uid)
+		if config.Conf.Server.Node == uNode {
+			return false, ""
+		}
 		return true, uNode
 	} else {
 		return false, ""

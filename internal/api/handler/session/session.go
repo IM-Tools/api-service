@@ -72,11 +72,22 @@ type Person struct {
 }
 
 func (s SessionHandler) Update(cxt *gin.Context) {
-	var person Person
-	if err := cxt.ShouldBindUri(&person); err != nil {
+	err, person := handler.GetPersonId(cxt)
+	if err != nil {
 		response.FailResponse(enum.ParamError, err.Error()).ToJson(cxt)
 		return
 	}
+	params := requests.SessionUpdate{
+		TopStatus: helpers.StringToInt(cxt.PostForm("top_status")),
+		Note:      cxt.PostForm("note"),
+	}
+	errs := validator.New().Struct(params)
+	if errs != nil {
+		response.FailResponse(enum.ParamError, errs.Error()).ToJson(cxt)
+		return
+	}
+
+	model.DB.Model(&im_sessions.ImSessions{}).Where("id", person.ID).Updates(&params)
 
 	response.SuccessResponse().ToJson(cxt)
 	return

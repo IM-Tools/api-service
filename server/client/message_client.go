@@ -25,19 +25,20 @@ type GrpcMessageService struct {
 }
 
 // 发送grpc消息
-func (messageService *GrpcMessageService) SendGpcMessage(message []byte, node string) {
+func (messageService *GrpcMessageService) SendGpcMessage(message string, node string) {
+	//creDs, _ := credentials.NewClientTLSFromFile("", "")
+	//conn, _ := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(creDs))
+
 	conn, err := grpc.Dial(node, grpc.WithInsecure())
 	if err != nil {
 
 	}
 	defer conn.Close()
-
 	ImRpcServiceClient := grpcMessage.NewImMessageClient(conn)
 
 	var p fastjson.Parser
-	v, _ := p.Parse(string(message))
+	v, _ := p.Parse(message)
 
-	fmt.Println(v.Get("message").String())
 	params := &grpcMessage.SendMessageRequest{
 		MsgId:       date.TimeUnixNano(),
 		MsgClientId: date.TimeUnix(),
@@ -51,7 +52,6 @@ func (messageService *GrpcMessageService) SendGpcMessage(message []byte, node st
 		Data:        v.Get("data").String(),
 	}
 
-	fmt.Println(params)
 	resp, err := ImRpcServiceClient.
 		SendMessageHandler(context.Background(), params)
 	if err != nil {

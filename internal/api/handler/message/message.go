@@ -28,7 +28,8 @@ func (m *MessageHandler) Index(cxt *gin.Context) {
 	var list []im_messages.ImMessages
 
 	query := model.DB.Table("im_messages").
-		Where("(form_id=? and to_id=?) or (form_id=? and to_id=?)", id, toId, toId, id)
+		Where("(form_id=? and to_id=?) or (form_id=? and to_id=?)", id, toId, toId, id).
+		Order("created_at desc")
 
 	var users user.ImUsers
 
@@ -49,7 +50,7 @@ func (m *MessageHandler) Index(cxt *gin.Context) {
 		return
 	}
 
-	for key, _ := range list {
+	for key := range list {
 		list[key].Users.ID = users.ID
 		list[key].Users.Name = users.Name
 		list[key].Users.Email = users.Email

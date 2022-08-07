@@ -7,10 +7,9 @@ package grpcMessage
 
 import (
 	"context"
+	"fmt"
 	"im-services/internal/api/requests"
 	"im-services/internal/enum"
-	"im-services/internal/service/client"
-	messageHandler "im-services/internal/service/message"
 	"im-services/pkg/date"
 	"im-services/pkg/logger"
 )
@@ -37,15 +36,29 @@ func (ImGrpcMessage) SendMessageHandler(c context.Context, request *SendMessageR
 		Data:        request.Data,
 	}
 
-	var handler messageHandler.MessageHandler
-
-	msgString := handler.GetGrpcPrivateChatMessages(params)
+	msgString := GetGrpcPrivateChatMessages(params)
 
 	switch request.ChannelType {
 	case 1:
-		client.ImManager.PrivateChannel <- []byte(msgString)
+		fmt.Println(msgString)
+		//client.ImManager.PrivateChannel <- []byte(msgString)
 	case 2:
-		client.ImManager.GroupChannel <- []byte(msgString)
+
 	}
 	return &SendMessageResponse{Code: 200, Message: "Success"}, nil
+}
+func GetGrpcPrivateChatMessages(message requests.PrivateMessageRequest) string {
+	msg := fmt.Sprintf(`{
+                "msg_id": %d,
+                "msg_client_id": %d,
+                "msg_code": %d,
+                "form_id": %d,
+                "to_id": %d,
+                "msg_type": %d,
+                "channel_type": %d,
+                "message": %s,
+                "data": %s
+        }`, message.MsgId, message.MsgClientId, message.MsgCode, message.FormID, message.ToID, message.MsgType, message.ChannelType, message.Message, message.Data)
+
+	return msg
 }

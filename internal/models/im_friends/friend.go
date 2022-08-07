@@ -25,12 +25,12 @@ type ImUsers struct {
 	ID            int64  `gorm:"column:id;primaryKey" json:"id"`
 	Name          string `gorm:"column:name" json:"name"`
 	Email         string `gorm:"column:email" json:"email"`
-	Avatar        string `gorm:"column:avatar" json:"avatar"`           //头像
-	Status        int8   `gorm:"column:status" json:"status"`           //0 离线 1 在线
-	Bio           string `gorm:"column:bio" json:"bio"`                 //用户简介
-	Sex           int8   `gorm:"column:sex" json:"sex"`                 //0 未知 1.男 2.女
-	ClientType    int8   `gorm:"column:client_type" json:"client_type"` //1.web 2.pc 3.app
+	Avatar        string `gorm:"column:avatar" json:"avatar"`
+	Status        int8   `gorm:"column:status" json:"status"`
+	Bio           string `gorm:"column:bio" json:"bio"`
+	Sex           int8   `gorm:"column:sex" json:"sex"`
+	ClientType    int8   `gorm:"column:client_type" json:"client_type"`
 	Age           int    `gorm:"column:age" json:"age"`
-	LastLoginTime string `gorm:"column:last_login_time" json:"last_login_time"` //最后登录时间
-	Uid           string `gorm:"column:uid" json:"uid"`                         //uid 关联
+	LastLoginTime string `gorm:"column:last_login_time" json:"last_login_time"`
+	Uid           string `gorm:"column:uid" json:"uid"`
 }

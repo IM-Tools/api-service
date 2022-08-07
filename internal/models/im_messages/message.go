@@ -11,7 +11,7 @@ type ImMessages struct {
 	CreatedAt string `gorm:"column:created_at" json:"created_at"`
 	FormId    int64  `gorm:"column:form_id" json:"form_id"`
 	ToId      int64  `gorm:"column:to_id" json:"to_id"`
-	IsRead    int    `gorm:"column:is_read" json:"is_read"` //0 未读 1已读
+	IsRead    int    `gorm:"column:is_read" json:"is_read"`
 	MsgType   int    `gorm:"column:msg_type" json:"msg_type"`
 	Status    int    `gorm:"column:status" json:"status"`
 

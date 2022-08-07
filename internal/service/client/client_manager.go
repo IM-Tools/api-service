@@ -1,12 +1,13 @@
 package client
 
 import (
+	"im-services/internal/api/requests"
 	"im-services/internal/helpers"
 	"im-services/pkg/coroutine_poll"
 	"sync"
 )
 
-type ImClientManager struct {
+type AppImClientManager struct {
 	// 储存客户端实例
 	ImClientMap map[string]*ImClient
 	// 公共频道
@@ -24,7 +25,7 @@ type ImClientManager struct {
 }
 
 var (
-	ImManager = ImClientManager{
+	ImManager = AppImClientManager{
 		ImClientMap:      make(map[string]*ImClient),
 		BroadcastChannel: make(chan []byte),
 		PrivateChannel:   make(chan []byte),
@@ -34,7 +35,7 @@ var (
 	}
 )
 
-type ClientManagerInterface interface {
+type AppClientManagerInterface interface {
 	// SetClient 设置客户端信息
 	SetClient(client *ImClient)
 	// DelClient 删除客户端信息
@@ -42,29 +43,34 @@ type ClientManagerInterface interface {
 	// Start 启动服务
 	Start()
 	// ImSend 消息投递到指定客户端 消息投递到指定客户端
-	ImSend(message []byte, client *ImClient)
+	SendMessageToSpecifiedClient(message []byte, toId string) bool
 	// LaunchPrivateMessage 私聊信息消费
-	LaunchPrivateMessage(msg_byte []byte)
+	LaunchPrivateMessage(msgByte []byte)
 	// LaunchGroupMessage 群聊信息消费
-	LaunchGroupMessage(msg_byte []byte)
+	LaunchGroupMessage(msgByte []byte)
 	// LaunchBroadcastMessage 广播消息
-	LaunchBroadcastMessage(msg_byte []byte)
+	LaunchBroadcastMessage(msgByte []byte)
 	// ConsumingOfflineMessages 消费离线消息
 	ConsumingOfflineMessages(client *ImClient)
 	// RadioUserOnlineStatus 向好友广播在线状态
 	RadioUserOnlineStatus(client *ImClient)
+
 	// GetOnlineNumber 获取在线人数
 	GetOnlineNumber() int
+
+	SendPrivateMessage(message requests.PrivateMessageRequest) (bool, string)
+
+	SendFriendActionMessage(msg CreateFriendMessage)
 }
 
-func (manager *ImClientManager) SetClient(client *ImClient) {
+func (manager *AppImClientManager) SetClient(client *ImClient) {
 	manager.MutexKey.Lock()
 	defer manager.MutexKey.Unlock()
 	manager.ImClientMap[client.ID] = client
 
 }
 
-func (manager *ImClientManager) DelClient(client *ImClient) {
+func (manager *AppImClientManager) DelClient(client *ImClient) {
 
 	manager.MutexKey.Lock()
 	client.Close()
@@ -72,7 +78,7 @@ func (manager *ImClientManager) DelClient(client *ImClient) {
 	delete(manager.ImClientMap, client.ID)
 }
 
-func (manager *ImClientManager) Start() {
+func (manager *AppImClientManager) Start() {
 	for {
 		select {
 		case client := <-ImManager.Register:
@@ -103,15 +109,14 @@ func (manager *ImClientManager) Start() {
 	}
 }
 
-func (manager *ImClientManager) ImSend(message []byte, client *ImClient) {
-	data, ok := manager.ImClientMap[client.ID]
-	if ok {
-		data.Send <- message
-	}
+func (manager *AppImClientManager) GetOnlineNumber() int {
+	return len(manager.ImClientMap)
 }
 
-func (manager *ImClientManager) GetOnlineNumber() int {
-	manager.MutexKey.RLock()
-	defer manager.MutexKey.RUnlock()
-	return len(manager.ImClientMap)
+func (manager *AppImClientManager) IsUserOline(toId string) bool {
+	_, ok := manager.ImClientMap[toId]
+	if ok {
+		return true
+	}
+	return false
 }

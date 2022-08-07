@@ -2,6 +2,9 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"im-services/docs"
 	"im-services/internal/api/handler/auth"
 	"im-services/internal/api/handler/friend"
 	"im-services/internal/api/handler/message"
@@ -14,7 +17,7 @@ import (
 func RegisterApiRoutes(router *gin.Engine) {
 
 	var api *gin.RouterGroup
-
+	docs.SwaggerInfo.BasePath = "/api"
 	api = router.Group("/api")
 	api.Use(middleware.Cors())
 	// 登录
@@ -73,4 +76,6 @@ func RegisterApiRoutes(router *gin.Engine) {
 		messageGroup.POST("/recall", messages.RecallMessage)       // 消息撤回
 
 	}
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 }

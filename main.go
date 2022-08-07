@@ -15,23 +15,36 @@ func init() {
 	config.InitConfig("config.yaml")
 }
 
+// @title im-services  接口文档
+// @version 2.0
+// @description
+
+// @contact.name im-services
+// @contact.url
+// @contact.email pltrueover@gmail.com
+
+// @license.name MIT
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host 127.0.0.7:8000
+// @BasePath /api
 func main() {
 	var rootCmd = &cobra.Command{
 		Use:   "im",
 		Short: "Hugo is a very fast static site generator",
 		Long: `A Fast and Flexible Static Site Generator built with
 	           love by spf13 and friends in Go.
-	           Complete documentation is available at http://hugo.spf13.com`,
+	           Complete documentation is available at https://hugo.spf13.com`,
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
 			bootstrap.LoadConfiguration()
 		},
 	}
 
 	rootCmd.AddCommand(
-		cmd.CmdServe,
+		cmd.AppCmdServe,
 	)
 
-	cmd2.RegisterDefaultCmd(rootCmd, cmd.CmdServe)
+	cmd2.RegisterDefaultCmd(rootCmd, cmd.AppCmdServe)
 
 	// 执行主命令
 	if err := rootCmd.Execute(); err != nil {

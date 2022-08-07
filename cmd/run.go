@@ -5,7 +5,7 @@ import (
 	"im-services/internal/service/bootstrap"
 )
 
-var CmdServe = &cobra.Command{
+var AppCmdServe = &cobra.Command{
 	Use:   "run",
 	Short: "启动im服务",
 	Long:  `启动im服务`,
