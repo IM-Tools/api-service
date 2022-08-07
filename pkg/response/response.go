@@ -6,10 +6,10 @@ import (
 )
 
 type JsonResponse struct {
-	Code     int         `json:"code"`
-	Message  string      `json:"message"`
-	Data     interface{} `json:"data"`
-	HttpCode int
+	Code     int         `json:"code"`    // 状态码
+	Message  string      `json:"message"` // 消息内容
+	Data     interface{} `json:"data"`    // 返回结构数据
+	HttpCode int         // http状态码
 }
 
 // ToJson 响应json

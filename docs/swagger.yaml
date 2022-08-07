@@ -1,0 +1,153 @@
+basePath: /api
+definitions:
+  auth.loginResponse:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      email:
+        description: 邮箱账号
+        type: string
+      expire_time:
+        description: token过期时间
+        type: integer
+      id:
+        description: 用户id
+        type: integer
+      name:
+        description: 名称
+        type: string
+      token:
+        description: token
+        type: string
+      ttl:
+        description: token有效期
+        type: integer
+      uid:
+        description: uid
+        type: string
+    type: object
+  response.JsonResponse:
+    properties:
+      code:
+        type: integer
+      data: {}
+      httpCode:
+        type: integer
+      message:
+        type: string
+    type: object
+host: 127.0.0.7:8000
+info:
+  contact:
+    email: pltrueover@gmail.com
+    name: im-services
+  license:
+    name: MIT
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: im-services  接口文档
+  version: "2.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 登录接口
+      parameters:
+      - description: 账号
+        in: formData
+        name: email
+        required: true
+        type: string
+      - description: 密码
+        in: formData
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JsonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/auth.loginResponse'
+              type: object
+      summary: Login 登录
+      tags:
+      - 登录接口
+  /auth/registered:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 注册接口
+      parameters:
+      - description: 账号
+        in: formData
+        name: email
+        required: true
+        type: string
+      - description: 名称
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: 邮件类型 1.注册 2.找回密码
+        in: formData
+        name: email_type
+        type: integer
+      - description: 密码
+        in: formData
+        name: password
+        required: true
+        type: string
+      - description: 确认密码
+        in: formData
+        name: password_repeat
+        required: true
+        type: string
+      - description: 验证码
+        in: formData
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/response.JsonResponse'
+      summary: Registered 注册
+      tags:
+      - 注册接口
+  /auth/sendEmailCode:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 发送邮件接口
+      parameters:
+      - description: 邮箱
+        in: formData
+        name: email
+        required: true
+        type: string
+      - description: 邮件类型 1.注册 2.找回密码
+        in: formData
+        name: email_type
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/response.JsonResponse'
+      summary: Registered 发送邮件
+      tags:
+      - 发送邮件接口
+swagger: "2.0"
