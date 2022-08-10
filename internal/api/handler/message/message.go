@@ -110,6 +110,7 @@ func (m *MessageHandler) SendPrivateMessage(cxt *gin.Context) {
 	var messages services.ImMessageService
 	ok, msg := messages.SendPrivateMessage(params)
 	if !ok {
+
 		response.FailResponse(http.StatusInternalServerError, msg).ToJson(cxt)
 		return
 	}

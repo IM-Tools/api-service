@@ -2,9 +2,10 @@ tmp
 gin.log
 config.yaml
 .idea
-gin.log
 关于im从0到1.md
 internal/service/tests/cpu.svg
 internal/service/tests/.DS_Store
 internal/service/.DS_Store
 pkg/.DS_Store
+.DS_Store
+internal/.DS_Store

@@ -31,7 +31,6 @@ func ConsumerInit() {
 		fmt.Println("Failed to get the list of partition:, ", err)
 		return
 	}
-	fmt.Println(partitionList)
 
 	for partition := range partitionList {
 		pc, err := consumer.ConsumePartition("web_log", int32(partition), sarama.OffsetNewest)
@@ -42,10 +41,7 @@ func ConsumerInit() {
 		wg.Add(1)
 		go func(sarama.PartitionConsumer) {  //为每个分区开一个go协程去取值
 			for msg := range pc.Messages() { //阻塞直到有值发送过来，然后再继续等待
-
 				offlineMessageDao.PrivateOfflineMessageSave(string(msg.Value))
-
-				fmt.Printf("Partition:%d, Offset:%d, key:%s, value:%s\n", msg.Partition, msg.Offset, string(msg.Key), string(msg.Value))
 			}
 			defer pc.AsyncClose()
 			wg.Done()

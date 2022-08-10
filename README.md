@@ -7,9 +7,13 @@
 
   * [docker-compose 安装](docs/1.安装使用.md)
 
-#### 实现
-  * 负载:实现了简易版集群(节点消息依靠Grpc传输消息)
-  * 消息:实现了Ws消息投递、Api消息投递、Grpc消息投递。以及自定义消息
+### 实现
+
+##### 集群
+- [x] 基于redis存储用户服务节点 实现了简易版集群(节点消息依靠Grpc传输消息)
+##### 消息
+- [x] Ws消息投递、Api消息投递、Grpc消息投递。以及自定义消息   
+- [x] Nsq生产池、消费者离线消息
 
 
 
@@ -19,20 +23,10 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-  * 项目结构
+#####  项目结构
 ```shell
-   ─ internal //应用核心
+├── cmd // cli 命令工具
+|─ internal //应用核心
 │   ├── api //接口
 │   │   ├── controllers // Api控制器
 │   │   ├── requests  // 接口请求校验
@@ -54,7 +48,6 @@
 │       ├── message // ws消息处理
 │       ├── queue // 消息中间件
 │       └── tests // 测试文件
-├── cmd // cli 命令工具
 │   ├── cmd
 ├── config.yaml // 配置文件
 ├── config.yaml.test

@@ -161,7 +161,6 @@ func (m *MessageHandler) GetPrivateChatMessages(message requests.PrivateMessageR
                 "message": "%s",
                 "data": "%s"
         }`, message.MsgId, message.MsgClientId, message.MsgCode, message.FormID, message.ToID, message.MsgType, message.ChannelType, message.Message, message.Data)
-
 	if isGrpcMessage {
 		return msg
 	} else {
@@ -172,7 +171,6 @@ func (m *MessageHandler) GetPrivateChatMessages(message requests.PrivateMessageR
 }`, message.ToID, message.ChannelType, msg)
 		return msgString
 	}
-
 }
 
 // 获取ack消息

@@ -107,7 +107,6 @@ func (manager *AppImClientManager) SendFriendActionMessage(msg CreateFriendMessa
 }
 
 func (manager *AppImClientManager) SendPrivateMessage(message requests.PrivateMessageRequest) (bool, string) {
-
 	// 判断是否开启集群
 	if config.Conf.Server.ServiceOpen {
 		msgString := messageHandler.GetPrivateChatMessages(message, true)
