@@ -43,7 +43,7 @@ func (m *MessageHandler) Index(cxt *gin.Context) {
 	model.DB.Table("im_users").Where("id=?", toId).First(&users)
 
 	if len(page) > 0 {
-		query = query.Where("id>?", page)
+		query = query.Where("id<?", page)
 	}
 
 	if result := query.Limit(pageSize).Find(&list); result.RowsAffected == 0 {
