@@ -27,17 +27,260 @@ definitions:
         description: uid
         type: string
     type: object
+  friend.UserStatus:
+    properties:
+      id:
+        description: 用户id
+        type: integer
+      status:
+        description: 0 未在线 1 在线
+        type: integer
+    type: object
+  im_friend_records.ImFriendRecords:
+    properties:
+      created_at:
+        type: string
+      form_id:
+        type: integer
+      id:
+        type: integer
+      information:
+        description: 请求信息
+        type: string
+      status:
+        description: 0 等待通过 1 已通过 2 已拒绝
+        type: integer
+      to_id:
+        type: integer
+      users:
+        $ref: '#/definitions/im_friend_records.ImUsers'
+    type: object
+  im_friend_records.ImUsers:
+    properties:
+      avatar:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  im_friends.ImFriends:
+    properties:
+      created_at:
+        type: string
+      form_id:
+        type: integer
+      id:
+        type: integer
+      note:
+        type: string
+      status:
+        description: 0.未置顶 1.已置顶
+        type: integer
+      to_id:
+        type: integer
+      top_time:
+        type: string
+      uid:
+        type: string
+      updated_at:
+        type: string
+      users:
+        $ref: '#/definitions/im_friends.ImUsers'
+    type: object
+  im_friends.ImUsers:
+    properties:
+      age:
+        type: integer
+      avatar:
+        type: string
+      bio:
+        type: string
+      client_type:
+        type: integer
+      email:
+        type: string
+      id:
+        type: integer
+      last_login_time:
+        type: string
+      name:
+        type: string
+      sex:
+        type: integer
+      status:
+        type: integer
+      uid:
+        type: string
+    type: object
+  im_messages.ImMessages:
+    properties:
+      created_at:
+        type: string
+      data:
+        type: string
+      form_id:
+        type: integer
+      id:
+        type: integer
+      is_read:
+        type: integer
+      msg:
+        type: string
+      msg_type:
+        type: integer
+      status:
+        type: integer
+      to_id:
+        type: integer
+      users:
+        $ref: '#/definitions/im_messages.ImUsers'
+    type: object
+  im_messages.ImUsers:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  im_sessions.ImSessions:
+    properties:
+      avatar:
+        description: 会话头像
+        type: string
+      channel_type:
+        description: 0.单聊 1.群聊
+        type: integer
+      created_at:
+        type: string
+      form_id:
+        type: integer
+      id:
+        description: 会话表
+        type: integer
+      name:
+        description: 会话名称
+        type: string
+      note:
+        description: 备注
+        type: string
+      status:
+        description: 会话状态 0.正常 1.禁用
+        type: integer
+      to_id:
+        type: integer
+      top_status:
+        description: 0.否 1.是
+        type: integer
+      top_time:
+        type: string
+      users:
+        $ref: '#/definitions/im_sessions.ImUsers'
+    type: object
+  im_sessions.ImUsers:
+    properties:
+      age:
+        type: integer
+      avatar:
+        description: 头像
+        type: string
+      bio:
+        description: 用户简介
+        type: string
+      client_type:
+        description: 1.web 2.pc 3.app
+        type: integer
+      email:
+        type: string
+      id:
+        description: model.BaseModel
+        type: integer
+      last_login_time:
+        description: 最后登录时间
+        type: string
+      name:
+        type: string
+      sex:
+        description: 0 未知 1.男 2.女
+        type: integer
+      status:
+        description: 0 离线 1 在线
+        type: integer
+    type: object
+  requests.Users:
+    properties:
+      avatar:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+    type: object
+  requests.VideoMessageRequest:
+    properties:
+      form_id:
+        description: 发消息的人
+        type: integer
+      message:
+        description: 消息
+        type: string
+      msg_code:
+        description: 定义的消息code
+        type: integer
+      send_time:
+        description: 消息发送时间
+        type: string
+      to_id:
+        description: 接收消息人的id
+        type: integer
+      users:
+        $ref: '#/definitions/requests.Users'
+    required:
+    - to_id
+    type: object
   response.JsonResponse:
     properties:
       code:
+        description: 状态码
         type: integer
-      data: {}
+      data:
+        description: 返回结构数据
       httpCode:
+        description: http状态码
         type: integer
       message:
+        description: 消息内容
         type: string
     type: object
-host: 127.0.0.7:8000
+  user.UserDetails:
+    properties:
+      age:
+        type: integer
+      avatar:
+        type: string
+      bio:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      last_login_time:
+        type: string
+      name:
+        type: string
+      sex:
+        type: integer
+      status:
+        type: integer
+      uid:
+        type: string
+    type: object
+host: 127.0.0.1:8000
 info:
   contact:
     email: pltrueover@gmail.com
@@ -46,7 +289,7 @@ info:
     name: MIT
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   title: im-services  接口文档
-  version: "2.0"
+  version: "1.0"
 paths:
   /auth/login:
     post:
@@ -78,7 +321,7 @@ paths:
               type: object
       summary: Login 登录
       tags:
-      - 登录接口
+      - 登录相关
   /auth/registered:
     post:
       consumes:
@@ -123,7 +366,7 @@ paths:
             $ref: '#/definitions/response.JsonResponse'
       summary: Registered 注册
       tags:
-      - 注册接口
+      - 登录相关
   /auth/sendEmailCode:
     post:
       consumes:
@@ -149,5 +392,396 @@ paths:
             $ref: '#/definitions/response.JsonResponse'
       summary: Registered 发送邮件
       tags:
-      - 发送邮件接口
+      - 登录相关
+  /friends/:
+    get:
+      description: 获取好友列表
+      parameters:
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JsonResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/im_friends.ImFriends'
+                  type: array
+              type: object
+      summary: friends 获取好友列表
+      tags:
+      - 好友
+  /friends/:id:
+    get:
+      description: 获取好友详情
+      parameters:
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JsonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/im_friends.ImFriends'
+              type: object
+      summary: friends/:id 获取好友详情
+      tags:
+      - 好友
+  /friends/record:
+    get:
+      description: 获取好友申请记录
+      parameters:
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JsonResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/im_friend_records.ImFriendRecords'
+                  type: array
+              type: object
+      summary: friends/record 获取好友申请记录
+      tags:
+      - 好友申请
+    post:
+      description: 发起好友申请
+      parameters:
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 添加人id
+        in: formData
+        name: to_id
+        required: true
+        type: string
+      - description: 添加描述
+        in: formData
+        name: information
+        required: true
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JsonResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/im_friend_records.ImFriendRecords'
+                  type: array
+              type: object
+      summary: friends/record 发起好友申请
+      tags:
+      - 好友申请
+    put:
+      description: 同意或者拒绝请求
+      parameters:
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 记录id
+        in: formData
+        name: id
+        required: true
+        type: string
+      - description: 状态 0等待 1同意 2拒绝
+        in: formData
+        name: status
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/response.JsonResponse'
+      summary: record 同意或者拒绝请求
+      tags:
+      - 好友申请
+  /friends/status/:id:
+    get:
+      description: 获取好友在线状态
+      parameters:
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JsonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/friend.UserStatus'
+              type: object
+      summary: friends/:id 获取好友在线状态
+      tags:
+      - 好友
+  /messages/:
+    get:
+      description: 获取私聊消息列表
+      parameters:
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JsonResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/im_messages.ImMessages'
+                  type: array
+              type: object
+      summary: friends/record 获取私聊消息列表
+      tags:
+      - 消息
+  /messages/private:
+    post:
+      description: 发送私聊消息
+      parameters:
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 客户端消息id
+        in: formData
+        name: msg_client_id
+        required: true
+        type: integer
+      - description: 推送人id
+        in: formData
+        name: to_id
+        required: true
+        type: integer
+      - description: 消息类型:1.私聊消息 2.图片消息 3.语音消息 ..
+        in: formData
+        name: msg_type
+        required: true
+        type: integer
+      - description: 消息内容
+        in: formData
+        name: message
+        required: true
+        type: string
+      - description: 自定义携带消息
+        in: formData
+        name: data
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JsonResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/im_messages.ImMessages'
+                  type: array
+              type: object
+      summary: friends/record 发送私聊消息
+      tags:
+      - 消息
+  /sessions/:
+    get:
+      description: 获取会话列表
+      parameters:
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JsonResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/im_sessions.ImSessions'
+                  type: array
+              type: object
+      summary: sessions/ 获取会话列表
+      tags:
+      - 会话
+    post:
+      description: 添加会话
+      parameters:
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 会话类型
+        in: formData
+        name: type
+        required: true
+        type: integer
+      - description: 聊天对象id
+        in: formData
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JsonResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/im_sessions.ImSessions'
+                  type: array
+              type: object
+      summary: sessions/ 添加会话
+      tags:
+      - 会话
+  /sessions/:id:
+    delete:
+      description: 删除会话
+      parameters:
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/response.JsonResponse'
+      summary: sessions/:id 删除会话
+      tags:
+      - 会话
+    put:
+      description: 更新会话
+      parameters:
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 置顶 0 取消 1置顶
+        in: formData
+        name: top_status
+        required: true
+        type: integer
+      - description: 会话备注
+        in: formData
+        name: note
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/response.JsonResponse'
+      summary: sessions/:id 更新会话
+      tags:
+      - 会话
+  /user/:id:
+    get:
+      description: 获取用户信息
+      parameters:
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JsonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/user.UserDetails'
+              type: object
+      summary: user/:id 获取用户信息
+      tags:
+      - 用户
 swagger: "2.0"

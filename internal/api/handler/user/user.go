@@ -11,6 +11,20 @@ import (
 type UsersHandler struct {
 }
 
+// @BasePath /api
+
+// PingExample godoc
+// @Summary user/:id 获取用户信息
+// @Schemes
+// @Description 获取用户信息
+// @Tags 用户
+// @SecurityDefinitions.apikey ApiKeyAuth
+// @In header
+// @Name Authorization
+// @Param Authorization	header string true "Bearer "
+// @Produce json
+// @Success 200 {object} response.JsonResponse{data=UserDetails} "ok"
+// @Router /user/:id [get]
 func (u *UsersHandler) Info(cxt *gin.Context) {
 	var person Person
 	if err := cxt.ShouldBindUri(&person); err != nil {

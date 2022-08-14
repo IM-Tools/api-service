@@ -16,7 +16,7 @@ func init() {
 }
 
 // @title im-services  接口文档
-// @version 2.0
+// @version 1.0
 // @description
 
 // @contact.name im-services
@@ -26,7 +26,7 @@ func init() {
 // @license.name MIT
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host 127.0.0.7:8000
+// @host 127.0.0.1:8000
 // @BasePath /api
 func main() {
 	var rootCmd = &cobra.Command{

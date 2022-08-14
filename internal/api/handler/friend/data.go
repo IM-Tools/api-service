@@ -10,8 +10,8 @@ type ImFriendList struct {
 
 }
 type UserStatus struct {
-	Status int `json:"status"`
-	Id     int `json:"id"`
+	Status int `json:"status"` // 0 未在线 1 在线
+	Id     int `json:"id"`     // 用户id
 }
 
 type Person struct {

@@ -56,7 +56,7 @@ type loginResponse struct {
 // @Summary Login 登录
 // @Schemes
 // @Description 登录接口
-// @Tags 登录接口
+// @Tags 登录相关
 // @Accept multipart/form-data
 // @Produce json
 // @Param email formData string true "账号"
@@ -124,7 +124,7 @@ func (*AuthHandler) Login(cxt *gin.Context) {
 // @Summary Registered 注册
 // @Schemes
 // @Description 注册接口
-// @Tags 注册接口
+// @Tags 登录相关
 // @Accept multipart/form-data
 // @Produce json
 // @Param email formData string true "账号"
@@ -191,7 +191,7 @@ func (*AuthHandler) Registered(cxt *gin.Context) {
 // @Summary Registered 发送邮件
 // @Schemes
 // @Description 发送邮件接口
-// @Tags 发送邮件接口
+// @Tags 登录相关
 // @Accept multipart/form-data
 // @Produce json
 // @Param email formData string true "邮箱"

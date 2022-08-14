@@ -103,7 +103,7 @@ var messageData MessageData
 
 func (manager *AppImClientManager) SendFriendActionMessage(msg CreateFriendMessage) {
 	message := messageData.GetCreateFriendMessage(msg)
-	manager.BroadcastChannel <- []byte(message)
+	manager.SendMessageToSpecifiedClient([]byte(message), helpers.Int64ToString(msg.ToID))
 }
 
 func (manager *AppImClientManager) SendPrivateMessage(message requests.PrivateMessageRequest) (bool, string) {

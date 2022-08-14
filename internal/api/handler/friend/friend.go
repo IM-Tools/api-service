@@ -13,6 +13,20 @@ import (
 type FriendHandler struct {
 }
 
+// @BasePath /api
+
+// PingExample godoc
+// @Summary friends 获取好友列表
+// @Schemes
+// @Description 获取好友列表
+// @Tags 好友
+// @SecurityDefinitions.apikey ApiKeyAuth
+// @In header
+// @Name Authorization
+// @Param Authorization	header string true "Bearer "
+// @Produce json
+// @Success 200 {object} response.JsonResponse{data=[]im_friends.ImFriends} "ok"
+// @Router /friends/ [get]
 func (friend FriendHandler) Index(cxt *gin.Context) {
 	id := cxt.MustGet("id")
 
@@ -29,6 +43,21 @@ func (friend FriendHandler) Index(cxt *gin.Context) {
 
 }
 
+// @BasePath /api
+
+// PingExample godoc
+// @Summary friends/:id 获取好友详情
+// @Schemes
+// @Description 获取好友详情
+// @Tags 好友
+// @SecurityDefinitions.apikey ApiKeyAuth
+// @In header
+// @Name Authorization
+// @Param Authorization	header string true "Bearer "
+// @Param id path int true "ID"
+// @Produce json
+// @Success 200 {object} response.JsonResponse{data=im_friends.ImFriends} "ok"
+// @Router /friends/:id [get]
 func (friend FriendHandler) Show(cxt *gin.Context) {
 
 	err, person := handler.GetPersonId(cxt)
@@ -49,6 +78,21 @@ func (friend FriendHandler) Show(cxt *gin.Context) {
 	return
 }
 
+// @BasePath /api
+
+// PingExample godoc
+// @Summary friends/:id 获取好友在线状态
+// @Schemes
+// @Description 获取好友在线状态
+// @Tags 好友
+// @SecurityDefinitions.apikey ApiKeyAuth
+// @In header
+// @Name Authorization
+// @Param Authorization	header string true "Bearer "
+// @Param id path int true "ID"
+// @Produce json
+// @Success 200 {object} response.JsonResponse{data=UserStatus} "ok"
+// @Router /friends/status/:id [get]
 func (friend FriendHandler) GetUserStatus(cxt *gin.Context) {
 
 	err, person := handler.GetPersonId(cxt)

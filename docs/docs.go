@@ -33,7 +33,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "登录接口"
+                    "登录相关"
                 ],
                 "summary": "Login 登录",
                 "parameters": [
@@ -84,7 +84,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "注册接口"
+                    "登录相关"
                 ],
                 "summary": "Registered 注册",
                 "parameters": [
@@ -150,7 +150,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "发送邮件接口"
+                    "登录相关"
                 ],
                 "summary": "Registered 发送邮件",
                 "parameters": [
@@ -174,6 +174,634 @@ const docTemplate = `{
                         "description": "ok",
                         "schema": {
                             "$ref": "#/definitions/response.JsonResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/friends/": {
+            "get": {
+                "description": "获取好友列表",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "好友"
+                ],
+                "summary": "friends 获取好友列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer ",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.JsonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/im_friends.ImFriends"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/friends/:id": {
+            "get": {
+                "description": "获取好友详情",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "好友"
+                ],
+                "summary": "friends/:id 获取好友详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer ",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.JsonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/im_friends.ImFriends"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/friends/record": {
+            "get": {
+                "description": "获取好友申请记录",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "好友申请"
+                ],
+                "summary": "friends/record 获取好友申请记录",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer ",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.JsonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/im_friend_records.ImFriendRecords"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "同意或者拒绝请求",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "好友申请"
+                ],
+                "summary": "record 同意或者拒绝请求",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer ",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "记录id",
+                        "name": "id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "状态 0等待 1同意 2拒绝",
+                        "name": "status",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/response.JsonResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "发起好友申请",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "好友申请"
+                ],
+                "summary": "friends/record 发起好友申请",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer ",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "添加人id",
+                        "name": "to_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "array",
+                        "description": "添加描述",
+                        "name": "information",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.JsonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/im_friend_records.ImFriendRecords"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/friends/status/:id": {
+            "get": {
+                "description": "获取好友在线状态",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "好友"
+                ],
+                "summary": "friends/:id 获取好友在线状态",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer ",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.JsonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/friend.UserStatus"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/messages/": {
+            "get": {
+                "description": "获取私聊消息列表",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "消息"
+                ],
+                "summary": "friends/record 获取私聊消息列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer ",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.JsonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/im_messages.ImMessages"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/messages/private": {
+            "post": {
+                "description": "发送私聊消息",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "消息"
+                ],
+                "summary": "friends/record 发送私聊消息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer ",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "客户端消息id",
+                        "name": "msg_client_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "推送人id",
+                        "name": "to_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "消息类型:1.私聊消息 2.图片消息 3.语音消息 ..",
+                        "name": "msg_type",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "消息内容",
+                        "name": "message",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "自定义携带消息",
+                        "name": "data",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.JsonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/im_messages.ImMessages"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/sessions/": {
+            "get": {
+                "description": "获取会话列表",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "会话"
+                ],
+                "summary": "sessions/ 获取会话列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer ",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.JsonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/im_sessions.ImSessions"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "添加会话",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "会话"
+                ],
+                "summary": "sessions/ 添加会话",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer ",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "会话类型",
+                        "name": "type",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "聊天对象id",
+                        "name": "id",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.JsonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/im_sessions.ImSessions"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/sessions/:id": {
+            "put": {
+                "description": "更新会话",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "会话"
+                ],
+                "summary": "sessions/:id 更新会话",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer ",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "置顶 0 取消 1置顶",
+                        "name": "top_status",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "会话备注",
+                        "name": "note",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/response.JsonResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除会话",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "会话"
+                ],
+                "summary": "sessions/:id 删除会话",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer ",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/response.JsonResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/:id": {
+            "get": {
+                "description": "获取用户信息",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户"
+                ],
+                "summary": "user/:id 获取用户信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer ",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.JsonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/user.UserDetails"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -218,17 +846,374 @@ const docTemplate = `{
                 }
             }
         },
+        "friend.UserStatus": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "用户id",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "0 未在线 1 在线",
+                    "type": "integer"
+                }
+            }
+        },
+        "im_friend_records.ImFriendRecords": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "form_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "information": {
+                    "description": "请求信息",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "0 等待通过 1 已通过 2 已拒绝",
+                    "type": "integer"
+                },
+                "to_id": {
+                    "type": "integer"
+                },
+                "users": {
+                    "$ref": "#/definitions/im_friend_records.ImUsers"
+                }
+            }
+        },
+        "im_friend_records.ImUsers": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "im_friends.ImFriends": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "form_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "status": {
+                    "description": "0.未置顶 1.已置顶",
+                    "type": "integer"
+                },
+                "to_id": {
+                    "type": "integer"
+                },
+                "top_time": {
+                    "type": "string"
+                },
+                "uid": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "users": {
+                    "$ref": "#/definitions/im_friends.ImUsers"
+                }
+            }
+        },
+        "im_friends.ImUsers": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "bio": {
+                    "type": "string"
+                },
+                "client_type": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_login_time": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "sex": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "uid": {
+                    "type": "string"
+                }
+            }
+        },
+        "im_messages.ImMessages": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "data": {
+                    "type": "string"
+                },
+                "form_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_read": {
+                    "type": "integer"
+                },
+                "msg": {
+                    "type": "string"
+                },
+                "msg_type": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "to_id": {
+                    "type": "integer"
+                },
+                "users": {
+                    "$ref": "#/definitions/im_messages.ImUsers"
+                }
+            }
+        },
+        "im_messages.ImUsers": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "im_sessions.ImSessions": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "会话头像",
+                    "type": "string"
+                },
+                "channel_type": {
+                    "description": "0.单聊 1.群聊",
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "form_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "会话表",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "会话名称",
+                    "type": "string"
+                },
+                "note": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "会话状态 0.正常 1.禁用",
+                    "type": "integer"
+                },
+                "to_id": {
+                    "type": "integer"
+                },
+                "top_status": {
+                    "description": "0.否 1.是",
+                    "type": "integer"
+                },
+                "top_time": {
+                    "type": "string"
+                },
+                "users": {
+                    "$ref": "#/definitions/im_sessions.ImUsers"
+                }
+            }
+        },
+        "im_sessions.ImUsers": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
+                "bio": {
+                    "description": "用户简介",
+                    "type": "string"
+                },
+                "client_type": {
+                    "description": "1.web 2.pc 3.app",
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "description": "model.BaseModel",
+                    "type": "integer"
+                },
+                "last_login_time": {
+                    "description": "最后登录时间",
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "sex": {
+                    "description": "0 未知 1.男 2.女",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "0 离线 1 在线",
+                    "type": "integer"
+                }
+            }
+        },
+        "requests.Users": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "requests.VideoMessageRequest": {
+            "type": "object",
+            "required": [
+                "to_id"
+            ],
+            "properties": {
+                "form_id": {
+                    "description": "发消息的人",
+                    "type": "integer"
+                },
+                "message": {
+                    "description": "消息",
+                    "type": "string"
+                },
+                "msg_code": {
+                    "description": "定义的消息code",
+                    "type": "integer"
+                },
+                "send_time": {
+                    "description": "消息发送时间",
+                    "type": "string"
+                },
+                "to_id": {
+                    "description": "接收消息人的id",
+                    "type": "integer"
+                },
+                "users": {
+                    "$ref": "#/definitions/requests.Users"
+                }
+            }
+        },
         "response.JsonResponse": {
             "type": "object",
             "properties": {
                 "code": {
+                    "description": "状态码",
                     "type": "integer"
                 },
-                "data": {},
+                "data": {
+                    "description": "返回结构数据"
+                },
                 "httpCode": {
+                    "description": "http状态码",
                     "type": "integer"
                 },
                 "message": {
+                    "description": "消息内容",
+                    "type": "string"
+                }
+            }
+        },
+        "user.UserDetails": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "bio": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_login_time": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "sex": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "uid": {
                     "type": "string"
                 }
             }
@@ -238,8 +1223,8 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "2.0",
-	Host:             "127.0.0.7:8000",
+	Version:          "1.0",
+	Host:             "127.0.0.1:8000",
 	BasePath:         "/api",
 	Schemes:          []string{},
 	Title:            "im-services  接口文档",
