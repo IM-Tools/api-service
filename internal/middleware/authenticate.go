@@ -16,14 +16,14 @@ func Auth() gin.HandlerFunc {
 
 		err, token := ValidatedToken(token)
 		if err != nil {
-			response.ErrorResponse(http.StatusUnauthorized, err.Error()).WriteTo(cxt)
+			response.ErrorResponse(http.StatusUnauthorized, err.Error()).SetHttpCode(http.StatusUnauthorized).WriteTo(cxt)
 			cxt.Abort()
 			return
 		}
 
 		claims, err := jwt.NewJWT().ParseToken(token)
 		if err != nil {
-			response.ErrorResponse(http.StatusUnauthorized, err.Error()).WriteTo(cxt)
+			response.ErrorResponse(http.StatusUnauthorized, err.Error()).SetHttpCode(http.StatusUnauthorized).WriteTo(cxt)
 			cxt.Abort()
 			return
 		}

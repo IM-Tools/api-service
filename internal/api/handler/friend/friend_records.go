@@ -102,13 +102,11 @@ func (friend *FriendRecordHandler) Update(cxt *gin.Context) {
 		Status: helpers.StringToInt(cxt.PostForm("status")),
 		ID:     cxt.PostForm("id"),
 	}
-
 	errs := validator.New().Struct(params)
 	if errs != nil {
 		response.ErrorResponse(enum.ParamError, errs.Error()).ToJson(cxt)
 		return
 	}
-
 	var records im_friend_records.ImFriendRecords
 
 	if result := model.DB.Table("im_friend_records").
@@ -165,11 +163,8 @@ func (friend *FriendRecordHandler) Update(cxt *gin.Context) {
 }
 
 // QueryUser 查询非好友用户
-
 func (friend *FriendRecordHandler) UserQuery(cxt *gin.Context) {
-
 	id := cxt.MustGet("id")
-
 	params := requests.QueryUserRequest{
 		Email: cxt.Query("email"),
 	}
@@ -179,10 +174,7 @@ func (friend *FriendRecordHandler) UserQuery(cxt *gin.Context) {
 		return
 	}
 	var friendDao friend_dao.FriendDao
-
 	users := friendDao.GetNotFriendList(id, params.Email)
-
 	response.SuccessResponse(users).ToJson(cxt)
-
 	return
 }

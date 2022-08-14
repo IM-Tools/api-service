@@ -34,9 +34,7 @@ func RegisterApiRoutes(router *gin.Engine) {
 	userGroup := api.Group("/user")
 	{
 		users := new(user.UsersHandler)
-
 		userGroup.GET("/:id", users.Info) //获取用户信息
-
 	}
 
 	// 会话
@@ -73,6 +71,7 @@ func RegisterApiRoutes(router *gin.Engine) {
 		messages := new(message.MessageHandler)
 		messageGroup.GET("/", messages.Index)                      //获取私聊消息列表
 		messageGroup.POST("/private", messages.SendPrivateMessage) // 发送私聊消息
+		messageGroup.POST("/video", messages.SendVideoMessage)     // 发送视频请求
 		messageGroup.POST("/recall", messages.RecallMessage)       // 消息撤回
 
 	}

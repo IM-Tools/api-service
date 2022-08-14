@@ -1,7 +1,9 @@
 package services
 
 import (
+	"encoding/json"
 	"im-services/internal/api/requests"
+	"im-services/internal/helpers"
 	AppClient "im-services/internal/service/client"
 )
 
@@ -16,6 +18,9 @@ type ImMessageServiceInterface interface {
 
 	// 发送私聊消息
 	SendPrivateMessage(msg requests.PrivateMessageRequest) (bool, string)
+
+	// 发送视频请求
+	SendVideoMessage(msg requests.VideoMessageRequest) bool
 }
 
 func (s ImMessageService) SendFriendActionMessage(msg AppClient.CreateFriendMessage) {
@@ -25,4 +30,10 @@ func (s ImMessageService) SendFriendActionMessage(msg AppClient.CreateFriendMess
 func (s ImMessageService) SendPrivateMessage(message requests.PrivateMessageRequest) (bool, string) {
 	isOk, respMessage := AppClient.ImManager.SendPrivateMessage(message)
 	return isOk, respMessage
+}
+
+func (s ImMessageService) SendVideoMessage(message requests.VideoMessageRequest) bool {
+	msg, _ := json.Marshal(message)
+	isOk := AppClient.ImManager.SendMessageToSpecifiedClient(msg, helpers.Int64ToString(message.ToID))
+	return isOk
 }

@@ -68,7 +68,13 @@ func ErrorResponse(status int, message string, data ...interface{}) *JsonRespons
 // WriteTo 将 json 设为响应体.
 // HTTP 状态码由应用状态码决定
 func (resp *JsonResponse) WriteTo(ctx *gin.Context) {
-	code := 200
+	var code int
+	if resp.HttpCode == 0 {
+		code = http.StatusOK
+	} else {
+		code = resp.HttpCode
+	}
+
 	ctx.JSON(code, resp)
 }
 func (resp *JsonResponse) SetHttpCode(httpCode int) *JsonResponse {

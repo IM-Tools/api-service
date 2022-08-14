@@ -13,3 +13,18 @@ type PrivateMessageRequest struct {
 	Data        string `json:"data"`                              // 自定义携带的数据
 
 }
+
+type VideoMessageRequest struct {
+	MsgCode  int    `json:"msg_code"`                  // 定义的消息code
+	FormID   int64  `json:"form_id"`                   // 发消息的人
+	ToID     int64  `json:"to_id" validate:"required"` // 接收消息人的id
+	Message  string `json:"message"`                   // 消息
+	SendTime string `json:"send_time"`                 // 消息发送时间
+	Users    Users  `json:"users"`
+}
+
+type Users struct {
+	Name   string `gorm:"column:name" json:"name"`
+	Email  string `gorm:"column:email" json:"email"`
+	Avatar string `gorm:"column:avatar" json:"avatar"`
+}

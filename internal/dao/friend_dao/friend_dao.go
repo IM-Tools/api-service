@@ -36,16 +36,14 @@ type APIUsers struct {
 // GetNotFriendList 获取非好友数据
 func (f *FriendDao) GetNotFriendList(id interface{}, email string) []APIUsers {
 	var users []APIUsers
-
 	sqlQuery := model.DB.Table("im_friends").Where("form_id=?", id).Select("to_id")
-
-	model.DB.Table("im_users").
-		Where("email like ?", email).
-		Where("id not in(?)", sqlQuery).
-		Select("id,name,email,avatar,bio,sex,status").
-		Limit(5).
-		Find(&users)
-
+	query := model.DB.Table("im_users").
+		Where("id not in(?)", sqlQuery).Where("id!=?", id)
+	if len(email) > 0 {
+		query = model.DB.Table("im_users").
+			Where("email like ?", email)
+	}
+	query.Select("id,name,email,avatar,bio,sex,status").Limit(5).Find(&users)
 	return users
 }
 
@@ -77,4 +75,17 @@ func (f *FriendDao) GetFriendLists(id interface{}) (error, interface{}) {
 		return err, list
 	}
 	return nil, list
+}
+
+// 判断是否是好友关系
+func (f *FriendDao) IsFriends(id interface{}, toId interface{}) bool {
+	var count int64
+	model.DB.Table("im_friends").
+		Where("to_id=? and form_id=?", id, toId).
+		Count(&count)
+
+	if count == 0 {
+		return false
+	}
+	return true
 }
