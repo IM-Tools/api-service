@@ -56,8 +56,9 @@ func RegisterApiRoutes(router *gin.Engine) {
 		friends := new(friend.FriendHandler)
 		friendRecords := new(friend.FriendRecordHandler)
 
-		friendGroup.GET("/", friends.Index)   //获取好友列表
-		friendGroup.GET("/:id", friends.Show) //获取好友详情信息
+		friendGroup.GET("/", friends.Index)        //获取好友列表
+		friendGroup.GET("/:id", friends.Show)      //获取好友详情信息
+		friendGroup.DELETE("/:id", friends.Delete) //删除好友
 		friendGroup.GET("/status/:id", friends.GetUserStatus)
 		friendGroup.POST("/record", friendRecords.Store)       //发送好友请求
 		friendGroup.GET("/record", friendRecords.Index)        //获取好友申请记录列表
@@ -79,6 +80,5 @@ func RegisterApiRoutes(router *gin.Engine) {
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	Clouds := new(cloud.QiNiuHandler)
-
-	api.POST("/upload/file", Clouds.UploadFile)
+	api.POST("/upload/file", Clouds.UploadFile).Use(middleware.Auth())
 }

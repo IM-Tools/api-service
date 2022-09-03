@@ -425,6 +425,29 @@ paths:
       tags:
       - 好友
   /friends/:id:
+    delete:
+      description: 删除好友
+      parameters:
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 好友ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/response.JsonResponse'
+      summary: friends/:id 删除好友
+      tags:
+      - 好友
     get:
       description: 获取好友详情
       parameters:

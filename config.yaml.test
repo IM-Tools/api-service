@@ -52,3 +52,7 @@ qiniu:
   secretKey: '-Itv6IKFu'
   bucket: 'im'
   domain: 'https://.top'
+github:
+  appId: '',
+  appKey: ''
+  redirectUrl: ''

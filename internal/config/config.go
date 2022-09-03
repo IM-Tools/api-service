@@ -15,6 +15,7 @@ type Config struct {
 	Kafka  KafkaConf
 	Nsq    NsqConf
 	QiNiu  QiNiuConfig
+	Github GithubConfig
 }
 
 type ServerConf struct {
@@ -88,6 +89,12 @@ type QiNiuConfig struct {
 	SecretKey string `json:"secretKey"`
 	Bucket    string `json:"bucket"`
 	Domain    string `json:"domain"`
+}
+
+type GithubConfig struct {
+	AppId       string `json:"appId"`
+	AppKey      string `json:"appKey"`
+	RedirectUrl string `json:"redirectUrl"`
 }
 
 var Conf = &Config{}

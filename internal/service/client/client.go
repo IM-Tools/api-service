@@ -1,7 +1,6 @@
 package client
 
 import (
-	"fmt"
 	"github.com/gorilla/websocket"
 	"im-services/internal/service/dispatch"
 	"im-services/pkg/logger"
@@ -75,11 +74,9 @@ func (client *ImClient) Read() {
 			case PING:
 				_ = client.Socket.WriteMessage(websocket.TextMessage,
 					ackMsg)
-				ImManager.GroupChannel <- msgByte
 			case FORWARDING:
 				_ = client.Socket.WriteMessage(websocket.TextMessage,
 					msgByte)
-				fmt.Println(node)
 				grpcClient.SendGpcMessage(string(msgByte), node)
 			default:
 				_ = client.Socket.WriteMessage(websocket.TextMessage,

@@ -88,6 +88,12 @@ func (friend *FriendRecordHandler) Store(cxt *gin.Context) {
 		return
 	}
 
+	var record im_friend_records.ImFriendRecords
+	if result := model.DB.Table("im_friend_records").Where("form_id=? and to_id=? and status=0", id, params.ToId).First(&record); result.RowsAffected > 0 {
+		response.ErrorResponse(enum.ParamError, "请勿重复添加...").ToJson(cxt)
+		return
+	}
+
 	var friends im_friends.ImFriends
 
 	if result := model.DB.Table("im_friends").Where("form_id=? and to_id=?", id, params.ToId).First(&friends); result.RowsAffected > 0 {
@@ -122,7 +128,10 @@ func (friend *FriendRecordHandler) Store(cxt *gin.Context) {
 
 	messageService.SendFriendActionMessage(msg)
 
-	response.SuccessResponse().ToJson(cxt)
+	records.Users.Name = users.Name
+	records.Users.Id = users.ID
+	records.Users.Avatar = users.Avatar
+	response.SuccessResponse(records).ToJson(cxt)
 	return
 }
 
@@ -156,8 +165,15 @@ func (friend *FriendRecordHandler) Update(cxt *gin.Context) {
 	var records im_friend_records.ImFriendRecords
 
 	if result := model.DB.Table("im_friend_records").
-		Where("id=? and status=0", params.ID, id).First(&records); result.RowsAffected == 0 {
+		Where("id=? and status=0", params.ID).First(&records); result.RowsAffected == 0 {
 		response.ErrorResponse(http.StatusInternalServerError, "数据不存在").ToJson(cxt)
+		return
+	}
+
+	var friends im_friends.ImFriends
+
+	if result := model.DB.Table("im_friends").Where("form_id=? and to_id=?", records.ToId, id).First(&friends); result.RowsAffected > 0 {
+		response.ErrorResponse(enum.ParamError, "用户已经是好友关系了...").ToJson(cxt)
 		return
 	}
 

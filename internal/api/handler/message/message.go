@@ -52,6 +52,9 @@ func (m *MessageHandler) Index(cxt *gin.Context) {
 		Where("(form_id=? and to_id=?) or (form_id=? and to_id=?)", id, toId, toId, id).
 		Order("created_at desc")
 
+	var total int64
+	query.Count(&total)
+
 	var users user.ImUsers
 
 	model.DB.Table("im_users").Where("id=?", toId).First(&users)
@@ -67,6 +70,7 @@ func (m *MessageHandler) Index(cxt *gin.Context) {
 			"mate": gin.H{
 				"pageSize": pageSize,
 				"page":     page,
+				"total":    0,
 			}}, http.StatusOK).ToJson(cxt)
 		return
 	}
@@ -77,6 +81,7 @@ func (m *MessageHandler) Index(cxt *gin.Context) {
 		"mate": gin.H{
 			"pageSize": pageSize,
 			"page":     page,
+			"total":    total,
 		}}, http.StatusOK).ToJson(cxt)
 	return
 
