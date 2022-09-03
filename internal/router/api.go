@@ -79,6 +79,5 @@ func RegisterApiRoutes(router *gin.Engine) {
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	Clouds := new(cloud.QiNiuHandler)
-
-	api.POST("/upload/file", Clouds.UploadFile)
+	api.POST("/upload/file", Clouds.UploadFile).Use(middleware.Auth())
 }
