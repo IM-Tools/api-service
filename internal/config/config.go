@@ -14,6 +14,7 @@ type Config struct {
 	Mail   MailConf
 	Kafka  KafkaConf
 	Nsq    NsqConf
+	QiNiu  QiNiuConfig
 }
 
 type ServerConf struct {
@@ -26,6 +27,7 @@ type ServerConf struct {
 	Node          string `json:"node"`
 	ServiceOpen   bool   `json:"serviceOpen"`
 	GrpcListen    string `json:"grpcListen"`
+	FilePath      string `json:"filePath"`
 }
 
 type JWTConf struct {
@@ -79,6 +81,13 @@ type KafkaConf struct {
 type NsqConf struct {
 	LookupHost string `json:"lookupHost"`
 	NsqHost    string `json:"nsqHost"`
+}
+
+type QiNiuConfig struct {
+	AccessKey string `json:"access_key"`
+	SecretKey string `json:"secretKey"`
+	Bucket    string `json:"bucket"`
+	Domain    string `json:"domain"`
 }
 
 var Conf = &Config{}

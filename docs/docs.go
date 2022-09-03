@@ -766,6 +766,54 @@ const docTemplate = `{
                 }
             }
         },
+        "/upload/file": {
+            "post": {
+                "description": "文件上传接口",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "文件"
+                ],
+                "summary": "upload/file 文件上传接口",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer ",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "文件",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.JsonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/cloud.Response"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/user/:id": {
             "get": {
                 "description": "获取用户信息",
@@ -842,6 +890,14 @@ const docTemplate = `{
                 },
                 "uid": {
                     "description": "uid",
+                    "type": "string"
+                }
+            }
+        },
+        "cloud.Response": {
+            "type": "object",
+            "properties": {
+                "file_url": {
                     "type": "string"
                 }
             }

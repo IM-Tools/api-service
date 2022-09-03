@@ -6,6 +6,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"im-services/docs"
 	"im-services/internal/api/handler/auth"
+	"im-services/internal/api/handler/cloud"
 	"im-services/internal/api/handler/friend"
 	"im-services/internal/api/handler/message"
 	"im-services/internal/api/handler/session"
@@ -77,4 +78,7 @@ func RegisterApiRoutes(router *gin.Engine) {
 	}
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+	Clouds := new(cloud.QiNiuHandler)
+
+	api.POST("/upload/file", Clouds.UploadFile)
 }

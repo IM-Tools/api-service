@@ -27,6 +27,11 @@ definitions:
         description: uid
         type: string
     type: object
+  cloud.Response:
+    properties:
+      file_url:
+        type: string
+    type: object
   friend.UserStatus:
     properties:
       id:
@@ -760,6 +765,35 @@ paths:
       summary: sessions/:id 更新会话
       tags:
       - 会话
+  /upload/file:
+    post:
+      description: 文件上传接口
+      parameters:
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JsonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/cloud.Response'
+              type: object
+      summary: upload/file 文件上传接口
+      tags:
+      - 文件
   /user/:id:
     get:
       description: 获取用户信息

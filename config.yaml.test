@@ -47,4 +47,8 @@ kafka:
 nsq:
   lookupHost: '127.0.0.1:4161'
   nsqHost: '127.0.0.1:4150'
-
+qiniu:
+  accessKey: '-'
+  secretKey: '-Itv6IKFu'
+  bucket: 'im'
+  domain: 'https://.top'
