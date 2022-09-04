@@ -47,6 +47,18 @@ func (f *FriendDao) GetNotFriendList(id interface{}, email string) []APIUsers {
 	return users
 }
 
+// 删除好友
+func (f *FriendDao) DelFriends(toId interface{}, formId interface{}) error {
+	var err error
+	var friend im_friends.ImFriends
+	result := model.DB.Model(&im_friends.ImFriends{}).Preload("Users").
+		Where("(to_id=? and form_id=?) or (to_id=? and form_id=?)", toId, formId, toId, formId).Delete(&friend)
+	if result.RowsAffected == 0 {
+		return err
+	}
+	return nil
+}
+
 // 查询好友详情
 func (f *FriendDao) GetFriends(id interface{}) (error, interface{}) {
 	var err error

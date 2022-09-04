@@ -161,6 +161,13 @@ func (friend *FriendRecordHandler) Update(cxt *gin.Context) {
 		return
 	}
 
+	var friends im_friends.ImFriends
+
+	if result := model.DB.Table("im_friends").Where("form_id=? and to_id=?", records.ToId, id).First(&friends); result.RowsAffected > 0 {
+		response.ErrorResponse(enum.ParamError, "用户已经是好友关系了...").ToJson(cxt)
+		return
+	}
+
 	var users user.ImUsers
 
 	model.DB.Table("im_users").Where("id=?", records.ToId).Find(&users)

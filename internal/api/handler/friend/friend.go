@@ -81,6 +81,38 @@ func (friend FriendHandler) Show(cxt *gin.Context) {
 // @BasePath /api
 
 // PingExample godoc
+// @Summary friends/:id 删除好友
+// @Schemes
+// @Description 删除好友
+// @Tags 好友
+// @SecurityDefinitions.apikey ApiKeyAuth
+// @In header
+// @Name Authorization
+// @Param Authorization	header string true "Bearer "
+// @Param id path int true "好友ID"
+// @Produce json
+// @Success 200 {object} response.JsonResponse{} "ok"
+// @Router /friends/:id [delete]
+func (friend FriendHandler) Delete(cxt *gin.Context) {
+	err, person := handler.GetPersonId(cxt)
+	if err != nil {
+		response.FailResponse(enum.ParamError, err.Error()).ToJson(cxt)
+		return
+	}
+	var friendDao friend_dao.FriendDao
+
+	errs := friendDao.DelFriends(person.ID, cxt.MustGet("id"))
+	if errs != nil {
+		response.FailResponse(enum.ParamError, errs.Error()).ToJson(cxt)
+		return
+	}
+	response.SuccessResponse().ToJson(cxt)
+	return
+}
+
+// @BasePath /api
+
+// PingExample godoc
 // @Summary friends/:id 获取好友在线状态
 // @Schemes
 // @Description 获取好友在线状态

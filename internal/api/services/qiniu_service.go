@@ -11,6 +11,7 @@ import (
 type QiNiuService struct {
 }
 
+// UploadFile 文件上传到七牛云
 func (QiNiuService) UploadFile(localFile string, fileName string) (string, error) {
 	putPolicy := storage.PutPolicy{
 		Scope: config.Conf.QiNiu.Bucket,
