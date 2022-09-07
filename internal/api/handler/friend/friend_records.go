@@ -156,7 +156,7 @@ func (friend *FriendRecordHandler) Update(cxt *gin.Context) {
 	var records im_friend_records.ImFriendRecords
 
 	if result := model.DB.Table("im_friend_records").
-		Where("id=? and status=0", params.ID, id).First(&records); result.RowsAffected == 0 {
+		Where("id=? and status=0", params.ID).First(&records); result.RowsAffected == 0 {
 		response.ErrorResponse(http.StatusInternalServerError, "数据不存在").ToJson(cxt)
 		return
 	}
