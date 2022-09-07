@@ -1,6 +1,7 @@
 package client
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gorilla/websocket"
 	"github.com/valyala/fastjson"
@@ -99,11 +100,9 @@ func (manager *AppImClientManager) SendMessageToSpecifiedClient(message []byte, 
 	return false
 }
 
-var messageData MessageData
-
 func (manager *AppImClientManager) SendFriendActionMessage(msg CreateFriendMessage) {
-	message := messageData.GetCreateFriendMessage(msg)
-	manager.SendMessageToSpecifiedClient([]byte(message), helpers.Int64ToString(msg.ToID))
+	message, _ := json.Marshal(msg)
+	manager.SendMessageToSpecifiedClient(message, helpers.Int64ToString(msg.ToID))
 }
 
 func (manager *AppImClientManager) SendPrivateMessage(message requests.PrivateMessageRequest) (bool, string) {

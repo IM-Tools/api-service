@@ -1,6 +1,7 @@
 package client
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/valyala/fastjson"
@@ -196,19 +197,8 @@ type MessageDataInterface interface {
 type MessageData struct {
 }
 
-func (*MessageData) GetCreateFriendMessage(message CreateFriendMessage) string {
+func (*MessageData) GetCreateFriendMessage(message CreateFriendMessage) []byte {
 
-	msg := fmt.Sprintf(`{
-                "msg_code": %d,
-                "id": %d,
-                "form_id": %d,
-                "status": %d,
-                "created_at": %d,
-                "to_id": %d,
-                "information": %d,
-                "message": %s,
-                "users": %s
-        }`, message.MsgCode, message.ID, message.FormId, message.Status, message.CreatedAt, message.ToID, message.Information, message.Users)
-
+	msg, _ := json.Marshal(message)
 	return msg
 }

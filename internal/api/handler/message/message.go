@@ -59,6 +59,8 @@ func (m *MessageHandler) Index(cxt *gin.Context) {
 	if len(page) > 0 {
 		query = query.Where("id<?", page)
 	}
+	var total int64
+	query.Count(&total)
 
 	if result := query.Limit(pageSize).Find(&list); result.RowsAffected == 0 {
 		response.SuccessResponse(gin.H{
@@ -67,6 +69,7 @@ func (m *MessageHandler) Index(cxt *gin.Context) {
 			"mate": gin.H{
 				"pageSize": pageSize,
 				"page":     page,
+				"total":    0,
 			}}, http.StatusOK).ToJson(cxt)
 		return
 	}
@@ -77,6 +80,7 @@ func (m *MessageHandler) Index(cxt *gin.Context) {
 		"mate": gin.H{
 			"pageSize": pageSize,
 			"page":     page,
+			"total":    total,
 		}}, http.StatusOK).ToJson(cxt)
 	return
 
