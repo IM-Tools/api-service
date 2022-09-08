@@ -52,6 +52,9 @@ func (m *MessageHandler) Index(cxt *gin.Context) {
 		Where("(form_id=? and to_id=?) or (form_id=? and to_id=?)", id, toId, toId, id).
 		Order("created_at desc")
 
+	var total int64
+	query.Count(&total)
+
 	var users user.ImUsers
 
 	model.DB.Table("im_users").Where("id=?", toId).First(&users)
@@ -59,8 +62,6 @@ func (m *MessageHandler) Index(cxt *gin.Context) {
 	if len(page) > 0 {
 		query = query.Where("id<?", page)
 	}
-	var total int64
-	query.Count(&total)
 
 	if result := query.Limit(pageSize).Find(&list); result.RowsAffected == 0 {
 		response.SuccessResponse(gin.H{
