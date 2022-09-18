@@ -296,6 +296,30 @@ info:
   title: im-services  接口文档
   version: "1.0"
 paths:
+  /auth/githubLogin:
+    get:
+      description: github登录
+      parameters:
+      - description: github授权码
+        in: path
+        name: code
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JsonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/auth.loginResponse'
+              type: object
+      summary: friends github登录
+      tags:
+      - 登录相关
   /auth/login:
     post:
       consumes:

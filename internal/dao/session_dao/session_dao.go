@@ -10,7 +10,7 @@ import (
 type SessionDao struct {
 }
 
-func (s *SessionDao) CreateSession(formId int64, toId int64, channelType int) {
+func (s *SessionDao) CreateSession(formId int64, toId int64, channelType int) (sessions *im_sessions.ImSessions) {
 
 	var users user.ImUsers
 	model.DB.Table("im_users").Where("id=?", toId).First(&users)
@@ -28,5 +28,7 @@ func (s *SessionDao) CreateSession(formId int64, toId int64, channelType int) {
 	}
 
 	model.DB.Save(&session)
+
+	return &session
 
 }

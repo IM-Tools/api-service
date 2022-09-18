@@ -92,9 +92,9 @@ type QiNiuConfig struct {
 }
 
 type GithubConfig struct {
-	AppId       string `json:"appId"`
-	AppKey      string `json:"appKey"`
-	RedirectUrl string `json:"redirectUrl"`
+	ClientId     string `json:"clientId"`
+	ClientSecret string `json:"clientSecret"`
+	RedirectUrl  string `json:"redirectUrl"`
 }
 
 var Conf = &Config{}

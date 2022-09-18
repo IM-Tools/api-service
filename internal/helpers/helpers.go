@@ -34,6 +34,10 @@ func Int64ToString(int64_ int64) string {
 	return strconv.Itoa(int(int64_))
 }
 
+func Float64ToString(float64_ float64) string {
+	return strconv.Itoa(int(float64_))
+}
+
 func StringToInt(str string) int {
 	num, _ := strconv.Atoi(str)
 	return num

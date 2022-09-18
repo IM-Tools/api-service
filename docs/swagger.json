@@ -15,6 +15,47 @@
     "host": "127.0.0.1:8000",
     "basePath": "/api",
     "paths": {
+        "/auth/githubLogin": {
+            "get": {
+                "description": "github登录",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "登录相关"
+                ],
+                "summary": "friends github登录",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "github授权码",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.JsonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/auth.loginResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "post": {
                 "description": "登录接口",

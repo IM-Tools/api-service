@@ -25,10 +25,12 @@ func RegisterApiRoutes(router *gin.Engine) {
 	authGroup := api.Group("/auth")
 	{
 		login := new(auth.AuthHandler)
+		oauth := new(auth.OAuthHandler)
 
 		authGroup.POST("/login", login.Login)                 //登录
 		authGroup.POST("/registered", login.Registered)       //注册
 		authGroup.POST("/sendEmailCode", login.SendEmailCode) //发送注册邮件
+		authGroup.GET("/githubLogin", oauth.GithubOAuth)      //发送注册邮件
 	}
 
 	// 用户

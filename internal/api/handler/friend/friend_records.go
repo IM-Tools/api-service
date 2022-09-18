@@ -179,7 +179,7 @@ func (friend *FriendRecordHandler) Update(cxt *gin.Context) {
 
 	var users user.ImUsers
 
-	model.DB.Table("im_users").Where("id=?", records.ToId).Find(&users)
+	model.DB.Table("im_users").Where("id=?", id).Find(&users)
 
 	records.Status = params.Status
 
@@ -208,8 +208,8 @@ func (friend *FriendRecordHandler) Update(cxt *gin.Context) {
 
 	msg.MsgCode = msgCode
 	msg.ID = records.Id
-	msg.ToID = records.ToId
-	msg.FormId = records.FormId
+	msg.ToID = records.FormId
+	msg.FormId = records.ToId
 	msg.Information = records.Information
 	msg.CreatedAt = records.CreatedAt
 	msg.Status = records.Status
@@ -218,8 +218,8 @@ func (friend *FriendRecordHandler) Update(cxt *gin.Context) {
 	msg.Users.Name = users.Name
 
 	messageService.SendFriendActionMessage(msg)
-
-	response.SuccessResponse().WriteTo(cxt)
+	friends.Status = params.Status
+	response.SuccessResponse(friends).WriteTo(cxt)
 	return
 
 }

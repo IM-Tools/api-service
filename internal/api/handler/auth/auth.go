@@ -7,10 +7,10 @@ import (
 	"im-services/internal/api/requests"
 	"im-services/internal/api/services"
 	"im-services/internal/config"
+	"im-services/internal/dao/auth_dao"
 	"im-services/internal/enum"
 	"im-services/internal/helpers"
 	"im-services/internal/models/user"
-	"im-services/pkg/date"
 	"im-services/pkg/hash"
 	"im-services/pkg/jwt"
 	"im-services/pkg/logger"
@@ -48,6 +48,10 @@ type loginResponse struct {
 	ExpireTime int64  `json:"expire_time"` // token过期时间
 	Ttl        int64  `json:"ttl"`         // token有效期
 }
+
+var (
+	auth auth_dao.AuthDao
+)
 
 // Login 登录
 // @BasePath /api
@@ -167,19 +171,7 @@ func (*AuthHandler) Registered(cxt *gin.Context) {
 		return
 	}
 
-	createdAt := date.NewDate()
-
-	model.DB.Table("im_users").Create(&user.ImUsers{
-		Email:         params.Email,
-		Password:      hash.BcryptHash(params.Password),
-		Name:          params.Name,
-		CreatedAt:     createdAt,
-		UpdatedAt:     createdAt,
-		Avatar:        fmt.Sprintf("https://api.multiavatar.com/Binx %s.png", params.Name),
-		LastLoginTime: createdAt,
-		Uid:           helpers.GetUuid(),
-	})
-
+	auth.CreateUser(params.Email, params.Password, params.Name)
 	response.SuccessResponse().ToJson(cxt)
 	return
 }
