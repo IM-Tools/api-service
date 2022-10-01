@@ -9,3 +9,6 @@ internal/service/.DS_Store
 pkg/.DS_Store
 .DS_Store
 internal/.DS_Store
+go_build_im_services
+go_build_main_go
+air

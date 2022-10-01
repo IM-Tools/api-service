@@ -33,7 +33,9 @@ func (u *UsersHandler) Info(cxt *gin.Context) {
 	}
 	var users UserDetails
 
-	if result := model.DB.Model(&user.ImUsers{}).Where("id=?", person.ID).First(&users); result.RowsAffected == 0 {
+	if result := model.DB.Model(&user.ImUsers{}).
+		Where("id=?", person.ID).
+		First(&users); result.RowsAffected == 0 {
 		response.ErrorResponse(enum.ParamError, "用户不存在").ToJson(cxt)
 		return
 	}

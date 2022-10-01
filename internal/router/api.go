@@ -8,6 +8,7 @@ import (
 	"im-services/internal/api/handler/auth"
 	"im-services/internal/api/handler/cloud"
 	"im-services/internal/api/handler/friend"
+	"im-services/internal/api/handler/group"
 	"im-services/internal/api/handler/message"
 	"im-services/internal/api/handler/session"
 	"im-services/internal/api/handler/user"
@@ -51,7 +52,6 @@ func RegisterApiRoutes(router *gin.Engine) {
 		sessionGroup.DELETE("/:id", sessions.Delete) // 移除会话
 
 	}
-
 	// 好友
 	friendGroup := api.Group("/friends").Use(middleware.Auth())
 	{
@@ -79,6 +79,16 @@ func RegisterApiRoutes(router *gin.Engine) {
 		messageGroup.POST("/recall", messages.RecallMessage)       // 消息撤回
 
 	}
+
+	// 群聊
+	chatGroup := api.Group("/groups").Use(middleware.Auth())
+	{
+		groups := new(group.GroupHandler)
+		chatGroup.POST("/add", groups.Store)  //查询群组
+		chatGroup.POST("/list", groups.Index) //创建群组
+
+	}
+
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	Clouds := new(cloud.QiNiuHandler)
