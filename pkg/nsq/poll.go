@@ -2,11 +2,11 @@ package nsq
 
 import (
 	"errors"
-	"fmt"
-	"github.com/nsqio/go-nsq"
-	"github.com/silenceper/pool"
 	"im-services/internal/config"
 	"time"
+
+	"github.com/nsqio/go-nsq"
+	"github.com/silenceper/pool"
 )
 
 var (
@@ -14,7 +14,6 @@ var (
 )
 
 func InitNewProducerPoll() error {
-	fmt.Println(config.Conf.Nsq)
 	factory := func() (interface{}, error) {
 		producer, err := nsq.NewProducer(config.Conf.Nsq.NsqHost, nsq.NewConfig())
 		if err != nil {
@@ -45,7 +44,24 @@ func InitNewProducerPoll() error {
 
 }
 
+// 私聊消息推送入topic
 func PublishMessage(topic string, content []byte) error {
+	nsqProducer, err := NsqProducerPool.Get()
+	if err != nil {
+		return err
+	}
+	defer NsqProducerPool.Put(nsqProducer)
+
+	err = nsqProducer.(*nsq.Producer).Publish(topic, content)
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+
+// 群聊消息推送入topic
+func PublishGroupMessage(topic string, content []byte) error {
 	nsqProducer, err := NsqProducerPool.Get()
 	if err != nil {
 		return err
