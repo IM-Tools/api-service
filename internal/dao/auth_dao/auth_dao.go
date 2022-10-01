@@ -24,6 +24,7 @@ func (*AuthDao) CreateUser(email string, password string, name string) {
 		Avatar:        fmt.Sprintf("https://api.multiavatar.com/Binx %s.png", name),
 		LastLoginTime: createdAt,
 		Uid:           helpers.GetUuid(),
+		UserJson:      "{}",
 	})
 }
 
