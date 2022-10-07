@@ -2,7 +2,7 @@ package requests
 
 type CreateGroupRequest struct {
 	UserId        int64             `json:"user_id"`
-	Name          string            `json:"name" validate:"required,min=6,max=20"`  //群名称
+	Name          string            `json:"name" validate:"required,min=2,max=20"`  //群名称
 	Info          string            `json:"info" validate:"required,min=2,max=255"` //群介绍
 	Avatar        string            `json:"avatar" validate:"required"`             //群头像
 	Password      string            `json:"password"`

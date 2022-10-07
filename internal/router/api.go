@@ -1,9 +1,6 @@
 package router
 
 import (
-	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 	"im-services/docs"
 	"im-services/internal/api/handler/auth"
 	"im-services/internal/api/handler/cloud"
@@ -13,6 +10,10 @@ import (
 	"im-services/internal/api/handler/session"
 	"im-services/internal/api/handler/user"
 	"im-services/internal/middleware"
+
+	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // RegisterApiRoutes 注册api路由
@@ -31,7 +32,7 @@ func RegisterApiRoutes(router *gin.Engine) {
 		authGroup.POST("/login", login.Login)                 //登录
 		authGroup.POST("/registered", login.Registered)       //注册
 		authGroup.POST("/sendEmailCode", login.SendEmailCode) //发送注册邮件
-		authGroup.GET("/githubLogin", oauth.GithubOAuth)      //发送注册邮件
+		authGroup.GET("/githubLogin", oauth.GithubOAuth)      //github登录
 	}
 
 	// 用户
@@ -73,7 +74,10 @@ func RegisterApiRoutes(router *gin.Engine) {
 	messageGroup := api.Group("/messages").Use(middleware.Auth())
 	{
 		messages := new(message.MessageHandler)
-		messageGroup.GET("/", messages.Index)                      //获取私聊消息列表
+		groupMessages := new(message.GroupMessageHandler)
+		messageGroup.GET("/", messages.Index)            //获取私聊消息列表
+		messageGroup.GET("/groups", groupMessages.Index) //获取群聊消息列表
+
 		messageGroup.POST("/private", messages.SendPrivateMessage) // 发送私聊消息
 		messageGroup.POST("/video", messages.SendVideoMessage)     // 发送视频请求
 		messageGroup.POST("/recall", messages.RecallMessage)       // 消息撤回
@@ -84,8 +88,8 @@ func RegisterApiRoutes(router *gin.Engine) {
 	chatGroup := api.Group("/groups").Use(middleware.Auth())
 	{
 		groups := new(group.GroupHandler)
-		chatGroup.POST("/add", groups.Store)  //查询群组
-		chatGroup.POST("/list", groups.Index) //创建群组
+		chatGroup.POST("/", groups.Store)     //创建群组
+		chatGroup.POST("/list", groups.Index) //获取群组列表
 
 	}
 

@@ -1,8 +1,6 @@
 package message
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"im-services/internal/api/requests"
 	"im-services/internal/api/services"
 	"im-services/internal/dao/friend_dao"
@@ -15,6 +13,9 @@ import (
 	"im-services/pkg/response"
 	"net/http"
 	"sort"
+
+	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 type MessageHandler struct {
@@ -28,7 +29,7 @@ var (
 // @BasePath /api
 
 // PingExample godoc
-// @Summary friends/record 获取私聊消息列表
+// @Summary /messages 获取私聊消息列表
 // @Schemes
 // @Description 获取私聊消息列表
 // @Tags 消息
@@ -75,7 +76,7 @@ func (m *MessageHandler) Index(cxt *gin.Context) {
 		return
 	}
 
-	SortByMessage(list, users)
+	sortByMessage(list, users)
 	response.SuccessResponse(gin.H{
 		"list": list,
 		"mate": gin.H{
@@ -86,7 +87,7 @@ func (m *MessageHandler) Index(cxt *gin.Context) {
 	return
 
 }
-func SortByMessage(list []im_messages.ImMessages, users user.ImUsers) {
+func sortByMessage(list []im_messages.ImMessages, users user.ImUsers) {
 	sort.Slice(list, func(i, j int) bool {
 		list[i].Users.ID = users.ID
 		list[i].Users.Name = users.Name

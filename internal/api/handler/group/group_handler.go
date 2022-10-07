@@ -1,6 +1,7 @@
 package group
 
 import (
+	"fmt"
 	"im-services/internal/api/requests"
 	"im-services/internal/enum"
 	"im-services/internal/helpers"
@@ -53,14 +54,16 @@ func (*GroupHandler) Index(cxt *gin.Context) {
 func (*GroupHandler) Store(cxt *gin.Context) {
 	id := cxt.MustGet("id")
 	params := requests.CreateGroupRequest{
-		UserId:   helpers.InterfaceToInt64(id),
-		Name:     cxt.PostForm("name"),
-		Info:     cxt.PostForm("info"),
-		Avatar:   cxt.PostForm("avatar"),
-		Password: cxt.PostForm("password"),
-		IsPwd:    helpers.StringToInt(cxt.PostForm("is_pwd")),
-		Theme:    cxt.PostForm("theme"),
+		UserId:        helpers.InterfaceToInt64(id),
+		Name:          cxt.PostForm("name"),
+		Info:          cxt.PostForm("info"),
+		Avatar:        cxt.PostForm("avatar"),
+		Password:      cxt.PostForm("password"),
+		IsPwd:         helpers.StringToInt(cxt.PostForm("is_pwd")),
+		Theme:         cxt.PostForm("theme"),
+		SelectUserMap: cxt.PostFormMap("select_user"),
 	}
+	fmt.Println(params.SelectUserMap)
 	errs := validator.New().Struct(params)
 	if errs != nil {
 		response.ErrorResponse(enum.ParamError, errs.Error()).ToJson(cxt)

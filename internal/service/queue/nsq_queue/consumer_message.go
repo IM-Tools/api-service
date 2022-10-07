@@ -21,6 +21,9 @@ func ConsumersInit() {
 	select {}
 }
 
+
+
+
 func NodeInit() {
 	err := nsq.NewConsumers(queue.OfflinePrivateTopic, ChannelNodeTopic, config.Conf.Nsq.LookupHost)
 	if err != nil {
