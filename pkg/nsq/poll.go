@@ -60,22 +60,6 @@ func PublishMessage(topic string, content []byte) error {
 
 }
 
-// 群聊消息推送入topic
-func PublishGroupMessage(topic string, content []byte) error {
-	nsqProducer, err := NsqProducerPool.Get()
-	if err != nil {
-		return err
-	}
-	defer NsqProducerPool.Put(nsqProducer)
-
-	err = nsqProducer.(*nsq.Producer).Publish(topic, content)
-	if err != nil {
-		return err
-	}
-	return nil
-
-}
-
 func Exit() {
 	NsqProducerPool.Release()
 }

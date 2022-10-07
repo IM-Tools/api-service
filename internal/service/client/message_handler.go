@@ -3,8 +3,6 @@ package client
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/websocket"
-	"github.com/valyala/fastjson"
 	"im-services/internal/api/requests"
 	"im-services/internal/config"
 	"im-services/internal/enum"
@@ -14,6 +12,14 @@ import (
 	"im-services/internal/service/dispatch"
 	"im-services/internal/service/queue/nsq_queue"
 	GrpcClient "im-services/server/client"
+
+	"github.com/gorilla/websocket"
+	"github.com/valyala/fastjson"
+)
+
+var (
+	GroupChannelType   = 2
+	PrivateChannelType = 1
 )
 
 func (manager *AppImClientManager) LaunchPrivateMessage(message []byte) {
@@ -54,7 +60,7 @@ func (manager *AppImClientManager) LaunchGroupMessage(message []byte) {
 	if client, ok := manager.ImClientMap[receiveId]; ok {
 		client.Send <- []byte(userMsg)
 	} else {
-		nsq_queue.ProducerQueue.SendMessage([]byte(userMsg))
+		nsq_queue.ProducerQueue.SendGroupMessage([]byte(userMsg))
 
 	}
 }
@@ -67,7 +73,19 @@ func (manager *AppImClientManager) ConsumingOfflineMessages(client *ImClient) {
 	}
 	// 更新离线消息状态
 	if len(list) > 0 {
-		dao.OfflineMessage.UpdatePrivateOfflineMessageStatus(client.ID)
+		dao.OfflineMessage.UpdatePrivateOfflineMessageStatus(client.ID, PrivateChannelType)
+	}
+}
+
+func (manager *AppImClientManager) ConsumingGroupOfflineMessages(client *ImClient) {
+	// 读取离线消息
+	list := dao.OfflineMessage.PullPrivateGroupOfflineMessage(client.ID)
+	for _, value := range list {
+		_ = client.Socket.WriteMessage(websocket.TextMessage, []byte(value.Message))
+	}
+	// 更新离线消息状态
+	if len(list) > 0 {
+		dao.OfflineMessage.UpdatePrivateOfflineMessageStatus(client.ID, GroupChannelType)
 	}
 }
 
@@ -127,7 +145,9 @@ func (manager *AppImClientManager) SendPrivateMessage(message requests.PrivateMe
 			nsq_queue.ProducerQueue.SendMessage([]byte(msgString))
 		}
 	case 2:
-
+		if !ImManager.SendMessageToSpecifiedClient([]byte(msgString), helpers.Int64ToString(message.ToID)) {
+			nsq_queue.ProducerQueue.SendGroupMessage([]byte(msgString))
+		}
 	default:
 	}
 	return true, "Success"

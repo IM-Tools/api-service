@@ -11,35 +11,22 @@ var (
 	OfflineMessageSave = new(dao.OfflineMessageDao)
 )
 
-type Handler struct {
+type PrivateHandler struct {
 }
 
-func (m *Handler) HandleMessage(msg *nsq.Message) (err error) {
+type GroupHandler struct {
+}
+
+func (m *PrivateHandler) HandleMessage(msg *nsq.Message) (err error) {
 	OfflineMessageSave.PrivateOfflineMessageSave(string(msg.Body))
 	return
 
 }
 
-func (m *Handler) HandleGroupMessage(msg *nsq.Message) (err error) {
+func (group *GroupHandler) HandleMessage(msg *nsq.Message) (err error) {
 	OfflineMessageSave.PrivateOfflineMessageSave(string(msg.Body))
 	return
 
-}
-
-func NewGroupConsumers(t string, c string, addr string) error {
-	conf := nsq.NewConfig()
-	nc, err := nsq.NewConsumer(t, c, conf)
-	if err != nil {
-		fmt.Println("create consumer failed err ", err)
-		return err
-	}
-	consumer := &Handler{}
-	nc.AddHandler(consumer)
-
-	if err := nc.ConnectToNSQLookupd(addr); err != nil {
-		return err
-	}
-	return nil
 }
 
 func NewConsumers(t string, c string, addr string) error {
@@ -49,7 +36,23 @@ func NewConsumers(t string, c string, addr string) error {
 		fmt.Println("create consumer failed err ", err)
 		return err
 	}
-	consumer := &Handler{}
+	consumer := &PrivateHandler{}
+	nc.AddHandler(consumer)
+
+	if err := nc.ConnectToNSQLookupd(addr); err != nil {
+		return err
+	}
+	return nil
+}
+
+func NewGroupConsumers(t string, c string, addr string) error {
+	conf := nsq.NewConfig()
+	nc, err := nsq.NewConsumer(t, c, conf)
+	if err != nil {
+		fmt.Println("create consumer failed err ", err)
+		return err
+	}
+	consumer := &GroupHandler{}
 	nc.AddHandler(consumer)
 
 	if err := nc.ConnectToNSQLookupd(addr); err != nil {

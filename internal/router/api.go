@@ -78,18 +78,22 @@ func RegisterApiRoutes(router *gin.Engine) {
 		messageGroup.GET("/", messages.Index)            //获取私聊消息列表
 		messageGroup.GET("/groups", groupMessages.Index) //获取群聊消息列表
 
-		messageGroup.POST("/private", messages.SendPrivateMessage) // 发送私聊消息
-		messageGroup.POST("/video", messages.SendVideoMessage)     // 发送视频请求
-		messageGroup.POST("/recall", messages.RecallMessage)       // 消息撤回
+		messageGroup.POST("/private", messages.SendMessage)    // 发送私聊消息
+		messageGroup.POST("/group", messages.SendMessage)      // 发送私聊消息
+		messageGroup.POST("/video", messages.SendVideoMessage) // 发送视频请求
+		messageGroup.POST("/recall", messages.RecallMessage)   // 消息撤回
 
 	}
 
 	// 群聊
+
 	chatGroup := api.Group("/groups").Use(middleware.Auth())
 	{
 		groups := new(group.GroupHandler)
-		chatGroup.POST("/", groups.Store)     //创建群组
-		chatGroup.POST("/list", groups.Index) //获取群组列表
+		chatGroup.POST("/store", groups.Store)             //创建群组
+		chatGroup.POST("/applyJoin/:id", groups.ApplyJoin) //加入群组
+		chatGroup.GET("/list", groups.Index)               //获取群组列表
+		chatGroup.GET("/users/:id", groups.GetUsers)       //获取群成员信息
 
 	}
 

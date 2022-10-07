@@ -17,9 +17,9 @@ type GroupMessageHandler struct {
 // @BasePath /api
 
 // PingExample godoc
-// @Summary /messages/groups 获取群聊消息列表
+// @Summary /messages/groups 获取群聊消息
 // @Schemes
-// @Description 获取群聊消息列表
+// @Description 获取群聊消息
 // @Tags 消息
 // @SecurityDefinitions.apikey ApiKeyAuth
 // @In header
@@ -30,12 +30,12 @@ type GroupMessageHandler struct {
 // @Router /messages/groups [get]
 func (*GroupMessageHandler) Index(cxt *gin.Context) {
 	page := cxt.Query("page")
-	groupId := cxt.Query("group_id")
+	groupId := cxt.Query("to_id")
 	pageSize := helpers.StringToInt(cxt.DefaultQuery("pageSize", "50"))
 
 	var list []group_message.ImGroupMessages
 
-	query := model.DB.Model(&group_message.ImGroupMessages{}).
+	query := model.DB.Model(&group_message.ImGroupMessages{}).Preload("Users").
 		Where("group_id=?", groupId).
 		Order("send_time desc")
 

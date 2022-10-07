@@ -39,4 +39,6 @@ const (
 	SessionStatusNo = 1
 	TopStatusOk     = 1
 	TopStatus       = 0
+	GroupType       = 2
+	PrivateType     = 1
 )

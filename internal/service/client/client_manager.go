@@ -84,7 +84,10 @@ func (manager *AppImClientManager) Start() {
 		case client := <-ImManager.Register:
 			// 设置客户端 拉去离线消息 推送在线状态
 			manager.SetClient(client)
+			// 拉取离线消息
 			manager.ConsumingOfflineMessages(client)
+			// 拉取群聊离线消息
+			manager.ConsumingGroupOfflineMessages(client)
 			//manager.RadioUserOnlineStatus(client)
 		case client := <-ImManager.Unregister:
 			manager.DelClient(client)
@@ -96,7 +99,7 @@ func (manager *AppImClientManager) Start() {
 			helpers.ErrorHandler(err)
 		case groupMessage := <-ImManager.GroupChannel:
 			err := coroutine_poll.AntsPool.Submit(func() {
-				manager.LaunchPrivateMessage(groupMessage)
+				manager.LaunchGroupMessage(groupMessage)
 			})
 			helpers.ErrorHandler(err)
 		case publicMessage := <-ImManager.BroadcastChannel:

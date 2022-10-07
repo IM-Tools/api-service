@@ -1,11 +1,12 @@
 package dao
 
 import (
-	"github.com/valyala/fastjson"
 	"im-services/internal/models/group_message"
 	"im-services/internal/models/offline_message"
 	"im-services/pkg/date"
 	"im-services/pkg/model"
+
+	"github.com/valyala/fastjson"
 )
 
 type DataInterface interface {
@@ -40,7 +41,7 @@ func (offline *OfflineMessageDao) GroupOfflineMessageSave(msg string) {
 	v, _ := p.Parse(msg)
 	ReceiveId := v.GetInt64("to_id")
 	FormId := v.GetInt64("form_id")
-	sendTime := v.GetInt("send_time")
+	sendTime := v.GetInt64("send_time")
 
 	model.DB.Table("im_offline_messages").Create(&group_message.ImGroupMessages{
 		SendTime: sendTime,

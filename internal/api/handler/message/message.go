@@ -4,6 +4,7 @@ import (
 	"im-services/internal/api/requests"
 	"im-services/internal/api/services"
 	"im-services/internal/dao/friend_dao"
+	"im-services/internal/dao/messsage_dao"
 	"im-services/internal/enum"
 	"im-services/internal/helpers"
 	"im-services/internal/models/im_messages"
@@ -24,6 +25,7 @@ type MessageHandler struct {
 var (
 	messagesServices services.ImMessageService
 	friend           friend_dao.FriendDao
+	messageDao       messsage_dao.MessageDao
 )
 
 // @BasePath /api
@@ -165,12 +167,13 @@ func (m *MessageHandler) SendVideoMessage(cxt *gin.Context) {
 // @Param msg_client_id formData int true "客户端消息id"
 // @Param to_id formData int true "推送人id"
 // @Param msg_type formData int true "消息类型:1.私聊消息 2.图片消息 3.语音消息 .."
+// @Param channel_type formData int true "频道类型 1.私聊 2.频道 3.广播"
 // @Param message formData string true "消息内容"
 // @Param data formData string false "自定义携带消息"
 // @Produce json
 // @Success 200 {object} response.JsonResponse{data=[]im_messages.ImMessages} "ok"
 // @Router /messages/private [post]
-func (m *MessageHandler) SendPrivateMessage(cxt *gin.Context) {
+func (m *MessageHandler) SendMessage(cxt *gin.Context) {
 
 	id := cxt.MustGet("id")
 	params := requests.PrivateMessageRequest{
@@ -179,7 +182,7 @@ func (m *MessageHandler) SendPrivateMessage(cxt *gin.Context) {
 		MsgClientId: helpers.StringToInt64(cxt.PostForm("msg_client_id")),
 		FormID:      helpers.InterfaceToInt64(id),
 		ToID:        helpers.StringToInt64(cxt.PostForm("to_id")),
-		ChannelType: 1,
+		ChannelType: helpers.StringToInt(cxt.DefaultPostForm("channel_type", "1")),
 		MsgType:     helpers.StringToInt(cxt.PostForm("msg_type")),
 		Message:     cxt.PostForm("message"),
 		SendTime:    date.NewDate(),
@@ -193,32 +196,34 @@ func (m *MessageHandler) SendPrivateMessage(cxt *gin.Context) {
 		return
 	}
 
-	if !friend.IsFriends(id, params.ToID) {
-		response.FailResponse(enum.WsNotFriend, "非好友关系,不能聊天...").ToJson(cxt)
+	switch params.ChannelType {
+	case 1:
+		if !friend.IsFriends(id, params.ToID) {
+			response.FailResponse(enum.WsNotFriend, "非好友关系,不能聊天...").ToJson(cxt)
+			return
+		}
+		// 消息投递
+		ok, msg := messagesServices.SendPrivateMessage(params)
+		if !ok {
+			response.FailResponse(http.StatusInternalServerError, msg).ToJson(cxt)
+			return
+		}
+		// todo 此处有点逻辑bug
+		messageDao.CreateMessage(params)
+		response.SuccessResponse(params).ToJson(cxt)
 		return
+	case 2:
+		if !groupDao.IsGroupsUser(id, params.ToID) {
+			response.FailResponse(enum.WsNotFriend, "你不是此群成员了...").ToJson(cxt)
+			return
+		}
+		// 消息投递
+		ok := messagesServices.SendGroupMessage(params)
+		if !ok {
+			response.FailResponse(http.StatusInternalServerError, "群聊消息投递异常").ToJson(cxt)
+			return
+		}
+
+		break
 	}
-
-	// 消息投递
-	ok, msg := messagesServices.SendPrivateMessage(params)
-	if !ok {
-
-		response.FailResponse(http.StatusInternalServerError, msg).ToJson(cxt)
-		return
-	}
-
-	message := im_messages.ImMessages{
-		Msg:       params.Message,
-		FormId:    params.FormID,
-		ToId:      params.ToID,
-		CreatedAt: params.SendTime,
-		IsRead:    0,
-		MsgType:   params.MsgType,
-		Status:    1,
-		Data:      helpers.InterfaceToString(params.Data),
-	}
-
-	model.DB.Save(&message)
-
-	response.SuccessResponse(params).ToJson(cxt)
-	return
 }

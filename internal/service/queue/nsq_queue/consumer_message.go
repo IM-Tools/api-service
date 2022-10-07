@@ -12,7 +12,7 @@ const (
 	ChannelNodeTopic    = "channel-node"
 )
 
-func ConsumersInit() {
+func ConsumersPrivateMessageInit() {
 	err := nsq.NewConsumers(queue.OfflinePrivateTopic, ChannelOfflineTopic, config.Conf.Nsq.LookupHost)
 	if err != nil {
 		fmt.Println("new nsq consumer failed", err)
@@ -21,8 +21,14 @@ func ConsumersInit() {
 	select {}
 }
 
-
-
+func ConsumersGroupMessageInit() {
+	err := nsq.NewConsumers(queue.OfflineGroupTopic, ChannelOfflineTopic, config.Conf.Nsq.LookupHost)
+	if err != nil {
+		fmt.Println("new nsq consumer failed", err)
+		return
+	}
+	select {}
+}
 
 func NodeInit() {
 	err := nsq.NewConsumers(queue.OfflinePrivateTopic, ChannelNodeTopic, config.Conf.Nsq.LookupHost)

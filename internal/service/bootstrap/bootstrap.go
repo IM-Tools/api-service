@@ -1,7 +1,6 @@
 package bootstrap
 
 import (
-	"github.com/gin-gonic/gin"
 	"im-services/internal/config"
 	"im-services/internal/middleware"
 	router2 "im-services/internal/router"
@@ -14,6 +13,8 @@ import (
 	"im-services/pkg/redis"
 	"im-services/server"
 	_ "net/http/pprof"
+
+	"github.com/gin-gonic/gin"
 )
 
 // Start 启动服务方法
@@ -46,7 +47,9 @@ func LoadConfiguration() {
 	coroutine_poll.ConnectPool()
 
 	_ = nsq.InitNewProducerPoll()
-	go nsq_queue.ConsumersInit()
+	// todo 消费逻辑可以单独抽离
+	go nsq_queue.ConsumersPrivateMessageInit()
+	go nsq_queue.ConsumersPrivateMessageInit()
 
 }
 
