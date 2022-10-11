@@ -2,6 +2,7 @@ package services
 
 import (
 	"encoding/json"
+	"fmt"
 	"im-services/internal/api/requests"
 	"im-services/internal/enum"
 	"im-services/internal/helpers"
@@ -11,7 +12,6 @@ import (
 	"im-services/internal/service/queue/nsq_queue"
 	"im-services/pkg/date"
 	"im-services/pkg/model"
-	"unsafe"
 )
 
 type ImMessageService struct {
@@ -54,30 +54,25 @@ func (s ImMessageService) SendGroupMessage(message requests.PrivateMessageReques
 	model.DB.Model(&im_group_users.ImGroupUsers{}).Where("group_id=?", message.ToID).Select([]string{"user_id"}).Find(&users)
 	var groupMesage group_message.ImGroupMessages
 
-	Len := unsafe.Sizeof(&message)
-	MessageBytes := &SliceMock{
-		addr: uintptr(unsafe.Pointer(&message)),
-		cap:  int(Len),
-		len:  int(Len),
-	}
-	data := *(*[]byte)(unsafe.Pointer(MessageBytes))
+	msg, _ := json.Marshal(message)
 
 	for _, val := range users {
-		isOk := AppClient.ImManager.SendMessageToSpecifiedClient(data, val.UserId)
+		fmt.Println(val.UserId)
+		isOk := AppClient.ImManager.SendMessageToSpecifiedClient(msg, val.UserId)
 		if !isOk {
 			//没有就丢入消息队列
-			nsq_queue.ProducerQueue.SendGroupMessage(data)
+			nsq_queue.ProducerQueue.SendGroupMessage(msg)
 		}
 
 	}
 	groupMesage.Message = message.Message
 	groupMesage.SendTime = date.TimeUnix()
-	groupMesage.MessageId = int(message.MsgClientId)
-	groupMesage.ClientMessageId = int(message.MsgClientId)
+	groupMesage.MessageId = message.MsgId
+	groupMesage.ClientMessageId = message.MsgClientId
 	groupMesage.FormId = message.FormID
 	groupMesage.GroupId = message.ToID
 
-	model.DB.Model(&im_group_users.ImGroupUsers{}).Create(&groupMesage)
+	model.DB.Model(&group_message.ImGroupMessages{}).Create(&groupMesage)
 
 	return true
 
