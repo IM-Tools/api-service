@@ -12,8 +12,12 @@ const (
 	WsNotFriend       = 1003 // 非好友关系
 	WsPing            = 1004 // 心跳
 	WsAck             = 1005 // 确认机制
-	WsUserOffline     = 2000 // 用户离线
-	WsUserOnline      = 2001 // 用户在线
-	WsIsUserStatus    = 2002 // 前端请求判断用户是否在线
+
+	WsUserOffline  = 2000 // 用户离线
+	WsUserOnline   = 2001 // 用户在线
+	WsIsUserStatus = 2002 // 前端请求判断用户是否在线
+	WsSession      = 2003 // 会话推送
+
+	WsGroupMessage = 3000 // 入群邀请
 
 )

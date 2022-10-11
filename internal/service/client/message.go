@@ -3,14 +3,15 @@ package client
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/go-playground/validator/v10"
-	"github.com/valyala/fastjson"
 	"im-services/internal/api/requests"
 	"im-services/internal/config"
 	"im-services/internal/enum"
 	"im-services/internal/helpers"
 	"im-services/internal/service/dispatch"
 	"im-services/pkg/date"
+
+	"github.com/go-playground/validator/v10"
+	"github.com/valyala/fastjson"
 )
 
 type MessageClient struct {
@@ -60,6 +61,38 @@ type Message struct {
 	SendTime    string      `json:"send_time"`     // 消息发送时间
 	Data        interface{} `json:"data"`          // 自定义携带的数据
 
+}
+
+type Sessions struct {
+	Id          int64           `gorm:"column:id;primaryKey" json:"id"` //会话表
+	FormId      int64           `gorm:"column:form_id" json:"form_id"`
+	ToId        int64           `gorm:"column:to_id" json:"to_id"`
+	GroupId     int64           `gorm:"column:group_id" json:"group_id"` // 群组id
+	CreatedAt   string          `gorm:"column:created_at" json:"created_at"`
+	TopStatus   int             `gorm:"column:top_status" json:"top_status"` //0.否 1.是
+	TopTime     string          `gorm:"column:top_time" json:"top_time"`
+	Note        string          `gorm:"column:note" json:"note"`                 //备注
+	ChannelType int             `gorm:"column:channel_type" json:"channel_type"` //0.单聊 1.群聊
+	Name        string          `gorm:"column:name" json:"name"`                 //会话名称
+	Avatar      string          `gorm:"column:avatar" json:"avatar"`             //会话头像
+	Status      int             `gorm:"column:status" json:"status"`             //会话状态 0.正常 1.禁用
+	Groups      ImGroupsMessage `gorm:"foreignKey:ID;references:GroupId"`
+}
+
+type ImSessionsMessage struct {
+	MsgCode  int      `json:"msg_code"` // 定义的消息code
+	Sessions Sessions `json:"sessions"` // 会话内容
+}
+
+type ImGroupsMessage struct {
+	ID        int64  `gorm:"column:id" json:"id"`                 //群聊id
+	UserId    int64  `gorm:"column:user_id" json:"user_id"`       //创建者
+	Name      string `gorm:"column:name" json:"name"`             //群聊名称
+	CreatedAt string `gorm:"column:created_at" json:"created_at"` //添加时间
+	Info      string `gorm:"column:info" json:"info"`             //群聊描述
+	Avatar    string `gorm:"column:avatar" json:"avatar"`         //群聊头像
+	IsPwd     int8   `gorm:"column:is_pwd" json:"is_pwd"`         //是否加密 0 否 1 是
+	Hot       int    `gorm:"column:hot" json:"hot"`               //热度
 }
 
 // PingMessage 心跳消息

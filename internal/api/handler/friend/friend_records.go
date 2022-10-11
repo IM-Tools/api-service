@@ -1,8 +1,6 @@
 package friend
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"im-services/internal/api/requests"
 	"im-services/internal/api/services"
 	"im-services/internal/dao/friend_dao"
@@ -17,6 +15,9 @@ import (
 	"im-services/pkg/model"
 	"im-services/pkg/response"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 type FriendRecordHandler struct {

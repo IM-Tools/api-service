@@ -7,6 +7,6 @@ type CreateGroupRequest struct {
 	Avatar     string   `json:"avatar" validate:"required"`             //群头像
 	Password   string   `json:"password"`
 	Theme      string   `json:"theme" validate:"required"`
-	IsPwd      int      `json:"is_pwd" validate:"required"`
+	IsPwd      int      `json:"is_pwd"`
 	SelectUser []string `form:"select_user[]"`
 }

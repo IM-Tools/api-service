@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"im-services/internal/api/handler"
 	"im-services/internal/api/requests"
+	"im-services/internal/api/services"
 	"im-services/internal/dao/group_dao"
 	"im-services/internal/enum"
 	"im-services/internal/helpers"
@@ -95,7 +96,10 @@ func (*GroupHandler) Store(cxt *gin.Context) {
 
 	groups := group.NewGroup(imGroups)
 	group.ImAppGroupGathers.SetGroups(groups)
-	// 创建成功之后发送创建群聊消息 --
+	// todo 创建成功之后发送创建群聊消息 --
+	var messageService services.ImMessageService
+
+	messageService.SenGroupSessionMessage(selectUser.SelectUser, imGroups.Id)
 
 	response.SuccessResponse(groups).WriteTo(cxt)
 	return

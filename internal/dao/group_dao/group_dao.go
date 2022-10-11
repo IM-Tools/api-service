@@ -13,6 +13,18 @@ import (
 type GroupDao struct {
 }
 
+type ImGroups struct {
+	Id        int64  `gorm:"column:id" json:"id"`                 //群聊id
+	UserId    int64  `gorm:"column:user_id" json:"user_id"`       //创建者
+	Name      string `gorm:"column:name" json:"name"`             //群聊名称
+	CreatedAt string `gorm:"column:created_at" json:"created_at"` //添加时间
+	Info      string `gorm:"column:info" json:"info"`             //群聊描述
+	Avatar    string `gorm:"column:avatar" json:"avatar"`         //群聊头像
+	Password  string `gorm:"column:password" json:"password"`     //密码
+	IsPwd     int8   `gorm:"column:is_pwd" json:"is_pwd"`         //是否加密 0 否 1 是
+	Hot       int    `gorm:"column:hot" json:"hot"`               //热度
+}
+
 // 将人员添加到群组表中 并创建会话
 func (*GroupDao) CreateSelectGroupUser(userIds []string, groupId int, avatar string, name string) {
 
@@ -28,11 +40,12 @@ func (*GroupDao) CreateSelectGroupUser(userIds []string, groupId int, avatar str
 		groupUser[key].Name = name
 
 		sessionsData[key].FormId = helpers.StringToInt64(id)
-		sessionsData[key].ToId = int64(groupId)
+		sessionsData[key].GroupId = int64(groupId)
 		sessionsData[key].CreatedAt = createdAt
 		sessionsData[key].ChannelType = im_sessions.GroupType
 		sessionsData[key].Name = name
 		sessionsData[key].Avatar = avatar
+		sessionsData[key].TopTime = date.NewDate()
 	}
 	model.DB.Model(&im_group_users.ImGroupUsers{}).Create(&groupUser)
 	model.DB.Model(&im_sessions.ImSessions{}).Create(&sessionsData)

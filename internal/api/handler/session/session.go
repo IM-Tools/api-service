@@ -1,8 +1,6 @@
 package session
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"im-services/internal/api/handler"
 	"im-services/internal/api/requests"
 	"im-services/internal/dao/session_dao"
@@ -11,6 +9,9 @@ import (
 	"im-services/internal/models/im_sessions"
 	"im-services/pkg/model"
 	"im-services/pkg/response"
+
+	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 type SessionHandler struct {
@@ -37,6 +38,7 @@ func (s SessionHandler) Index(cxt *gin.Context) {
 
 	if result := model.DB.Model(&im_sessions.ImSessions{}).
 		Preload("Users").
+		Preload("Groups").
 		Where("form_id=? and status=0", id).
 		Order("top_status desc").
 		Find(&list); result.RowsAffected == 0 {
