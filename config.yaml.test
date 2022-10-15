@@ -56,3 +56,8 @@ github:
   appId: '',
   appKey: ''
   redirectUrl: ''
+gobot:
+  email: 'intelligence@chat.com'
+  password: 'intelligence@30434---343'
+  name: '机器人'
+  avatar: 'https://img-blog.csdnimg.cn/b58167dd92d2467f8404b044e909d26c.png#pic_center'

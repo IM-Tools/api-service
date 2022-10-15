@@ -198,19 +198,28 @@ func (m *MessageHandler) SendMessage(cxt *gin.Context) {
 
 	switch params.ChannelType {
 	case 1:
-		if !friend.IsFriends(id, params.ToID) {
-			response.FailResponse(enum.WsNotFriend, "非好友关系,不能聊天...").ToJson(cxt)
-			return
-		}
-		// 消息投递
-		ok, msg := messagesServices.SendPrivateMessage(params)
-		if !ok {
-			response.FailResponse(http.StatusInternalServerError, msg).ToJson(cxt)
-			return
-		}
-		// todo 此处有点逻辑bug
+
 		messageDao.CreateMessage(params)
-		response.SuccessResponse(params).ToJson(cxt)
+		// todo 暂时先写死 --
+		if params.ToID == 1 {
+			// todo 消息投递 机器人不需要好友关系
+			messagesServices.SendChatMessage(params)
+			response.SuccessResponse(params).ToJson(cxt)
+		} else {
+			if !friend.IsFriends(id, params.ToID) {
+				response.FailResponse(enum.WsNotFriend, "非好友关系,不能聊天...").ToJson(cxt)
+				return
+			}
+			// todo 此处有点逻辑bug
+			// 消息投递
+			ok, msg := messagesServices.SendPrivateMessage(params)
+			if !ok {
+				response.FailResponse(http.StatusInternalServerError, msg).ToJson(cxt)
+				return
+			}
+			response.SuccessResponse(params).ToJson(cxt)
+		}
+
 		return
 	case 2:
 		if !groupDao.IsGroupsUser(id, params.ToID) {
@@ -226,4 +235,7 @@ func (m *MessageHandler) SendMessage(cxt *gin.Context) {
 
 		break
 	}
+
+	response.SuccessResponse(params).ToJson(cxt)
+	return
 }

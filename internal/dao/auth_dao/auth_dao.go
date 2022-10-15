@@ -3,6 +3,7 @@ package auth_dao
 import (
 	"encoding/json"
 	"fmt"
+	"im-services/internal/dao/session_dao"
 	"im-services/internal/helpers"
 	"im-services/internal/models/user"
 	"im-services/pkg/date"
@@ -13,9 +14,9 @@ import (
 type AuthDao struct {
 }
 
-func (*AuthDao) CreateUser(email string, password string, name string) {
+func (*AuthDao) CreateUser(email string, password string, name string) int64 {
 	createdAt := date.NewDate()
-	model.DB.Table("im_users").Create(&user.ImUsers{
+	users := user.ImUsers{
 		Email:         email,
 		Password:      hash.BcryptHash(password),
 		Name:          name,
@@ -25,7 +26,14 @@ func (*AuthDao) CreateUser(email string, password string, name string) {
 		LastLoginTime: createdAt,
 		Uid:           helpers.GetUuid(),
 		UserJson:      "{}",
-	})
+		UserType:      1,
+	}
+	model.DB.Table("im_users").Create(&users)
+	var sessionDao session_dao.SessionDao
+	sessionDao.CreateSession(users.ID, 1, 1)
+	sessionDao.CreateSession(1, users.ID, 1)
+	return users.ID
+
 }
 
 func (*AuthDao) isOAuthExists(oauthId string) bool {

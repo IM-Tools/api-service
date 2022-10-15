@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"im-services/internal/api/services"
 	"im-services/internal/config"
 	"im-services/internal/middleware"
 	router2 "im-services/internal/router"
@@ -49,7 +50,9 @@ func LoadConfiguration() {
 	_ = nsq.InitNewProducerPoll()
 	// todo 消费逻辑可以单独抽离
 	go nsq_queue.ConsumersPrivateMessageInit()
-	go nsq_queue.ConsumersPrivateMessageInit()
+	go nsq_queue.ConsumersGroupMessageInit()
+
+	services.InitChatBot()
 
 }
 

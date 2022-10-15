@@ -48,6 +48,13 @@ func (s ImMessageService) SendPrivateMessage(message requests.PrivateMessageRequ
 	return isOk, respMessage
 }
 
+func (s ImMessageService) SendChatMessage(message requests.PrivateMessageRequest) (bool, string) {
+	message.ToID = message.FormID
+	message.FormID = 1
+	message.Message = GetMessage(message.Message)
+	isOk, respMessage := AppClient.ImManager.SendPrivateMessage(message)
+	return isOk, respMessage
+}
 func (s ImMessageService) SendGroupMessage(message requests.PrivateMessageRequest) bool {
 	var users []Users
 

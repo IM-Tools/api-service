@@ -16,6 +16,7 @@ type Config struct {
 	Nsq    NsqConf
 	QiNiu  QiNiuConfig
 	Github GithubConfig
+	GoBot  BotConfig
 }
 
 type ServerConf struct {
@@ -95,6 +96,13 @@ type GithubConfig struct {
 	ClientId     string `json:"clientId"`
 	ClientSecret string `json:"clientSecret"`
 	RedirectUrl  string `json:"redirectUrl"`
+}
+
+type BotConfig struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	Name     string `json:"name"`
+	Avatar   string `json:"avatar"`
 }
 
 var Conf = &Config{}

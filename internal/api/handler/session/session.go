@@ -46,7 +46,6 @@ func (s SessionHandler) Index(cxt *gin.Context) {
 
 		return
 	}
-
 	response.SuccessResponse(list).ToJson(cxt)
 
 	return

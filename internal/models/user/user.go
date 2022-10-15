@@ -21,7 +21,8 @@ type ImUsers struct {
 	Age           int    `gorm:"column:age" json:"age"`
 	LastLoginTime string `gorm:"column:last_login_time" json:"last_login_time"` //最后登录时间
 	Uid           string `gorm:"column:uid" json:"uid"`                         //uid 关联
-	UserJson      string `gorm:"column:user_json" json:"user_json"`             //uid 关联
+	UserJson      string `gorm:"column:user_json" json:"user_json"`
+	UserType      int    `gorm:"column:user_type" json:"user_type"` //uid 关联
 }
 
 func IsUserExits(email string, name string) (bool, string) {

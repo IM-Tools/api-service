@@ -2,8 +2,6 @@ package auth
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"im-services/internal/api/requests"
 	"im-services/internal/api/services"
 	"im-services/internal/config"
@@ -18,6 +16,9 @@ import (
 	"im-services/pkg/response"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 type AuthHandler struct {
@@ -164,14 +165,18 @@ func (*AuthHandler) Registered(cxt *gin.Context) {
 		return
 	}
 
-	var emailService services.EmailService
+	// var emailService services.EmailService
 
-	if !emailService.CheckCode(params.Email, params.Code, params.EmailType) {
-		response.FailResponse(enum.ParamError, "邮件验证码不正确").WriteTo(cxt)
-		return
-	}
+	// if !emailService.CheckCode(params.Email, params.Code, params.EmailType) {
+	// 	response.FailResponse(enum.ParamError, "邮件验证码不正确").WriteTo(cxt)
+	// 	return
+	// }
 
-	auth.CreateUser(params.Email, params.Password, params.Name)
+	id := auth.CreateUser(params.Email, params.Password, params.Name)
+
+	// 投递消息
+	services.InitChatBotMessage(1, id)
+
 	response.SuccessResponse().ToJson(cxt)
 	return
 }
