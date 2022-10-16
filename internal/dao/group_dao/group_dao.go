@@ -42,7 +42,7 @@ func (*GroupDao) CreateSelectGroupUser(userIds []string, groupId int, avatar str
 		sessionsData[key].FormId = helpers.StringToInt64(id)
 		sessionsData[key].GroupId = int64(groupId)
 		sessionsData[key].CreatedAt = createdAt
-		sessionsData[key].ChannelType = im_sessions.GroupType
+		sessionsData[key].ChannelType = im_sessions.GROUP_TYPE
 		sessionsData[key].Name = name
 		sessionsData[key].Avatar = avatar
 		sessionsData[key].TopTime = date.NewDate()
@@ -68,7 +68,7 @@ func (*GroupDao) CreateOneGroupUser(group im_groups.ImGroups, id int) {
 	session.FormId = int64(id)
 	session.ToId = group.Id
 	session.CreatedAt = date.NewDate()
-	session.ChannelType = im_sessions.GroupType
+	session.ChannelType = im_sessions.GROUP_TYPE
 	session.Name = group.Name
 	session.Avatar = group.Avatar
 	model.DB.Model(&im_sessions.ImSessions{}).Create(&session)
@@ -107,4 +107,11 @@ func (*GroupDao) GetGroupUsers(groupId string) []im_group_users.ImGroupUsers {
 	var groupUser []im_group_users.ImGroupUsers
 	model.DB.Model(&im_group_users.ImGroupUsers{}).Where("group_id=?", groupId).Preload("Users").Find(&groupUser)
 	return groupUser
+}
+
+func (*GroupDao) DeleteGroupUser(id interface{}, groupId string) {
+	var groupUsers im_group_users.ImGroupUsers
+	model.DB.Model(&im_group_users.ImGroupUsers{}).
+		Where("user_id = ? and group_id =?", id, groupId).
+		Delete(&groupUsers)
 }

@@ -6,7 +6,7 @@ type PrivateMessageRequest struct {
 	MsgCode     int    `json:"msg_code" validate:"required"`                  // 定义的消息code
 	FormID      int64  `json:"form_id" validate:"required"`                   // 发消息的人
 	ToID        int64  `json:"to_id" validate:"required"`                     // 接收消息人的id
-	MsgType     int    `json:"msg_type" validate:"required"`                  // 消息类型 例如 1.文本 2.语音 3.文件
+	MsgType     int    `json:"msg_type" validate:"required"`                  // 消息类型 例如 1.文本 2.语音 3.文件 5.退群消息 6.拉黑
 	ChannelType int    `json:"channel_type" validate:"required,gte=1,lte=3" ` // 频道类型 1.私聊 2.频道 3.广播
 	Message     string `json:"message" validate:"required"`                   // 消息
 	SendTime    string `json:"send_time" validate:"required"`                 // 消息发送时间

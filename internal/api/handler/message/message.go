@@ -198,10 +198,11 @@ func (m *MessageHandler) SendMessage(cxt *gin.Context) {
 
 	switch params.ChannelType {
 	case 1:
-
 		messageDao.CreateMessage(params)
 		// todo 暂时先写死 --
-		if params.ToID == 1 {
+		var users user.ImUsers
+		model.DB.Model(&user.ImUsers{}).Where("id =?", params.ToID).Find(&users)
+		if users.UserType == user.BOT_TYPE {
 			// todo 消息投递 机器人不需要好友关系
 			messagesServices.SendChatMessage(params)
 			response.SuccessResponse(params).ToJson(cxt)

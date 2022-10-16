@@ -23,3 +23,16 @@ func (*MessageDao) CreateMessage(params requests.PrivateMessageRequest) {
 	message.Data = helpers.InterfaceToString(params.Data)
 	model.DB.Save(&message)
 }
+
+func (*MessageDao) CreateMultipleMessage(params requests.PrivateMessageRequest) {
+	var message im_messages.ImMessages
+	message.Msg = params.Message
+	message.FormId = params.FormID
+	message.ToId = params.ToID
+	message.CreatedAt = params.SendTime
+	message.IsRead = 0
+	message.MsgType = params.MsgType
+	message.Status = 1
+	message.Data = helpers.InterfaceToString(params.Data)
+	model.DB.Save(&message)
+}

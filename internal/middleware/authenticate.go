@@ -30,6 +30,7 @@ func Auth() gin.HandlerFunc {
 
 		cxt.Set("id", claims.ID)
 		cxt.Set("uid", claims.UID)
+		cxt.Set("name", claims.Name)
 
 		cxt.Next()
 	}

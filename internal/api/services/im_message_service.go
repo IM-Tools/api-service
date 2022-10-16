@@ -2,7 +2,6 @@ package services
 
 import (
 	"encoding/json"
-	"fmt"
 	"im-services/internal/api/requests"
 	"im-services/internal/enum"
 	"im-services/internal/helpers"
@@ -39,32 +38,31 @@ type SliceMock struct {
 	cap  int
 }
 
-func (s ImMessageService) SendFriendActionMessage(msg AppClient.CreateFriendMessage) {
+func (*ImMessageService) SendFriendActionMessage(msg AppClient.CreateFriendMessage) {
 	AppClient.ImManager.SendFriendActionMessage(msg)
 }
 
-func (s ImMessageService) SendPrivateMessage(message requests.PrivateMessageRequest) (bool, string) {
+func (*ImMessageService) SendPrivateMessage(message requests.PrivateMessageRequest) (bool, string) {
 	isOk, respMessage := AppClient.ImManager.SendPrivateMessage(message)
 	return isOk, respMessage
 }
 
-func (s ImMessageService) SendChatMessage(message requests.PrivateMessageRequest) (bool, string) {
+func (*ImMessageService) SendChatMessage(message requests.PrivateMessageRequest) (bool, string) {
 	message.ToID = message.FormID
 	message.FormID = 1
 	message.Message = GetMessage(message.Message)
+	messageDao.CreateMessage(message)
 	isOk, respMessage := AppClient.ImManager.SendPrivateMessage(message)
 	return isOk, respMessage
 }
-func (s ImMessageService) SendGroupMessage(message requests.PrivateMessageRequest) bool {
+func (*ImMessageService) SendGroupMessage(message requests.PrivateMessageRequest) bool {
 	var users []Users
-
 	model.DB.Model(&im_group_users.ImGroupUsers{}).Where("group_id=?", message.ToID).Select([]string{"user_id"}).Find(&users)
-	var groupMesage group_message.ImGroupMessages
+	var groupMessage group_message.ImGroupMessages
 
 	msg, _ := json.Marshal(message)
 
 	for _, val := range users {
-		fmt.Println(val.UserId)
 		isOk := AppClient.ImManager.SendMessageToSpecifiedClient(msg, val.UserId)
 		if !isOk {
 			//没有就丢入消息队列
@@ -72,20 +70,20 @@ func (s ImMessageService) SendGroupMessage(message requests.PrivateMessageReques
 		}
 
 	}
-	groupMesage.Message = message.Message
-	groupMesage.SendTime = date.TimeUnix()
-	groupMesage.MessageId = message.MsgId
-	groupMesage.ClientMessageId = message.MsgClientId
-	groupMesage.FormId = message.FormID
-	groupMesage.GroupId = message.ToID
+	groupMessage.Message = message.Message
+	groupMessage.SendTime = date.TimeUnix()
+	groupMessage.MessageId = message.MsgId
+	groupMessage.ClientMessageId = message.MsgClientId
+	groupMessage.FormId = message.FormID
+	groupMessage.GroupId = message.ToID
 
-	model.DB.Model(&group_message.ImGroupMessages{}).Create(&groupMesage)
+	model.DB.Model(&group_message.ImGroupMessages{}).Create(&groupMessage)
 
 	return true
 
 }
 
-func (s ImMessageService) SendVideoMessage(message requests.VideoMessageRequest) bool {
+func (*ImMessageService) SendVideoMessage(message requests.VideoMessageRequest) bool {
 	msg, _ := json.Marshal(message)
 	isOk := AppClient.ImManager.SendMessageToSpecifiedClient(msg, helpers.Int64ToString(message.ToID))
 	return isOk
@@ -128,13 +126,14 @@ type ImGroups struct {
 }
 
 // 会话消息投递
-func (s ImMessageService) SenGroupSessionMessage(userIds []string, groupId int64) {
+func (*ImMessageService) SendGroupSessionMessage(userIds []string, groupId int64) {
 	var message ImSessionsMessage
 	message.MsgCode = enum.WsSession
 	model.DB.Table("im_sessions").Where("group_id=?", groupId).Preload("Groups").Find(&message.Sessions)
 	for _, id := range userIds {
 		message.Sessions.FormId = helpers.StringToInt64(id)
 		msg, _ := json.Marshal(message)
+
 		data, ok := AppClient.ImManager.ImClientMap[id]
 		if ok {
 			data.Send <- msg

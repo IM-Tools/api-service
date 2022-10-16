@@ -25,6 +25,11 @@ type ImUsers struct {
 	UserType      int    `gorm:"column:user_type" json:"user_type"` //uid 关联
 }
 
+var (
+	USER_TYPE=0
+	BOT_TYPE =1
+)
+
 func IsUserExits(email string, name string) (bool, string) {
 
 	var user ImUsers

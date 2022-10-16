@@ -9,7 +9,10 @@ import (
 	"im-services/internal/enum"
 	"im-services/internal/helpers"
 	"im-services/internal/models/im_groups"
+	"im-services/internal/models/im_messages"
+	"im-services/internal/models/im_sessions"
 	"im-services/internal/service/group"
+	"im-services/pkg/date"
 	"im-services/pkg/hash"
 	"im-services/pkg/model"
 	"im-services/pkg/response"
@@ -19,7 +22,8 @@ import (
 )
 
 var (
-	groupDao group_dao.GroupDao
+	groupDao         group_dao.GroupDao
+	messagesServices services.ImMessageService
 )
 
 type GroupHandler struct {
@@ -99,7 +103,7 @@ func (*GroupHandler) Store(cxt *gin.Context) {
 	// todo 创建成功之后发送创建群聊消息 --
 	var messageService services.ImMessageService
 
-	messageService.SenGroupSessionMessage(selectUser.SelectUser, imGroups.Id)
+	messageService.SendGroupSessionMessage(selectUser.SelectUser, imGroups.Id)
 
 	response.SuccessResponse(groups).WriteTo(cxt)
 	return
@@ -146,6 +150,25 @@ func (*GroupHandler) ApplyJoin(cxt *gin.Context) {
 
 	groupDao.CreateOneGroupUser(group, int(helpers.InterfaceToInt64(id)))
 
+	name := cxt.MustGet("name")
+
+	groupDao.DeleteGroupUser(id, person.ID)
+
+	params := requests.PrivateMessageRequest{
+		MsgId:       date.TimeUnixNano(),
+		MsgCode:     enum.WsChantMessage,
+		MsgClientId: date.TimeUnixNano(),
+		FormID:      helpers.InterfaceToInt64(id),
+		ToID:        helpers.StringToInt64(person.ID),
+		ChannelType: 2,
+		MsgType:     im_messages.JOIN_GROUP,
+		Message:     fmt.Sprintf("%s 加入群聊", name),
+		SendTime:    date.NewDate(),
+		Data:        cxt.PostForm("data"),
+	}
+	// 退群消息推送
+	messagesServices.SendGroupMessage(params)
+
 	response.SuccessResponse().WriteTo(cxt)
 	return
 
@@ -182,5 +205,49 @@ func (*GroupHandler) GetUsers(cxt *gin.Context) {
 		Groups: group,
 		Users:  groupDao.GetGroupUsers(person.ID),
 	}).WriteTo(cxt)
+	return
+}
+
+// @BasePath /api
+
+// PingExample godoc
+// @Summary groups/:id 退出群聊
+// @Schemes
+// @Description 退出群聊
+// @Tags 群聊
+// @SecurityDefinitions.apikey ApiKeyAuth
+// @In header
+// @Name Authorization
+// @Param Authorization	header string true "Bearer "
+// @Produce json
+// @Success 200 {object} response.JsonResponse{data=GroupsDate} "ok"
+// @Router /groups/:id [delete]
+func (*GroupHandler) Logout(cxt *gin.Context) {
+	err, person := handler.GetPersonId(cxt)
+	if err != nil {
+		response.FailResponse(enum.ParamError, "参数错误！").WriteTo(cxt)
+		return
+	}
+	id := cxt.MustGet("id")
+	name := cxt.MustGet("name")
+
+	groupDao.DeleteGroupUser(id, person.ID)
+
+	params := requests.PrivateMessageRequest{
+		MsgId:       date.TimeUnixNano(),
+		MsgCode:     enum.WsChantMessage,
+		MsgClientId: date.TimeUnixNano(),
+		FormID:      helpers.InterfaceToInt64(id),
+		ToID:        helpers.StringToInt64(person.ID),
+		ChannelType: im_sessions.GROUP_TYPE,
+		MsgType:     im_messages.LOGOUT_GROUP,
+		Message:     fmt.Sprintf("%s 退出群聊", name),
+		SendTime:    date.NewDate(),
+		Data:        cxt.PostForm("data"),
+	}
+	// 退群消息推送
+	messagesServices.SendGroupMessage(params)
+
+	response.SuccessResponse().WriteTo(cxt)
 	return
 }

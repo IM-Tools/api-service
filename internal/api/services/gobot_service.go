@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"im-services/internal/api/requests"
 	"im-services/internal/config"
-	"im-services/internal/dao/auth_dao"
+	"im-services/internal/dao/messsage_dao"
 	"im-services/internal/enum"
 	"im-services/internal/helpers"
 	"im-services/internal/models/user"
@@ -16,16 +16,11 @@ import (
 )
 
 var (
-	BOT_NOE = 1
-	AuthDao auth_dao.AuthDao
-)
-var (
 	messagesServices ImMessageService
-)
-
-var (
-	userInfo = map[string]string{}
-	lock     sync.Mutex
+	botData          = map[string]string{} // 存储指令
+	lock             sync.RWMutex
+	BOT_NOE          = 1
+	messageDao       messsage_dao.MessageDao
 )
 
 // 初始化机器人信息数据
@@ -56,7 +51,7 @@ func GetMessage(key string) string {
 		arr := strings.Split(key, ":")
 		if len(arr) == 2 {
 			lock.Lock()
-			userInfo[arr[0]] = arr[1]
+			botData[arr[0]] = arr[1]
 			lock.Unlock()
 			return "很不错就是这样~"
 		}
@@ -65,7 +60,7 @@ func GetMessage(key string) string {
 		}
 	}
 
-	if value, ok := userInfo[key]; ok {
+	if value, ok := botData[key]; ok {
 		return value
 	} else {
 		return "没明白您的意思-暂时还不知道说啥~~~ 你可以通过 xxx:xxx 指令定义消息😊"
@@ -86,8 +81,9 @@ func InitChatBotMessage(formID int64, toID int64) {
 		SendTime:    date.NewDate(),
 		Data:        "",
 	}
-
+	messageDao.CreateMessage(params)
 	messagesServices.SendPrivateMessage(params)
 	params.Message = "我们来玩个游戏吧！你问我答~！👋"
+	messageDao.CreateMessage(params)
 	messagesServices.SendPrivateMessage(params)
 }

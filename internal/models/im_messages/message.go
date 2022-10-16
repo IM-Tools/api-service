@@ -25,3 +25,12 @@ type ImUsers struct {
 	Email  string `gorm:"column:email" json:"email"`
 	Avatar string `gorm:"column:avatar" json:"avatar"` //头像
 }
+
+var (
+	TEXT         = 1
+	VOICE        = 2
+	FILE         = 3
+	IMAGE        = 4
+	LOGOUT_GROUP = 5
+	JOIN_GROUP   = 6
+)

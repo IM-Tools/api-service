@@ -165,12 +165,15 @@ func (*AuthHandler) Registered(cxt *gin.Context) {
 		return
 	}
 
-	// var emailService services.EmailService
+	if config.Conf.Server.Mode == "release" {
+		var emailService services.EmailService
 
-	// if !emailService.CheckCode(params.Email, params.Code, params.EmailType) {
-	// 	response.FailResponse(enum.ParamError, "邮件验证码不正确").WriteTo(cxt)
-	// 	return
-	// }
+		if !emailService.CheckCode(params.Email, params.Code, params.EmailType) {
+			response.FailResponse(enum.ParamError, "邮件验证码不正确").WriteTo(cxt)
+			return
+		}
+
+	}
 
 	id := auth.CreateUser(params.Email, params.Password, params.Name)
 

@@ -7,7 +7,6 @@ package client
 
 import (
 	"context"
-	"fmt"
 	"github.com/valyala/fastjson"
 	"google.golang.org/grpc"
 	"im-services/internal/enum"
@@ -55,7 +54,6 @@ func (messageService *GrpcMessageService) SendGpcMessage(message string, node st
 	resp, err := ImRpcServiceClient.
 		SendMessageHandler(context.Background(), params)
 	if err != nil {
-		fmt.Println(err.Error())
 		return
 	}
 	logger.Logger.Error(resp.Message)

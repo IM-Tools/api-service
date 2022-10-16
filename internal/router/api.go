@@ -94,6 +94,7 @@ func RegisterApiRoutes(router *gin.Engine) {
 		chatGroup.POST("/applyJoin/:id", groups.ApplyJoin) //加入群组
 		chatGroup.GET("/list", groups.Index)               //获取群组列表
 		chatGroup.GET("/users/:id", groups.GetUsers)       //获取群成员信息
+		chatGroup.DELETE("/logout/:id", groups.Logout)     //退出群聊
 
 	}
 
