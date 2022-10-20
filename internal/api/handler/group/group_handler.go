@@ -11,7 +11,6 @@ import (
 	"im-services/internal/models/im_groups"
 	"im-services/internal/models/im_messages"
 	"im-services/internal/models/im_sessions"
-	"im-services/internal/service/group"
 	"im-services/pkg/date"
 	"im-services/pkg/hash"
 	"im-services/pkg/model"
@@ -98,14 +97,12 @@ func (*GroupHandler) Store(cxt *gin.Context) {
 
 	groupDao.CreateSelectGroupUser(selectUser.SelectUser, int(imGroups.Id), params.Avatar, params.Name)
 
-	groups := group.NewGroup(imGroups)
-	group.ImAppGroupGathers.SetGroups(groups)
 	// todo 创建成功之后发送创建群聊消息 --
 	var messageService services.ImMessageService
 
 	messageService.SendGroupSessionMessage(selectUser.SelectUser, imGroups.Id)
 
-	response.SuccessResponse(groups).WriteTo(cxt)
+	response.SuccessResponse(imGroups).WriteTo(cxt)
 	return
 }
 

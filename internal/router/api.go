@@ -21,8 +21,8 @@ func RegisterApiRoutes(router *gin.Engine) {
 
 	var api *gin.RouterGroup
 	docs.SwaggerInfo.BasePath = "/api"
+	router.Use(middleware.Cors())
 	api = router.Group("/api")
-	api.Use(middleware.Cors())
 	// 登录
 	authGroup := api.Group("/auth")
 	{
@@ -94,7 +94,7 @@ func RegisterApiRoutes(router *gin.Engine) {
 		chatGroup.POST("/applyJoin/:id", groups.ApplyJoin) //加入群组
 		chatGroup.GET("/list", groups.Index)               //获取群组列表
 		chatGroup.GET("/users/:id", groups.GetUsers)       //获取群成员信息
-		chatGroup.DELETE("/logout/:id", groups.Logout)     //退出群聊
+		chatGroup.DELETE("/:id", groups.Logout)            //退出群聊
 
 	}
 

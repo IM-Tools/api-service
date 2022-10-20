@@ -2,6 +2,7 @@ package services
 
 import (
 	"encoding/json"
+	"fmt"
 	"im-services/internal/api/requests"
 	"im-services/internal/enum"
 	"im-services/internal/helpers"
@@ -139,4 +140,5 @@ func (*ImMessageService) SendGroupSessionMessage(userIds []string, groupId int64
 			data.Send <- msg
 		}
 	}
+	fmt.Println(userIds)
 }
