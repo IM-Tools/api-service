@@ -218,15 +218,13 @@ func (m *MessageHandler) SendMessage(cxt *gin.Context) {
 				response.FailResponse(http.StatusInternalServerError, msg).ToJson(cxt)
 				return
 			}
-			response.SuccessResponse(params).ToJson(cxt)
 		}
-
-		return
 	case 2:
 		if !groupDao.IsGroupsUser(id, params.ToID) {
 			response.FailResponse(enum.WsNotFriend, "你不是此群成员了...").ToJson(cxt)
 			return
 		}
+
 		// 消息投递
 		ok := messagesServices.SendGroupMessage(params)
 		if !ok {
@@ -234,7 +232,6 @@ func (m *MessageHandler) SendMessage(cxt *gin.Context) {
 			return
 		}
 
-		break
 	}
 
 	response.SuccessResponse(params).ToJson(cxt)

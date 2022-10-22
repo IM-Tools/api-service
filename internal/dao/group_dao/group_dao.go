@@ -109,9 +109,25 @@ func (*GroupDao) GetGroupUsers(groupId string) []im_group_users.ImGroupUsers {
 	return groupUser
 }
 
+// 讲用户从群聊中移除
 func (*GroupDao) DeleteGroupUser(id interface{}, groupId string) {
 	var groupUsers im_group_users.ImGroupUsers
 	model.DB.Model(&im_group_users.ImGroupUsers{}).
 		Where("user_id = ? and group_id =?", id, groupId).
 		Delete(&groupUsers)
+}
+
+// 查询用户添加的群聊
+func (*GroupDao) GetGroupList(userId interface{}) []im_groups.ImGroups {
+
+	sqlQuery := model.DB.Model(&im_group_users.ImGroupUsers{}).Where("user_id=?", userId).Select("group_id")
+
+	var imGroupLists []im_groups.ImGroups
+	if result := model.DB.Model(&im_groups.ImGroups{}).
+		Where("id in (?)", sqlQuery).
+		Order("hot desc").
+		Find(&imGroupLists); result.RowsAffected > 0 {
+	}
+
+	return imGroupLists
 }

@@ -27,6 +27,7 @@ var (
 	groupMessages message.GroupMessageHandler
 	groups        group.GroupHandler
 	clouds        cloud.QiNiuHandler
+	invites       group.InviteGroupHandler
 )
 
 // RegisterApiRoutes 注册api路由
@@ -49,7 +50,8 @@ func RegisterApiRoutes(router *gin.Engine) {
 		api.Use(middleware.Auth())
 		{
 			// 用户
-			api.GET("/user/:id", users.Info) //获取用户信息
+			api.GET("/user/:id", users.Info)            //获取用户信息
+			api.Any("/address/list", users.AddressList) //通讯录列表
 			// 会话
 			api.GET("/sessions", sessions.Index)         // 获取会话列表
 			api.POST("/sessions", sessions.Store)        // 添加会话
@@ -84,6 +86,7 @@ func RegisterApiRoutes(router *gin.Engine) {
 			api.GET("/groups/list", groups.Index)               //获取群组列表
 			api.GET("/groups/users/:id", groups.GetUsers)       //获取群成员信息
 			api.DELETE("/groups/:id", groups.Logout)            //退出群聊
+			api.POST("/invite/:id", invites.Store)              //创建分享群聊token
 
 			api.POST("/upload/file", clouds.UploadFile).Use(middleware.Auth())
 		}

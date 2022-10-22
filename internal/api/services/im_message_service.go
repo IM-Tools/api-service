@@ -73,6 +73,7 @@ func (*ImMessageService) SendGroupMessage(message requests.PrivateMessageRequest
 	}
 	groupMessage.Message = message.Message
 	groupMessage.SendTime = date.TimeUnix()
+	groupMessage.CreatedAt = date.NewDate()
 	groupMessage.MessageId = message.MsgId
 	groupMessage.ClientMessageId = message.MsgClientId
 	groupMessage.FormId = message.FormID

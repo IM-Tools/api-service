@@ -13,6 +13,10 @@ import (
 type FriendHandler struct {
 }
 
+var (
+	friendDao friend_dao.FriendDao
+)
+
 // @BasePath /api
 
 // PingExample godoc
@@ -27,15 +31,13 @@ type FriendHandler struct {
 // @Produce json
 // @Success 200 {object} response.JsonResponse{data=[]im_friends.ImFriends} "ok"
 // @Router /friends/ [get]
-func (friend FriendHandler) Index(cxt *gin.Context) {
+func (*FriendHandler) Index(cxt *gin.Context) {
 	id := cxt.MustGet("id")
-
-	var friendDao friend_dao.FriendDao
 
 	err, lists := friendDao.GetFriendLists(id)
 
 	if err != nil {
-		response.SuccessResponse().ToJson(cxt)
+		response.FailResponse(enum.ParamError, "获取用户列表失败").ToJson(cxt)
 		return
 	}
 	response.SuccessResponse(lists).ToJson(cxt)
@@ -58,7 +60,7 @@ func (friend FriendHandler) Index(cxt *gin.Context) {
 // @Produce json
 // @Success 200 {object} response.JsonResponse{data=im_friends.ImFriends} "ok"
 // @Router /friends/:id [get]
-func (friend FriendHandler) Show(cxt *gin.Context) {
+func (*FriendHandler) Show(cxt *gin.Context) {
 
 	err, person := handler.GetPersonId(cxt)
 	if err != nil {
@@ -93,7 +95,7 @@ func (friend FriendHandler) Show(cxt *gin.Context) {
 // @Produce json
 // @Success 200 {object} response.JsonResponse{} "ok"
 // @Router /friends/:id [delete]
-func (friend FriendHandler) Delete(cxt *gin.Context) {
+func (*FriendHandler) Delete(cxt *gin.Context) {
 	err, person := handler.GetPersonId(cxt)
 	if err != nil {
 		response.FailResponse(enum.ParamError, err.Error()).ToJson(cxt)
@@ -125,7 +127,7 @@ func (friend FriendHandler) Delete(cxt *gin.Context) {
 // @Produce json
 // @Success 200 {object} response.JsonResponse{data=UserStatus} "ok"
 // @Router /friends/status/:id [get]
-func (friend FriendHandler) GetUserStatus(cxt *gin.Context) {
+func (*FriendHandler) GetUserStatus(cxt *gin.Context) {
 
 	err, person := handler.GetPersonId(cxt)
 	if err != nil {

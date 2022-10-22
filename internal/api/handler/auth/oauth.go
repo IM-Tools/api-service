@@ -55,6 +55,9 @@ func (*OAuthHandler) GithubOAuth(cxt *gin.Context) {
 		expireAtTime,
 	)
 
+	// 投递消息
+	services.InitChatBotMessage(1, users.ID)
+
 	response.SuccessResponse(&loginResponse{
 		ID:         users.ID,
 		UID:        users.Uid,

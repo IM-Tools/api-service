@@ -2,6 +2,8 @@ package group
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"im-services/internal/api/handler"
 	"im-services/internal/api/requests"
 	"im-services/internal/api/services"
@@ -15,9 +17,6 @@ import (
 	"im-services/pkg/hash"
 	"im-services/pkg/model"
 	"im-services/pkg/response"
-
-	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 var (
@@ -30,14 +29,8 @@ type GroupHandler struct {
 
 // 获取群聊列表
 func (*GroupHandler) Index(cxt *gin.Context) {
-	var imGroupLists []im_groups.ImGroups
-	if result := model.DB.Model(&im_groups.ImGroups{}).
-		Order("hot desc").
-		Find(&imGroupLists); result.RowsAffected > 0 {
-		response.SuccessResponse(imGroupLists).ToJson(cxt)
-		return
-	}
-	response.SuccessResponse().ToJson(cxt)
+	list := groupDao.GetGroupList(cxt.MustGet("id"))
+	response.SuccessResponse(list).ToJson(cxt)
 	return
 }
 

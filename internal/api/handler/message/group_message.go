@@ -73,6 +73,6 @@ func (*GroupMessageHandler) Index(cxt *gin.Context) {
 // 对群聊消息进行排序
 func sortByGroupMessage(list []group_message.ImGroupMessages) {
 	sort.Slice(list, func(i, j int) bool {
-		return int64(list[i].SendTime) < int64(list[j].SendTime)
+		return list[i].SendTime < list[j].SendTime
 	})
 }
