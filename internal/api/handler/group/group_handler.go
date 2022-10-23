@@ -20,8 +20,8 @@ import (
 )
 
 var (
-	groupDao         group_dao.GroupDao
-	messagesServices services.ImMessageService
+	groupDao       group_dao.GroupDao
+	messageService services.ImMessageService
 )
 
 type GroupHandler struct {
@@ -91,7 +91,6 @@ func (*GroupHandler) Store(cxt *gin.Context) {
 	groupDao.CreateSelectGroupUser(selectUser.SelectUser, int(imGroups.Id), params.Avatar, params.Name)
 
 	// todo 创建成功之后发送创建群聊消息 --
-	var messageService services.ImMessageService
 
 	messageService.SendGroupSessionMessage(selectUser.SelectUser, imGroups.Id)
 
@@ -157,7 +156,7 @@ func (*GroupHandler) ApplyJoin(cxt *gin.Context) {
 		Data:        cxt.PostForm("data"),
 	}
 	// 退群消息推送
-	messagesServices.SendGroupMessage(params)
+	messageService.SendGroupMessage(params)
 
 	response.SuccessResponse().WriteTo(cxt)
 	return
@@ -236,8 +235,55 @@ func (*GroupHandler) Logout(cxt *gin.Context) {
 		Data:        cxt.PostForm("data"),
 	}
 	// 退群消息推送
-	messagesServices.SendGroupMessage(params)
+	messageService.SendGroupMessage(params)
 
 	response.SuccessResponse().WriteTo(cxt)
 	return
+}
+
+// @BasePath /api
+
+// PingExample godoc
+// @Summary groups/:id 添加用户进入群聊
+// @Schemes
+// @Description 添加用户进入群聊
+// @Tags 群聊
+// @SecurityDefinitions.apikey ApiKeyAuth
+// @In header
+// @Name Authorization
+// @Param Authorization	header string true "Bearer "
+// @Param group_id formData string true "群聊id"
+// @Param select_user formData array true "所选用户数组"
+// @Produce json
+// @Success 200 {object} response.JsonResponse{data=GroupsDate} "ok"
+// @Router /groups/CreateUser [post]
+func (*GroupHandler) CreateUser(cxt *gin.Context) {
+
+	var selectUser SelectUser
+
+	cxt.ShouldBind(&selectUser)
+
+	params := requests.CreateUserToGroup{
+		GroupId: helpers.StringToInt64(cxt.PostForm("group_id")),
+		UserId:  selectUser.SelectUser,
+	}
+
+	userId := cxt.MustGet("id")
+	var group im_groups.ImGroups
+	if result := model.DB.Model(&im_groups.ImGroups{}).Where("groupId=?", userId).Find(&group); result.RowsAffected == 0 {
+		response.FailResponse(enum.ParamError, "群聊不存在！").WriteTo(cxt)
+		return
+	}
+	if group.UserId != userId {
+		response.FailResponse(enum.ParamError, "非群主不可以邀请人入群！").WriteTo(cxt)
+		return
+
+	}
+
+	groupDao.CreateSelectGroupUser(selectUser.SelectUser, int(params.GroupId), group.Avatar, group.Name)
+
+	messageService.SendGroupSessionMessage(selectUser.SelectUser, params.GroupId)
+
+	response.SuccessResponse().WriteTo(cxt)
+
 }

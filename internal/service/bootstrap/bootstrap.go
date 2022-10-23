@@ -6,7 +6,6 @@ import (
 	"im-services/internal/middleware"
 	router2 "im-services/internal/router"
 	"im-services/internal/service/client"
-	"im-services/internal/service/queue/nsq_queue"
 	"im-services/pkg/coroutine_poll"
 	"im-services/pkg/logger"
 	"im-services/pkg/model"
@@ -49,8 +48,6 @@ func LoadConfiguration() {
 
 	_ = nsq.InitNewProducerPoll()
 	// todo 消费逻辑可以单独抽离
-	go nsq_queue.ConsumersPrivateMessageInit()
-	go nsq_queue.ConsumersGroupMessageInit()
 
 	services.InitChatBot()
 

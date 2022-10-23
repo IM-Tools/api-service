@@ -8,8 +8,9 @@ import (
 )
 
 const (
-	ChannelOfflineTopic = "channel-aa"
-	ChannelNodeTopic    = "channel-node"
+	ChannelOfflineTopic      = "channel-offline-private"
+	ChannelGroupOfflineTopic = "channel-offline-group"
+	ChannelNodeTopic         = "channel-node"
 )
 
 func ConsumersPrivateMessageInit() {
@@ -22,7 +23,7 @@ func ConsumersPrivateMessageInit() {
 }
 
 func ConsumersGroupMessageInit() {
-	err := nsq.NewConsumers(queue.OfflineGroupTopic, ChannelOfflineTopic, config.Conf.Nsq.LookupHost)
+	err := nsq.NewGroupConsumers(queue.OfflineGroupTopic, ChannelGroupOfflineTopic, config.Conf.Nsq.LookupHost)
 	if err != nil {
 		fmt.Println("new nsq consumer failed", err)
 		return

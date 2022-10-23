@@ -61,9 +61,11 @@ func (*ImMessageService) SendGroupMessage(message requests.PrivateMessageRequest
 	model.DB.Model(&im_group_users.ImGroupUsers{}).Where("group_id=?", message.ToID).Select([]string{"user_id"}).Find(&users)
 	var groupMessage group_message.ImGroupMessages
 
-	msg, _ := json.Marshal(message)
-
+	fmt.Println(users)
 	for _, val := range users {
+		message.UserId = helpers.StringToInt64(val.UserId)
+		fmt.Println(message)
+		msg, _ := json.Marshal(message)
 		isOk := AppClient.ImManager.SendMessageToSpecifiedClient(msg, val.UserId)
 		if !isOk {
 			//没有就丢入消息队列
@@ -72,12 +74,14 @@ func (*ImMessageService) SendGroupMessage(message requests.PrivateMessageRequest
 
 	}
 	groupMessage.Message = message.Message
+	groupMessage.MsgType = message.MsgType
 	groupMessage.SendTime = date.TimeUnix()
 	groupMessage.CreatedAt = date.NewDate()
 	groupMessage.MessageId = message.MsgId
 	groupMessage.ClientMessageId = message.MsgClientId
 	groupMessage.FormId = message.FormID
 	groupMessage.GroupId = message.ToID
+	groupMessage.Data = message.Data
 
 	model.DB.Model(&group_message.ImGroupMessages{}).Create(&groupMessage)
 
@@ -132,6 +136,7 @@ func (*ImMessageService) SendGroupSessionMessage(userIds []string, groupId int64
 	var message ImSessionsMessage
 	message.MsgCode = enum.WsSession
 	model.DB.Table("im_sessions").Where("group_id=?", groupId).Preload("Groups").Find(&message.Sessions)
+	// 用户加入群聊
 	for _, id := range userIds {
 		message.Sessions.FormId = helpers.StringToInt64(id)
 		msg, _ := json.Marshal(message)
@@ -141,5 +146,4 @@ func (*ImMessageService) SendGroupSessionMessage(userIds []string, groupId int64
 			data.Send <- msg
 		}
 	}
-	fmt.Println(userIds)
 }

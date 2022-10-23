@@ -10,3 +10,8 @@ type CreateGroupRequest struct {
 	IsPwd      int      `json:"is_pwd"`
 	SelectUser []string `form:"select_user[]"`
 }
+
+type CreateUserToGroup struct {
+	UserId  []string `json:"user_id" validate:"required"`
+	GroupId int64    `json:"group_id" validate:"required"`
+}

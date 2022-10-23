@@ -11,6 +11,7 @@ type PrivateMessageRequest struct {
 	Message     string `json:"message" validate:"required"`                   // 消息
 	SendTime    string `json:"send_time" validate:"required"`                 // 消息发送时间
 	Data        string `json:"data"`                                          // 自定义携带的数据
+	UserId      int64  `json:"user_id"`                                       // 自定义携带的数据
 
 }
 

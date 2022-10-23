@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"im-services/cmd"
-	cmd2 "im-services/cmd/cmd"
+	AppCmd "im-services/cmd/cmd"
 	"im-services/internal/config"
 	"im-services/internal/service/bootstrap"
 	"im-services/pkg/console"
@@ -42,10 +42,12 @@ func main() {
 
 	rootCmd.AddCommand(
 		cmd.AppCmdServe,
+		cmd.GroupConsumers,
+		cmd.PrivateConsumers,
 	)
 
-	cmd2.RegisterDefaultCmd(rootCmd, cmd.AppCmdServe)
-
+	AppCmd.RegisterDefaultCmd(rootCmd, cmd.AppCmdServe)
+	AppCmd.RegisterGlobalFlags(rootCmd)
 	// 执行主命令
 	if err := rootCmd.Execute(); err != nil {
 		console.Exit(fmt.Sprintf("命令启动失败 %v: %s", os.Args, err.Error()))
