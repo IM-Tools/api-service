@@ -17,6 +17,7 @@ type Config struct {
 	QiNiu  QiNiuConfig
 	Github GithubConfig
 	GoBot  BotConfig
+	Gitee  GiteeConfig
 }
 
 type ServerConf struct {
@@ -103,6 +104,11 @@ type BotConfig struct {
 	Password string `json:"password"`
 	Name     string `json:"name"`
 	Avatar   string `json:"avatar"`
+}
+type GiteeConfig struct {
+	ClientId     string `json:"clientId"`
+	ClientSecret string `json:"clientSecret"`
+	RedirectUrl  string `json:"redirectUrl"`
 }
 
 var Conf = &Config{}

@@ -10,8 +10,7 @@ type ImUsers struct {
 	Password      string `gorm:"column:password" json:"password"`
 	CreatedAt     string `gorm:"column:created_at" json:"created_at"`
 	UpdatedAt     string `gorm:"column:updated_at" json:"updated_at"`
-	Avatar        string `gorm:"column:avatar" json:"avatar"`     //头像
-	OauthId       string `gorm:"column:oauth_id" json:"oauth_id"` //第三方id
+	Avatar        string `gorm:"column:avatar" json:"avatar"` //头像
 	BoundOauth    int8   `gorm:"column:bound_oauth" json:"bound_oauth"`
 	OauthType     int8   `gorm:"column:oauth_type" json:"oauth_type"`   //1.微博 2.github
 	Status        int8   `gorm:"column:status" json:"status"`           //0 离线 1 在线
@@ -23,11 +22,17 @@ type ImUsers struct {
 	Uid           string `gorm:"column:uid" json:"uid"`                         //uid 关联
 	UserJson      string `gorm:"column:user_json" json:"user_json"`
 	UserType      int    `gorm:"column:user_type" json:"user_type"` //uid 关联
+	Gitee         int    `gorm:"column:gitee" json:"gitee"`         //是否绑定gitee
+	Github        int    `gorm:"column:github" json:"github"`       //是否绑定github
+	GithubId      string `gorm:"column:github_id" json:"github_id"` //githubid
+	GiteeId       string `gorm:"column:gitee_id" json:"gitee_id"`   //giteeid
+	GiteeUrl      string `gorm:"column:gitee_url" json:"gitee_url"`
+	GithubUrl     string `gorm:"column:github_url" json:"github_url"`
 }
 
 var (
-	USER_TYPE=0
-	BOT_TYPE =1
+	USER_TYPE = 0
+	BOT_TYPE  = 1
 )
 
 func IsUserExits(email string, name string) (bool, string) {

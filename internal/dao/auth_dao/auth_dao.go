@@ -45,39 +45,63 @@ func (*AuthDao) isOAuthExists(oauthId string) bool {
 	return false
 }
 
-// 获取或创建github用户信息
-func (auth *AuthDao) CreateGithubUser(userInfo map[string]interface{}) (err error, info user.ImUsers) {
+// 获取或创建第三方登录信息
+func (auth *AuthDao) CreateOauthUser(userInfo map[string]interface{}, oAuth string) (err error, info user.ImUsers) {
 	id := helpers.Float64ToString(userInfo["id"].(float64))
 	var users user.ImUsers
+
 	if len(id) > 0 {
-		if result := model.DB.Table("im_users").Where("oauth_id=?", id).First(&users); result.RowsAffected > 0 {
+		if result := model.DB.Table("im_users").Where(oAuth+"_id=?", id).First(&users); result.RowsAffected > 0 {
 			return nil, users
 		}
 	}
-	name := userInfo["login"].(string)
-	email := userInfo["email"].(string)
-
-	password := id + "password"
-
 	userByte, err := json.Marshal(userInfo)
 	if err != nil {
 		return err, users
 	}
 
-	createdAt := date.NewDate()
-	model.DB.Model(&users).Create(&user.ImUsers{
-		Email:         email,
-		Password:      hash.BcryptHash(password),
-		Name:          name,
-		OauthId:       id,
-		CreatedAt:     createdAt,
-		UpdatedAt:     createdAt,
-		Avatar:        userInfo["avatar_url"].(string),
-		LastLoginTime: createdAt,
-		Bio:           userInfo["bio"].(string),
-		Uid:           helpers.GetUuid(),
-		UserJson:      string(userByte),
-	})
+	switch oAuth {
+	case "github":
+		name := userInfo["login"].(string)
+		email := userInfo["email"].(string)
+		password := id + "password"
+		createdAt := date.NewDate()
+		users = user.ImUsers{
+			Email:         email,
+			Password:      hash.BcryptHash(password),
+			Name:          name,
+			CreatedAt:     createdAt,
+			UpdatedAt:     createdAt,
+			Avatar:        userInfo["avatar_url"].(string),
+			LastLoginTime: createdAt,
+			Bio:           userInfo["bio"].(string),
+			Uid:           helpers.GetUuid(),
+			UserJson:      string(userByte),
+			GithubId:      id,
+			Github:        1,
+		}
+	case "gitee":
+		name := userInfo["name"].(string)
+		email := userInfo["login"].(string)
+		password := id + "password"
+		createdAt := date.NewDate()
+		users = user.ImUsers{
+			Email:         email,
+			Password:      hash.BcryptHash(password),
+			Name:          name,
+			CreatedAt:     createdAt,
+			UpdatedAt:     createdAt,
+			Avatar:        userInfo["avatar_url"].(string),
+			LastLoginTime: createdAt,
+			Bio:           userInfo["bio"].(string),
+			Uid:           helpers.GetUuid(),
+			UserJson:      string(userByte),
+			GiteeId:       id,
+			Gitee:         1,
+			GiteeUrl:      userInfo["html_url"].(string),
+		}
+	}
+	model.DB.Table("im_users").Create(&users)
 
 	return nil, users
 

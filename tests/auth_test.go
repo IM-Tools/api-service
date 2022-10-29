@@ -2,7 +2,7 @@ package tests
 
 import (
 	"fmt"
-	"gotest.tools/assert"
+	"github.com/magiconair/properties/assert"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -41,7 +41,7 @@ func TestLogin(t *testing.T) {
 
 	fmt.Println(body)
 	if err != nil {
-		assert.Error(t, err, "有错误发生，err 不为空")
+		assert.Equal(t, err, "有错误发生，err 不为空")
 		return
 	}
 	assert.Equal(t, 200, resp.StatusCode)

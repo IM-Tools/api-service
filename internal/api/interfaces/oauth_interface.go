@@ -1,10 +1,9 @@
 package interfaces
 
+import "im-services/internal/api/services"
+
 type OAuth interface {
 	GetTokenAuthUrl(code string) string
-	GetToken(url string) (*Token, error)
-	GetUserInfo(token *Token) (map[string]interface{}, error)
-}
-type Token struct {
-	AccessToken string `json:"access_token"`
+	GetToken(url string) (*services.Token, error)
+	GetUserInfo(token string) (map[string]interface{}, error)
 }
