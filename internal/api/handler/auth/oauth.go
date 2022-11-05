@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"im-services/internal/api/interfaces"
 	"im-services/internal/api/services"
@@ -47,7 +46,7 @@ func (*OAuthHandler) GithubOAuth(cxt *gin.Context) {
 
 	var tokenAuthUrl = oauth.GetTokenAuthUrl(code)
 	var token *services.Token
-	fmt.Println(token)
+
 	if token, err = oauth.GetToken(tokenAuthUrl); err != nil {
 		response.FailResponse(http.StatusInternalServerError, err.Error()).WriteTo(cxt)
 		return
@@ -59,8 +58,7 @@ func (*OAuthHandler) GithubOAuth(cxt *gin.Context) {
 		return
 	}
 
-	err, users := auth.CreateOauthUser(userInfo, loginType)
-	fmt.Println(users)
+	err, users, isNew := auth.CreateOauthUser(userInfo, loginType)
 	ttl := config.Conf.JWT.Ttl
 	expireAtTime := time.Now().Unix() + ttl
 	tokens := jwt.NewJWT().IssueToken(
@@ -70,8 +68,11 @@ func (*OAuthHandler) GithubOAuth(cxt *gin.Context) {
 		users.Email,
 		expireAtTime,
 	)
-	// 投递消息
-	services.InitChatBotMessage(1, users.ID)
+	if isNew {
+		//新注册用户 投递消息
+		services.InitChatBotMessage(1, users.ID)
+
+	}
 
 	response.SuccessResponse(&loginResponse{
 		ID:         users.ID,

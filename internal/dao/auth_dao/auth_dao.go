@@ -46,18 +46,18 @@ func (*AuthDao) isOAuthExists(oauthId string) bool {
 }
 
 // 获取或创建第三方登录信息
-func (auth *AuthDao) CreateOauthUser(userInfo map[string]interface{}, oAuth string) (err error, info user.ImUsers) {
+func (auth *AuthDao) CreateOauthUser(userInfo map[string]interface{}, oAuth string) (err error, info user.ImUsers, isNew bool) {
 	id := helpers.Float64ToString(userInfo["id"].(float64))
 	var users user.ImUsers
 
 	if len(id) > 0 {
 		if result := model.DB.Table("im_users").Where(oAuth+"_id=?", id).First(&users); result.RowsAffected > 0 {
-			return nil, users
+			return nil, users, false
 		}
 	}
 	userByte, err := json.Marshal(userInfo)
 	if err != nil {
-		return err, users
+		return err, users, true
 	}
 
 	switch oAuth {
@@ -103,6 +103,6 @@ func (auth *AuthDao) CreateOauthUser(userInfo map[string]interface{}, oAuth stri
 	}
 	model.DB.Table("im_users").Create(&users)
 
-	return nil, users
+	return nil, users, true
 
 }

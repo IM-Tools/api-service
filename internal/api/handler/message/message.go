@@ -204,8 +204,9 @@ func (m *MessageHandler) SendMessage(cxt *gin.Context) {
 		model.DB.Model(&user.ImUsers{}).Where("id =?", params.ToID).Find(&users)
 		if users.UserType == user.BOT_TYPE {
 			// todo 消息投递 机器人不需要好友关系
-			messagesServices.SendChatMessage(params)
+			messagesServices.SendPrivateMessage(params)
 			response.SuccessResponse(params).ToJson(cxt)
+			return
 		} else {
 			if !friend.IsFriends(id, params.ToID) {
 				response.FailResponse(enum.WsNotFriend, "非好友关系,不能聊天...").ToJson(cxt)
