@@ -81,13 +81,13 @@ func RegisterApiRoutes(router *gin.Engine) {
 
 			// 群聊
 
-			api.POST("/groups/store", groups.Store)             //创建群组
-			api.POST("/groups/applyJoin/:id", groups.ApplyJoin) //加入群组
-			api.POST("/groups/createUser", groups.CreateUser)   //添加好友入群
-			api.GET("/groups/list", groups.Index)               //获取群组列表
-			api.GET("/groups/users/:id", groups.GetUsers)       //获取群成员信息
-			api.DELETE("/groups/:id", groups.Logout)            //退出群聊
-			api.POST("/invite/:id", invites.Store)              //创建分享群聊token
+			api.POST("/groups/store", groups.Store)                           //创建群组
+			api.POST("/groups/applyJoin/:id", groups.ApplyJoin)               //加入群组
+			api.POST("/groups/createOrRemoveUser", groups.CreateOrRemoveUser) //添加移除用户
+			api.GET("/groups/list", groups.Index)                             //获取群组列表
+			api.GET("/groups/users/:id", groups.GetUsers)                     //获取群成员信息
+			api.DELETE("/groups/:id", groups.Logout)                          //退出群聊
+			api.POST("/invite/:id", invites.Store)                            //创建分享群聊token
 
 			api.POST("/upload/file", clouds.UploadFile).Use(middleware.Auth())
 		}

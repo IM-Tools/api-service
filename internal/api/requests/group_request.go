@@ -11,7 +11,13 @@ type CreateGroupRequest struct {
 	SelectUser []string `form:"select_user[]"`
 }
 
-type CreateUserToGroup struct {
-	UserId  []string `json:"user_id" validate:"required"`
+type CreateUserToGroupRequest struct {
+	UserId  []string `json:"select_user[]" validate:"required"`
 	GroupId int64    `json:"group_id" validate:"required"`
+	Type    int      `json:"type" validate:"required"`
+}
+
+type InviteUserRequest struct {
+	GroupId int64 `json:"group_id" validate:"required"`
+	UserId  int64 `json:"user_id" validate:"required"`
 }

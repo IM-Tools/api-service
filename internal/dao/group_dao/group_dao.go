@@ -52,6 +52,13 @@ func (*GroupDao) CreateSelectGroupUser(userIds []string, groupId int, avatar str
 	return
 }
 
+// 将用户移除群聊
+func (*GroupDao) DelSelectGroupUser(userIds []string, groupId int, avatar string, name string) {
+	model.DB.Model(&im_group_users.ImGroupUsers{}).Where("user_id in(?)", userIds).Delete(&im_group_users.ImGroupUsers{})
+	model.DB.Model(&im_sessions.ImSessions{}).Where("group_id=? and form_id in(?)", groupId, userIds).Delete(&im_sessions.ImSessions{})
+	return
+}
+
 // 将人员添加到群组表中 并创建会话
 func (*GroupDao) CreateOneGroupUser(group im_groups.ImGroups, id int) {
 

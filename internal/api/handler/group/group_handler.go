@@ -1,6 +1,7 @@
 package group
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -10,9 +11,11 @@ import (
 	"im-services/internal/dao/group_dao"
 	"im-services/internal/enum"
 	"im-services/internal/helpers"
+	"im-services/internal/models/im_group_users"
 	"im-services/internal/models/im_groups"
 	"im-services/internal/models/im_messages"
 	"im-services/internal/models/im_sessions"
+	"im-services/internal/models/user"
 	"im-services/pkg/date"
 	"im-services/pkg/hash"
 	"im-services/pkg/model"
@@ -244,33 +247,35 @@ func (*GroupHandler) Logout(cxt *gin.Context) {
 // @BasePath /api
 
 // PingExample godoc
-// @Summary groups/:id 添加用户进入群聊
+// @Summary groups/createOrRemoveUser 添加或者移除用户
 // @Schemes
-// @Description 添加用户进入群聊
+// @Description 添加或者移除用户
 // @Tags 群聊
 // @SecurityDefinitions.apikey ApiKeyAuth
 // @In header
 // @Name Authorization
 // @Param Authorization	header string true "Bearer "
 // @Param group_id formData string true "群聊id"
-// @Param select_user formData array true "所选用户数组"
+// @Param type formData int true "1 添加 2 移除"
 // @Produce json
 // @Success 200 {object} response.JsonResponse{data=GroupsDate} "ok"
-// @Router /groups/CreateUser [post]
-func (*GroupHandler) CreateUser(cxt *gin.Context) {
+// @Router /groups/createOrRemoveUser [post]
+func (*GroupHandler) CreateOrRemoveUser(cxt *gin.Context) {
 
 	var selectUser SelectUser
 
 	cxt.ShouldBind(&selectUser)
 
-	params := requests.CreateUserToGroup{
+	params := requests.CreateUserToGroupRequest{
 		GroupId: helpers.StringToInt64(cxt.PostForm("group_id")),
+		Type:    helpers.StringToInt(cxt.PostForm("type")),
 		UserId:  selectUser.SelectUser,
 	}
 
 	userId := cxt.MustGet("id")
-	var group im_groups.ImGroups
-	if result := model.DB.Model(&im_groups.ImGroups{}).Where("groupId=?", userId).Find(&group); result.RowsAffected == 0 {
+	name := cxt.MustGet("name")
+	var group ImGroups
+	if result := model.DB.Model(&im_groups.ImGroups{}).Where("id=?", params.GroupId).Find(&group); result.RowsAffected == 0 {
 		response.FailResponse(enum.ParamError, "群聊不存在！").WriteTo(cxt)
 		return
 	}
@@ -280,10 +285,35 @@ func (*GroupHandler) CreateUser(cxt *gin.Context) {
 
 	}
 
-	groupDao.CreateSelectGroupUser(selectUser.SelectUser, int(params.GroupId), group.Avatar, group.Name)
+	if params.Type == 1 {
+		groupDao.CreateSelectGroupUser(selectUser.SelectUser, int(params.GroupId), group.Avatar, group.Name)
+		// 发送群聊会话消息
+		messageService.SendGroupSessionMessage(selectUser.SelectUser, params.GroupId)
+	} else {
+		groupDao.DelSelectGroupUser(selectUser.SelectUser, int(params.GroupId), group.Avatar, group.Name)
+	}
+	var users []user.ImUsers
 
-	messageService.SendGroupSessionMessage(selectUser.SelectUser, params.GroupId)
+	model.DB.Model(&user.ImUsers{}).
+		Where("id in(?)", model.DB.Model(&im_group_users.ImGroupUsers{}).
+			Where("group_id=?", params.GroupId).Select("user_id")).
+		Find(&users)
+
+	groupStr, _ := json.Marshal(group)
+	message := requests.PrivateMessageRequest{
+		MsgId:       date.TimeUnixNano(),
+		MsgCode:     enum.WsChantMessage,
+		MsgClientId: date.TimeUnixNano(),
+		FormID:      group.Id,
+		ChannelType: enum.GroupMessage,
+		MsgType:     enum.JOIN_GROUP,
+		Message:     "",
+		SendTime:    date.NewDate(),
+		Data:        string(groupStr),
+	}
+	messageService.SendCreateUserGroupMessage(users, message, name, params.Type)
 
 	response.SuccessResponse().WriteTo(cxt)
+	return
 
 }

@@ -8,6 +8,7 @@ import (
 	"im-services/internal/helpers"
 	"im-services/internal/models/group_message"
 	"im-services/internal/models/im_group_users"
+	"im-services/internal/models/user"
 	AppClient "im-services/internal/service/client"
 	"im-services/internal/service/queue/nsq_queue"
 	"im-services/pkg/date"
@@ -37,6 +38,16 @@ type SliceMock struct {
 	addr uintptr
 	len  int
 	cap  int
+}
+
+// 判断用户是否在线
+func (*ImMessageService) IsOline(id string) bool {
+
+	_, ok := AppClient.ImManager.ImClientMap[id]
+	if ok {
+		return true
+	}
+	return false
 }
 
 func (*ImMessageService) SendFriendActionMessage(msg AppClient.CreateFriendMessage) {
@@ -142,6 +153,25 @@ func (*ImMessageService) SendGroupSessionMessage(userIds []string, groupId int64
 		msg, _ := json.Marshal(message)
 
 		data, ok := AppClient.ImManager.ImClientMap[id]
+		if ok {
+			data.Send <- msg
+		}
+	}
+}
+
+// 邀请入群消息投递
+func (*ImMessageService) SendCreateUserGroupMessage(users []user.ImUsers, message requests.PrivateMessageRequest, name interface{}, actionType int) {
+
+	// 用户加入群聊
+	for _, val := range users {
+		message.ToID = val.ID
+		if actionType == 1 {
+			message.Message = fmt.Sprintf("%s邀请%s加入群聊", name, val.Name)
+		} else {
+			message.Message = fmt.Sprintf("%s已经移出群聊", val.Name)
+		}
+		msg, _ := json.Marshal(message)
+		data, ok := AppClient.ImManager.ImClientMap[helpers.Int64ToString(val.ID)]
 		if ok {
 			data.Send <- msg
 		}

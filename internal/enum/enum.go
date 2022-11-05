@@ -20,4 +20,14 @@ const (
 
 	WsGroupMessage = 3000 // 入群邀请
 
+	PrivateMessage = 1 // 私聊消息
+	GroupMessage   = 2 // 群聊消息
+
+	TEXT         = 1 // 文本
+	VOICE        = 2 // 语音
+	FILE         = 3 // 文件
+	IMAGE        = 4 // 图片
+	LOGOUT_GROUP = 5 // 退出群聊
+	JOIN_GROUP   = 6 // 加入群聊
+
 )

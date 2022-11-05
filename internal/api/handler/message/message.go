@@ -203,8 +203,12 @@ func (m *MessageHandler) SendMessage(cxt *gin.Context) {
 		var users user.ImUsers
 		model.DB.Model(&user.ImUsers{}).Where("id =?", params.ToID).Find(&users)
 		if users.UserType == user.BOT_TYPE {
-			// todo 消息投递 机器人不需要好友关系
-			messagesServices.SendPrivateMessage(params)
+			// todo 消息投递 机器人不需要好友关系 在线不发消息 离线发送消息
+			if messagesServices.IsOline(helpers.Int64ToString(users.ID)) {
+				messagesServices.SendPrivateMessage(params)
+			} else {
+				messagesServices.SendChatMessage(params)
+			}
 			response.SuccessResponse(params).ToJson(cxt)
 			return
 		} else {
