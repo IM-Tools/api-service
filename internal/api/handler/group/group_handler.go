@@ -311,7 +311,8 @@ func (*GroupHandler) CreateOrRemoveUser(cxt *gin.Context) {
 		SendTime:    date.NewDate(),
 		Data:        string(groupStr),
 	}
-	messageService.SendCreateUserGroupMessage(users, message, name, params.Type)
+
+	messageService.SendCreateUserGroupMessage(users, message, name, params.Type, selectUser.SelectUser)
 
 	response.SuccessResponse().WriteTo(cxt)
 	return

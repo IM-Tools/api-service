@@ -160,20 +160,37 @@ func (*ImMessageService) SendGroupSessionMessage(userIds []string, groupId int64
 }
 
 // 邀请入群消息投递
-func (*ImMessageService) SendCreateUserGroupMessage(users []user.ImUsers, message requests.PrivateMessageRequest, name interface{}, actionType int) {
-
+func (*ImMessageService) SendCreateUserGroupMessage(users []user.ImUsers, message requests.PrivateMessageRequest, name interface{}, actionType int, userIds []string) {
+	var username string
 	// 用户加入群聊
-	for _, val := range users {
-		message.ToID = val.ID
-		if actionType == 1 {
-			message.Message = fmt.Sprintf("%s邀请%s加入群聊", name, val.Name)
-		} else {
-			message.Message = fmt.Sprintf("%s已经移出群聊", val.Name)
-		}
-		msg, _ := json.Marshal(message)
-		data, ok := AppClient.ImManager.ImClientMap[helpers.Int64ToString(val.ID)]
-		if ok {
-			data.Send <- msg
+	for _, value := range users {
+		if InSlice(userIds, helpers.Int64ToString(value.ID)) {
+			username = value.Name
+			for _, val := range users {
+				message.ToID = val.ID
+				if actionType == 1 {
+					if value.ID == val.ID {
+						message.Message = fmt.Sprintf("%s邀请您加入了群聊", name)
+					} else {
+						message.Message = fmt.Sprintf("%s邀请%s加入了群聊", name, username)
+					}
+				} else {
+					message.Message = fmt.Sprintf("%s已经移出群聊", val.Name)
+				}
+				msg, _ := json.Marshal(message)
+				data, ok := AppClient.ImManager.ImClientMap[helpers.Int64ToString(val.ID)]
+				if ok {
+					data.Send <- msg
+				}
+			}
 		}
 	}
+}
+func InSlice(items []string, item string) bool {
+	for _, eachItem := range items {
+		if eachItem == item {
+			return true
+		}
+	}
+	return false
 }
