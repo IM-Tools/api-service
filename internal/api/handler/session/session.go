@@ -11,7 +11,6 @@ import (
 	"im-services/pkg/response"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 type SessionHandler struct {
@@ -75,7 +74,7 @@ func (s SessionHandler) Store(cxt *gin.Context) {
 		Type: helpers.StringToInt(cxt.PostForm("type")),
 	}
 
-	errs := validator.New().Struct(params)
+	errs := requests.Validate(params)
 
 	if errs != nil {
 		response.FailResponse(enum.ParamError, errs.Error()).ToJson(cxt)
@@ -129,7 +128,7 @@ func (s SessionHandler) Update(cxt *gin.Context) {
 		TopStatus: helpers.StringToInt(cxt.PostForm("top_status")),
 		Note:      cxt.PostForm("note"),
 	}
-	errs := validator.New().Struct(params)
+	errs := requests.Validate(params)
 	if errs != nil {
 		response.FailResponse(enum.ParamError, errs.Error()).ToJson(cxt)
 		return

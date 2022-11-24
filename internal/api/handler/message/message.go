@@ -16,7 +16,6 @@ import (
 	"sort"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 type MessageHandler struct {
@@ -189,7 +188,7 @@ func (m *MessageHandler) SendMessage(cxt *gin.Context) {
 		Data:        cxt.PostForm("data"),
 	}
 
-	errs := validator.New().Struct(params)
+	errs := requests.Validate(params)
 
 	if errs != nil {
 		response.FailResponse(enum.ParamError, errs.Error()).ToJson(cxt)
