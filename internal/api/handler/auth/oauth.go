@@ -5,6 +5,7 @@ import (
 	"im-services/internal/api/interfaces"
 	"im-services/internal/api/services"
 	"im-services/internal/config"
+	"im-services/internal/helpers"
 	"im-services/pkg/jwt"
 	"im-services/pkg/response"
 	"net/http"
@@ -73,6 +74,8 @@ func (*OAuthHandler) GithubOAuth(cxt *gin.Context) {
 		services.InitChatBotMessage(1, users.ID)
 
 	}
+	// 异地登录事件
+	eventHandle.LogoutEvent(helpers.Int64ToString(users.ID), cxt.Request.Header.Get("X-Forward-For"))
 
 	response.SuccessResponse(&loginResponse{
 		ID:         users.ID,

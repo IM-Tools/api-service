@@ -7,6 +7,7 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
+	"im-services/internal/api/event"
 	"im-services/internal/helpers"
 	client2 "im-services/internal/service/client"
 	"im-services/internal/service/dispatch"
@@ -22,6 +23,10 @@ const (
 	userRole     = 2 // 用户
 )
 
+var (
+	eventHandle event.EventHandle
+)
+
 func (*WsService) Connect(cxt *gin.Context) {
 
 	conn, err := ws.App(cxt.Writer, cxt.Request)
@@ -32,14 +37,18 @@ func (*WsService) Connect(cxt *gin.Context) {
 		http.Error(cxt.Writer, cxt.Errors.String(), http.StatusInternalServerError)
 		return
 	}
+	id := helpers.InterfaceToInt64(cxt.MustGet("id"))
+	uid := helpers.InterfaceToString(cxt.MustGet("uid"))
+	// 异地登录事件
+	eventHandle.LogoutEvent(helpers.Int64ToString(id), cxt.Request.Header.Get("X-Forward-For"))
 
 	var dService dispatch.DispatchService
 
 	// 用户id
-	id := helpers.InterfaceToInt64(cxt.MustGet("id"))
-	uid := helpers.InterfaceToString(cxt.MustGet("uid"))
 	dService.SetDispatchNode(helpers.Int64ToString(id))
+
 	// 创建客户端
+
 	client := client2.NewClient(helpers.Int64ToString(id), uid, userRole, conn)
 	// 注册客户端
 	client2.ImManager.Register <- client

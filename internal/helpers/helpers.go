@@ -1,10 +1,14 @@
 package helpers
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/axgle/mahonia"
 	uuid "github.com/satori/go.uuid"
 	"im-services/pkg/logger"
+	"io/ioutil"
 	"math/rand"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
@@ -88,4 +92,43 @@ func ErrorHandler(err error) {
 		return
 	}
 	return
+}
+
+type IpInfo struct {
+	IP          string `json:"ip"`
+	Pro         string `json:"pro"`
+	ProCode     string `json:"proCode"`
+	City        string `json:"city"`
+	CityCode    string `json:"cityCode"`
+	Region      string `json:"region"`
+	RegionCode  string `json:"regionCode"`
+	Addr        string `json:"addr"`
+	RegionNames string `json:"regionNames"`
+	Err         string `json:"err"`
+}
+
+func GetIpInfo(ip string) (error, IpInfo) {
+	var info IpInfo
+	url := "http://whois.pconline.com.cn/ipJson.jsp?ip=" + ip + "&json=true"
+	method := "GET"
+
+	client := &http.Client{}
+	req, err := http.NewRequest(method, url, nil)
+	req.Header.Set("accept", "application/json")
+	if err != nil {
+		return err, info
+	}
+	res, err := client.Do(req)
+	if err != nil {
+		return err, info
+	}
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	bodyStr := mahonia.NewDecoder("gbk").ConvertString(string(body))
+	err = json.Unmarshal([]byte(bodyStr), &info)
+	if err != nil {
+		return err, info
+	}
+	return nil, info
+
 }

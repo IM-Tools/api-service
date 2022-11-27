@@ -2,6 +2,7 @@ package auth
 
 import (
 	"fmt"
+	"im-services/internal/api/event"
 	"im-services/internal/api/requests"
 	"im-services/internal/api/services"
 	"im-services/internal/config"
@@ -51,7 +52,8 @@ type loginResponse struct {
 }
 
 var (
-	auth auth_dao.AuthDao
+	auth        auth_dao.AuthDao
+	eventHandle event.EventHandle
 )
 
 // Login 登录
@@ -95,6 +97,7 @@ func (*AuthHandler) Login(cxt *gin.Context) {
 		response.FailResponse(http.StatusInternalServerError, "密码错误").ToJson(cxt)
 		return
 	}
+
 	users.LastLoginTime = date.NewDate()
 	model.DB.Table("im_users").Save(users)
 
@@ -107,6 +110,8 @@ func (*AuthHandler) Login(cxt *gin.Context) {
 		users.Email,
 		expireAtTime,
 	)
+	// 异地登录事件
+	eventHandle.LogoutEvent(helpers.Int64ToString(users.ID), cxt.Request.Header.Get("X-Forward-For"))
 
 	response.SuccessResponse(&loginResponse{
 		ID:         users.ID,

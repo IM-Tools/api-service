@@ -18,6 +18,7 @@ type Config struct {
 	Github GithubConfig
 	GoBot  BotConfig
 	Gitee  GiteeConfig
+	Consul ConsulConfig
 }
 
 type ServerConf struct {
@@ -109,6 +110,9 @@ type GiteeConfig struct {
 	ClientId     string `json:"clientId"`
 	ClientSecret string `json:"clientSecret"`
 	RedirectUrl  string `json:"redirectUrl"`
+}
+type ConsulConfig struct {
+	Host string `json:"host"`
 }
 
 var Conf = &Config{}

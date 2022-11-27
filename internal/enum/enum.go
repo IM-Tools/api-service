@@ -17,6 +17,7 @@ const (
 	WsUserOnline   = 2001 // 用户在线
 	WsIsUserStatus = 2002 // 前端请求判断用户是否在线
 	WsSession      = 2003 // 会话推送
+	WsLoginOut     = 2004 // 异地登录
 
 	WsGroupMessage = 3000 // 入群邀请
 
