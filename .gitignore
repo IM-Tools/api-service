@@ -12,3 +12,4 @@ internal/.DS_Store
 go_build_im_services
 go_build_main_go
 air
+main.exe
