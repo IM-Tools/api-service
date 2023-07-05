@@ -181,8 +181,9 @@ func (*AuthHandler) Registered(cxt *gin.Context) {
 
 	}
 
-	auth.CreateUser(params.Email, params.Password, params.Name)
+	id := auth.CreateUser(params.Email, params.Password, params.Name)
 
+	eventHandle.RegisterEvent(id, params.Name)
 	// 投递消息
 	//services.InitChatBotMessage(1, id)
 

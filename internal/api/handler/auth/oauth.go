@@ -59,7 +59,7 @@ func (*OAuthHandler) GithubOAuth(cxt *gin.Context) {
 		return
 	}
 
-	err, users, _ := auth.CreateOauthUser(userInfo, loginType)
+	err, users, isNew := auth.CreateOauthUser(userInfo, loginType)
 	ttl := config.Conf.JWT.Ttl
 	expireAtTime := time.Now().Unix() + ttl
 	tokens := jwt.NewJWT().IssueToken(
@@ -71,11 +71,12 @@ func (*OAuthHandler) GithubOAuth(cxt *gin.Context) {
 	)
 	// 异地登录事件
 	eventHandle.LogoutEvent(helpers.Int64ToString(users.ID), cxt.Request.Header.Get("X-Forward-For"))
-	//if isNew {
-	//	//新注册用户 投递消息
-	//	services.InitChatBotMessage(1, users.ID)
-	//
-	//}
+
+	if isNew {
+		// 注册事件
+		eventHandle.RegisterEvent(users.ID, users.Name)
+	}
+
 	response.SuccessResponse(&loginResponse{
 		ID:         users.ID,
 		UID:        users.Uid,
