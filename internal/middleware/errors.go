@@ -15,7 +15,7 @@ func Recover(cxt *gin.Context) {
 			var errorString = errorToString(r)
 			logger.Logger.Error(errorString)
 			debug.PrintStack()
-			response.FailResponse(http.StatusInternalServerError, errorString).ToJson(cxt)
+			response.FailResponse(http.StatusInternalServerError, "服务异常！").ToJson(cxt)
 			cxt.Abort()
 		}
 	}()

@@ -12,7 +12,7 @@ type PrivateMessageRequest struct {
 	SendTime    string `json:"send_time" validate:"required"`                 // 消息发送时间
 	Data        string `json:"data"`                                          // 自定义携带的数据
 	UserId      int64  `json:"user_id"`                                       // 自定义携带的数据
-
+	CreatedAt   string `json:"created_at"`
 }
 
 type VideoMessageRequest struct {

@@ -17,7 +17,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 type FriendRecordHandler struct {
@@ -76,7 +75,7 @@ func (friend *FriendRecordHandler) Store(cxt *gin.Context) {
 		Information: cxt.PostForm("information"),
 	}
 
-	errs := validator.New().Struct(params)
+	errs := requests.Validate(params)
 
 	if errs != nil {
 		response.ErrorResponse(enum.ParamError, errs.Error()).ToJson(cxt)
@@ -158,7 +157,7 @@ func (friend *FriendRecordHandler) Update(cxt *gin.Context) {
 		Status: helpers.StringToInt(cxt.PostForm("status")),
 		ID:     cxt.PostForm("id"),
 	}
-	errs := validator.New().Struct(params)
+	errs := requests.Validate(params)
 	if errs != nil {
 		response.ErrorResponse(enum.ParamError, errs.Error()).ToJson(cxt)
 		return
@@ -231,7 +230,7 @@ func (friend *FriendRecordHandler) UserQuery(cxt *gin.Context) {
 	params := requests.QueryUserRequest{
 		Email: cxt.Query("email"),
 	}
-	errs := validator.New().Struct(params)
+	errs := requests.Validate(params)
 	if errs != nil {
 		response.ErrorResponse(enum.ParamError, errs.Error()).ToJson(cxt)
 		return

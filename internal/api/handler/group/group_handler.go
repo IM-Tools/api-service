@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"im-services/internal/api/handler"
 	"im-services/internal/api/requests"
 	"im-services/internal/api/services"
@@ -75,7 +74,7 @@ func (*GroupHandler) Store(cxt *gin.Context) {
 		SelectUser: selectUser.SelectUser,
 	}
 
-	errs := validator.New().Struct(params)
+	errs := requests.Validate(params)
 	if errs != nil {
 		response.ErrorResponse(enum.ParamError, errs.Error()).ToJson(cxt)
 		return
@@ -310,9 +309,10 @@ func (*GroupHandler) CreateOrRemoveUser(cxt *gin.Context) {
 		Message:     "",
 		SendTime:    date.NewDate(),
 		Data:        string(groupStr),
+		CreatedAt:   date.NewDate(),
 	}
 
-	messageService.SendCreateUserGroupMessage(users, message, name, params.Type, selectUser.SelectUser)
+	messageService.SendCreateUserGroupMessage(users, message, name, params.Type, selectUser.SelectUser, helpers.InterfaceToInt64(userId))
 
 	response.SuccessResponse().WriteTo(cxt)
 	return

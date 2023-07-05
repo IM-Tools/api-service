@@ -41,9 +41,9 @@ func (f *FriendDao) GetNotFriendList(id interface{}, email string) []APIUsers {
 		Where("id not in(?) and user_type=?", sqlQuery, 0).Where("id!=?", id)
 	if len(email) > 0 {
 		query = model.DB.Table("im_users").
-			Where("email like ?", email)
+			Where("email like ? or name like ?", email+"%", email+"%")
 	}
-	query.Select("id,name,email,avatar,bio,sex,status").Limit(5).Find(&users)
+	query.Select("id,name,email,avatar,bio,sex,status").Order("last_login_time desc").Limit(10).Find(&users)
 	return users
 }
 

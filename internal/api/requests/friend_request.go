@@ -10,5 +10,5 @@ type CreateFriendRequest struct {
 }
 
 type QueryUserRequest struct {
-	Email string `json:"email" validate:"omitempty,email"`
+	Email string `json:"email" validate:"omitempty"`
 }

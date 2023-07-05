@@ -9,6 +9,7 @@ import (
 	"im-services/internal/enum"
 	"im-services/internal/helpers"
 	"im-services/internal/models/user"
+	"im-services/pkg/date"
 	"im-services/pkg/hash"
 	"im-services/pkg/jwt"
 	"im-services/pkg/logger"
@@ -18,7 +19,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 type AuthHandler struct {
@@ -75,7 +75,7 @@ func (*AuthHandler) Login(cxt *gin.Context) {
 		Password: cxt.PostForm("password"),
 	}
 
-	errs := validator.New().Struct(params)
+	errs := requests.Validate(params)
 
 	if errs != nil {
 		response.FailResponse(http.StatusInternalServerError, errs.Error()).WriteTo(cxt)
@@ -91,11 +91,12 @@ func (*AuthHandler) Login(cxt *gin.Context) {
 		return
 	}
 
-	fmt.Println(users.Password)
 	if !hash.BcryptCheck(params.Password, users.Password) {
 		response.FailResponse(http.StatusInternalServerError, "密码错误").ToJson(cxt)
 		return
 	}
+	users.LastLoginTime = date.NewDate()
+	model.DB.Table("im_users").Save(users)
 
 	ttl := config.Conf.JWT.Ttl
 	expireAtTime := time.Now().Unix() + ttl
@@ -151,7 +152,7 @@ func (*AuthHandler) Registered(cxt *gin.Context) {
 		Code:           cxt.PostForm("code"),
 	}
 
-	err := validator.New().Struct(params)
+	err := requests.Validate(params)
 
 	if err != nil {
 		response.FailResponse(enum.ParamError, err.Error()).WriteTo(cxt)
@@ -205,7 +206,7 @@ func (*AuthHandler) SendEmailCode(cxt *gin.Context) {
 		EmailType: helpers.StringToInt(cxt.PostForm("email_type")),
 	}
 
-	err := validator.New().Struct(params)
+	err := requests.Validate(params)
 
 	if err != nil {
 		response.FailResponse(enum.ParamError, err.Error()).WriteTo(cxt)

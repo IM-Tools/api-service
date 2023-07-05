@@ -160,7 +160,7 @@ func (*ImMessageService) SendGroupSessionMessage(userIds []string, groupId int64
 }
 
 // 邀请入群消息投递
-func (*ImMessageService) SendCreateUserGroupMessage(users []user.ImUsers, message requests.PrivateMessageRequest, name interface{}, actionType int, userIds []string) {
+func (*ImMessageService) SendCreateUserGroupMessage(users []user.ImUsers, message requests.PrivateMessageRequest, name interface{}, actionType int, userIds []string, userId int64) {
 	var username string
 	// 用户加入群聊
 	for _, value := range users {
@@ -171,6 +171,19 @@ func (*ImMessageService) SendCreateUserGroupMessage(users []user.ImUsers, messag
 				if actionType == 1 {
 					if value.ID == val.ID {
 						message.Message = fmt.Sprintf("%s邀请您加入了群聊", name)
+
+						var groupMessage group_message.ImGroupMessages
+						groupMessage.Message = fmt.Sprintf("%s邀请%s加入了群聊", name, username)
+						groupMessage.MsgType = message.MsgType
+						groupMessage.SendTime = date.TimeUnix()
+						groupMessage.CreatedAt = date.NewDate()
+						groupMessage.MessageId = message.MsgId
+						groupMessage.ClientMessageId = message.MsgClientId
+						groupMessage.FormId = userId
+						groupMessage.GroupId = message.FormID
+						groupMessage.Data = message.Data
+						model.DB.Model(&group_message.ImGroupMessages{}).Create(&groupMessage)
+
 					} else {
 						message.Message = fmt.Sprintf("%s邀请%s加入了群聊", name, username)
 					}
