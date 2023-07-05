@@ -175,10 +175,10 @@ func (*AuthHandler) Registered(cxt *gin.Context) {
 
 	}
 
-	id := auth.CreateUser(params.Email, params.Password, params.Name)
+	auth.CreateUser(params.Email, params.Password, params.Name)
 
 	// 投递消息
-	services.InitChatBotMessage(1, id)
+	//services.InitChatBotMessage(1, id)
 
 	response.SuccessResponse().ToJson(cxt)
 	return

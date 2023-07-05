@@ -58,7 +58,7 @@ func (*OAuthHandler) GithubOAuth(cxt *gin.Context) {
 		return
 	}
 
-	err, users, isNew := auth.CreateOauthUser(userInfo, loginType)
+	err, users, _ := auth.CreateOauthUser(userInfo, loginType)
 	ttl := config.Conf.JWT.Ttl
 	expireAtTime := time.Now().Unix() + ttl
 	tokens := jwt.NewJWT().IssueToken(
@@ -68,11 +68,11 @@ func (*OAuthHandler) GithubOAuth(cxt *gin.Context) {
 		users.Email,
 		expireAtTime,
 	)
-	if isNew {
-		//新注册用户 投递消息
-		services.InitChatBotMessage(1, users.ID)
-
-	}
+	//if isNew {
+	//	//新注册用户 投递消息
+	//	services.InitChatBotMessage(1, users.ID)
+	//
+	//}
 
 	response.SuccessResponse(&loginResponse{
 		ID:         users.ID,
